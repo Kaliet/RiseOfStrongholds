@@ -11,11 +11,12 @@ namespace RiseOfStrongholds.Classes
     {        
         public LoggerClass() { }
 
-        public void createNewDebugFile ()
+        public void createNewFile ()
         {
             try
             {
                 System.IO.File.WriteAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.DEBUG_LOG_FILENAME, "");
+                System.IO.File.WriteAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.D_LOG_FILENAME, "");
             }                  
             catch (DirectoryNotFoundException e)
             {
@@ -28,7 +29,7 @@ namespace RiseOfStrongholds.Classes
             }            
         }
 
-        public void writeToLog(string text)
+        public void writeToDebugLog(string text)
         {           
             int year = DateTime.Now.Year;
             int month = DateTime.Now.Month;
@@ -58,6 +59,18 @@ namespace RiseOfStrongholds.Classes
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());                
+            }
+
+        public void writeToGameLog(string text)
+        {
+            text = ConstantClass.gameTime.ToString() + "\t\t - \t" + text + "\n";
+            try
+            {
+                System.IO.File.AppendAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.GAME_LOG_FILENAME, text);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
             }
         }
 
