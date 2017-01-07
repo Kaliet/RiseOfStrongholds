@@ -1,0 +1,18 @@
+﻿TODO:	
+	- Define time in game and map to tick
+	- remove MP and add stamina for actions reduction
+	- start as survival mode (basic survival tasks: eating, resting) - no home	
+	- add blockclass (consists of different tyeps: building, terrain)
+	- check if to add map (2d table of blockclass) for character to search and find food, character will need x,y coordinates
+	-
+
+05/01/2017:
+	- GameTime class - ongoing
+	- Testcase class - ongoing
+
+03/01/2017:
+	- LOGGER class created
+	- CHARACTER class created
+	- CONSTANT class created
+	- STATS CLASS created
+	- template for new classes created in Constant Class (used for debugging)
