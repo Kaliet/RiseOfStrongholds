@@ -10,6 +10,7 @@ namespace RiseOfStrongholds
     {
         static void Main(string[] args)
         {
+            sdfsf
         }
     }
 }
