@@ -53,6 +53,7 @@ namespace RiseOfStrongholds
                     /*-----------------*/
 
                     //<-game code goes here.
+                    ConstantClass.LOGGER.writeToGameLog("");
                 }
             }
 

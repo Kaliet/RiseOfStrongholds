@@ -1,5 +1,4 @@
-﻿TODO:	
-	- Define time in game and map to tick	
+﻿TODO:		
 	- start as survival mode (basic survival tasks: eating, resting) - no home	
 	- add blockclass (consists of different tyeps: building, terrain)
 	- check if to add map (2d table of blockclass) for character to search and find food, character will need x,y coordinates
@@ -10,6 +9,7 @@
 	- MP replaced by Energy for actions
 	- Updated GameTime with more overloading operators (>=, <=, >, <)
 	- Introduced global variable GAME_SPEED
+	- Gametime mapped to system tick time
 
 05/01/2017:
 	- GameTime class created
