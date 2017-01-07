@@ -11,7 +11,7 @@ namespace RiseOfStrongholds.Classes
     {        
         public LoggerClass() { }
 
-        public void createNewFile ()
+        public void createNewFiles ()
         {
             try
             {

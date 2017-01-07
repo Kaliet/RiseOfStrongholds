@@ -63,7 +63,7 @@ namespace RiseOfStrongholds.Classes
             while (i < 10)
             {
                 people[i] = new CharacterClass();                
-                ConstantClass.LOGGER.writeToLog("Person " + i + ": Birth date is " + people[i].getBirthDate().ToString());
+                ConstantClass.LOGGER.writeToDebugLog("Person " + i + ": Birth date is " + people[i].getBirthDate().ToString());
                 i++;
                 ConstantClass.gameTime.set_days(1);
             }

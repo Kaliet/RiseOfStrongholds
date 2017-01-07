@@ -14,7 +14,7 @@ namespace RiseOfStrongholds
         {
             TestingClass testcase = new TestingClass(); //for making tests
 
-            // Added Comment //
+            // WELCOME!//            
 
             /*VARIABLES*/
             long lastTick = DateTime.Now.Ticks;
@@ -26,9 +26,9 @@ namespace RiseOfStrongholds
 
             /*Defining LOGGER*/
             ConstantClass.LOGGER = new LoggerClass();
-            ConstantClass.LOGGER.createNewDebugFile();
+            ConstantClass.LOGGER.createNewFiles();
 
-            /*PROGRAM START*/ConstantClass.LOGGER.writeToLog("Starting program...");
+            /*PROGRAM START*/ConstantClass.LOGGER.writeToDebugLog("Starting program...");
             //---------------
 
             //testcase.runGameTimeTests();
@@ -48,7 +48,7 @@ namespace RiseOfStrongholds
                     /*UPDATE GAME TIME*/
                     elapsedSpan = new TimeSpan(elapsedTick);
                     ConstantClass.gameTime.updateGameTimeBasedOnElapsedTimeSpan(elapsedSpan); //gameTime is updated based on real time seconds elapse
-                    ConstantClass.LOGGER.writeToLog(ConstantClass.gameTime.ToString());
+                    ConstantClass.LOGGER.writeToDebugLog(ConstantClass.gameTime.ToString());
                     lastTick = currentTick;
                     /*-----------------*/
 
