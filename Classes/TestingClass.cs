@@ -15,30 +15,43 @@ namespace RiseOfStrongholds.Classes
         {
 
             /*TEST CASE*/
+          
+            /*checking getTotalMinutes()*/
+            //ConstantClass.LOGGER.writeToLog(ConstantClass.gameTime.ToString());
+            //ConstantClass.LOGGER.writeToLog("Total minutes = " + ConstantClass.gameTime.getTotalMins());
+            //ConstantClass.gameTime.set_years(1);
+            //ConstantClass.LOGGER.writeToLog(ConstantClass.gameTime.ToString());
+            //ConstantClass.LOGGER.writeToLog("Total minutes = " + ConstantClass.gameTime.getTotalMins());
 
-            /*Check 1 full day*/
-            GameTimeClass tempTime = new GameTimeClass(1, 0, 2, 1, 1);
-            while (ConstantClass.gameTime != tempTime)
-            {
-                ConstantClass.LOGGER.writeToLog(ConstantClass.gameTime.ToString());
-                ConstantClass.gameTime.set_mins(1);
-            }
-
-            /*Check 1 full month*/
-            //GameTimeClass tempTime = new GameTimeClass(0, 1, 1, 2, 1);
+            /*Ensure 1440+ mins are added to days correctly.*/
+            //GameTimeClass tempTime = new GameTimeClass(1, 0, 1, 5, 1);
             //while (ConstantClass.gameTime != tempTime)
             //{
             //    ConstantClass.LOGGER.writeToLog(ConstantClass.gameTime.ToString());
-            //    ConstantClass.gameTime.set_hours(1);
+            //    ConstantClass.gameTime.set_mins(1440);
+            //    ConstantClass.LOGGER.writeToLog("Added 50 minutes:\t" + ConstantClass.gameTime.ToString());
+            //    ConstantClass.gameTime.set_mins(1600);
+            //    ConstantClass.LOGGER.writeToLog("Added 100 minutes:\t" + ConstantClass.gameTime.ToString());
+            //    ConstantClass.gameTime.set_mins(2000);
+            //    ConstantClass.LOGGER.writeToLog("Added 240 minutes:\t" + ConstantClass.gameTime.ToString());
+            //    ConstantClass.gameTime.set_mins(2880);
+            //    ConstantClass.LOGGER.writeToLog("Added 245 minutes:\t" + ConstantClass.gameTime.ToString());
             //}
 
-            /*Check 1 full year*/
-            //GameTimeClass tempTime = new GameTimeClass(0, 8, 1, 1, 2);
+            /*Ensure 60+ mins are added to hours correctly.*/
+            //GameTimeClass tempTime = new GameTimeClass(1, 0, 1, 5, 1);
             //while (ConstantClass.gameTime != tempTime)
             //{
             //    ConstantClass.LOGGER.writeToLog(ConstantClass.gameTime.ToString());
-            //    ConstantClass.gameTime.set_days(1);
-            //}
+            //    ConstantClass.gameTime.set_mins(50);
+            //    ConstantClass.LOGGER.writeToLog("Added 50 minutes:\t" + ConstantClass.gameTime.ToString());
+            //    ConstantClass.gameTime.set_mins(100);
+            //    ConstantClass.LOGGER.writeToLog("Added 100 minutes:\t" + ConstantClass.gameTime.ToString());
+            //    ConstantClass.gameTime.set_mins(240);
+            //    ConstantClass.LOGGER.writeToLog("Added 240 minutes:\t" + ConstantClass.gameTime.ToString());
+            //    ConstantClass.gameTime.set_mins(245);
+            //    ConstantClass.LOGGER.writeToLog("Added 245 minutes:\t" + ConstantClass.gameTime.ToString());
+            //}  
         }
 
         /*CHARACTER TEST CASES*/

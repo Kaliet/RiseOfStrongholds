@@ -23,10 +23,12 @@ namespace RiseOfStrongholds.Classes
 
         /*GAME TIME*/
         public static GameTimeClass gameTime;
-        public static byte MINUTES_IN_ONE_HOUR = 60;
-        public static byte HOURS_IN_ONE_DAY = 24;
-        public static byte DAYS_IN_ONE_MONTH = 30;
-        public static byte MONTHS_IN_ONE_YEAR = 12;
+        public static int MINUTES_IN_ONE_HOUR = 60;
+        public static int HOURS_IN_ONE_DAY = 24;
+        public static int DAYS_IN_ONE_MONTH = 30;
+        public static int MONTHS_IN_ONE_YEAR = 12;
+
+        public static int GAME_SPEED = 1; //number of game minutes to 1 real life second
     }
 }
 

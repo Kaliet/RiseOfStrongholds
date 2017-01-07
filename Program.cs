@@ -15,6 +15,10 @@ namespace RiseOfStrongholds
             TestingClass testcase = new TestingClass(); //for making tests
 
             /*VARIABLES*/
+            long lastTick = DateTime.Now.Ticks;
+            long currentTick;
+            long elapsedTick;
+            TimeSpan elapsedSpan;
             ConstantClass.gameTime = new GameTimeClass();                                   
             ConstantClass.DEBUG_LOG_LEVEL = ConstantClass.DEBUG_LEVELS.OFF;
 
@@ -28,9 +32,32 @@ namespace RiseOfStrongholds
             //testcase.runGameTimeTests();
             //testcase.runCharacterTests();
 
+            while (true) //game loop
+            {
+                currentTick = DateTime.Now.Ticks; //checks time now.
+                elapsedTick = currentTick - lastTick; //calculates how much time elapsed
+
+                if (elapsedTick < TimeSpan.TicksPerSecond)
+                {
+                    //do nothing and check again until 1 second passes
+                }
+                else //more than 1 second has passed
+                {
+                    /*UPDATE GAME TIME*/
+                    elapsedSpan = new TimeSpan(elapsedTick);
+                    ConstantClass.gameTime.updateGameTimeBasedOnElapsedTimeSpan(elapsedSpan); //gameTime is updated based on real time seconds elapse
+                    ConstantClass.LOGGER.writeToLog(ConstantClass.gameTime.ToString());
+                    lastTick = currentTick;
+                    /*-----------------*/
+
+                    //<-game code goes here.
+                }
+            }
+
+
             //---------------
             /*PROGRAM END*/
-            ConstantClass.LOGGER.writeToLog("Ending program...");
+            
         }
     }
 }
