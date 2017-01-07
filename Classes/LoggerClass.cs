@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,9 +16,14 @@ namespace RiseOfStrongholds.Classes
             try
             {
                 System.IO.File.WriteAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.DEBUG_LOG_FILENAME, "");
+            }                  
+            catch (DirectoryNotFoundException e)
+            {
+                System.IO.Directory.CreateDirectory(ConstantClass.DEBUG_LOG_DIRECTORY);
+                System.IO.File.WriteAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.DEBUG_LOG_FILENAME, "");
             }
             catch (Exception e)
-            {
+            {                
                 Console.WriteLine(e.ToString());
             }            
         }
