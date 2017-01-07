@@ -14,6 +14,8 @@ namespace RiseOfStrongholds
         {
             TestingClass testcase = new TestingClass(); //for making tests
 
+            // Added Comment //
+
             /*VARIABLES*/
             long lastTick = DateTime.Now.Ticks;
             long currentTick;
