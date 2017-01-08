@@ -13,6 +13,11 @@ namespace RiseOfStrongholds.Classes
         /*enums*/
         public enum DEBUG_LEVELS { OFF, LOW, HIGH };
 
+        /*character enums*/
+        public enum CHARACTER_ACTIONS { IDLE, EAT, SLEEP};
+        public enum CHARACTER_SLEEP_STATUS { AWAKE, SLEEPY}; //awake = can perform actions, sleepy = must sleep otherwise energy decreases to 0
+        public enum CHARACTER_HUNGER_STATUS { FULL, HUNGRY}; //hungry = top priority is to find food ; otherwise HP decreases
+
         /*LOGGER*/
         public static LoggerClass LOGGER; //logger for debugging purposes
         public static string DEBUG_LOG_DIRECTORY = @"..\..\Debug\";
@@ -30,6 +35,7 @@ namespace RiseOfStrongholds.Classes
         public static int MONTHS_IN_ONE_YEAR = 12;
 
         public static int GAME_SPEED = 1; //number of game minutes to 1 real life second
+       
     }
 }
 

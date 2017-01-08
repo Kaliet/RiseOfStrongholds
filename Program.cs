@@ -15,6 +15,7 @@ namespace RiseOfStrongholds
             TestingClass testcase = new TestingClass(); //for making tests
 
             // WELCOME!//            
+            // WORK//
 
             /*VARIABLES*/
             long lastTick = DateTime.Now.Ticks;
@@ -33,6 +34,8 @@ namespace RiseOfStrongholds
 
             //testcase.runGameTimeTests();
             //testcase.runCharacterTests();
+
+            CharacterClass person = new CharacterClass();
 
             while (true) //game loop
             {
@@ -53,13 +56,14 @@ namespace RiseOfStrongholds
                     /*-----------------*/
 
                     //<-game code goes here.
+                    ConstantClass.LOGGER.writeToGameLog("");
                 }
             }
 
 
             //---------------
             /*PROGRAM END*/
-            
+
         }
     }
 }
