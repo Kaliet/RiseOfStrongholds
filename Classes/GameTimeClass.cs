@@ -82,8 +82,7 @@ namespace RiseOfStrongholds.Classes
         /*CONSTRUCTORS*/
         public GameTimeClass()
         {
-            /*DEBUG HIGH*/
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->GameTimeClass()"); };
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->GameTimeClass()"); };
 
             game_hours = 8;
             game_mins = 0;
@@ -91,14 +90,12 @@ namespace RiseOfStrongholds.Classes
             game_month = 1;
             game_year = 1;
 
-            /*DEBUG HIGH*/
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-GameTimeClass()"); };
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-GameTimeClass()"); };
         }
 
         public GameTimeClass(GameTimeClass input)
         {
-            /*DEBUG HIGH*/
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->GameTimeClass()"); };
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->GameTimeClass()"); };
 
             game_mins = input.get_min();
             game_hours = input.get_hour();
@@ -106,14 +103,12 @@ namespace RiseOfStrongholds.Classes
             game_month = input.get_month();
             game_year = input.get_year();
 
-            /*DEBUG HIGH*/
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-GameTimeClass()"); };
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-GameTimeClass()"); };
         }
 
         public GameTimeClass(int min,int hour, int day, int month, int year)
         {
-            /*DEBUG HIGH*/
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->GameTimeClass()"); };
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->GameTimeClass()"); };
                        
             game_mins = min;
             game_hours = hour;
@@ -121,8 +116,7 @@ namespace RiseOfStrongholds.Classes
             game_month = month;
             game_year = year;
 
-            /*DEBUG HIGH*/
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-GameTimeClass()"); };
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-GameTimeClass()"); };
         }
       
         /*OVERRIDE & OVERLOAD*/
@@ -181,13 +175,11 @@ namespace RiseOfStrongholds.Classes
         /*GAMETIME MODIFICATIONS*/
         public void updateGameTimeBasedOnElapsedTimeSpan (TimeSpan elapsedTime)
         {
-            /*DEBUG HIGH*/
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->updateGameTimeBasedOnElapsedTimeSpan()"); };
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->updateGameTimeBasedOnElapsedTimeSpan()"); };
 
             set_mins((int)elapsedTime.TotalSeconds * ConstantClass.GAME_SPEED);
 
-            /*DEBUG HIGH*/
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-updateGameTimeBasedOnElapsedTimeSpan()"); };
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-updateGameTimeBasedOnElapsedTimeSpan()"); };
             
         }
     }

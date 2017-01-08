@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\ActionClass.cs" />
     <Compile Include="Classes\AttributeClass.cs" />
     <Compile Include="Classes\CharacterClass.cs" />
     <Compile Include="Classes\ConstantClass.cs" />
