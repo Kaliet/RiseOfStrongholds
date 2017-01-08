@@ -15,6 +15,7 @@ namespace RiseOfStrongholds
             TestingClass testcase = new TestingClass(); //for making tests
 
             // WELCOME!//            
+            // WORK//
 
             /*VARIABLES*/
             long lastTick = DateTime.Now.Ticks;
