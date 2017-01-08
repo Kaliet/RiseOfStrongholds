@@ -55,18 +55,16 @@ namespace RiseOfStrongholds.Classes
         }
 
         /*CHARACTER TEST CASES*/
-        public void runCharacterTests()
-        {
-            int i = 0;
-            CharacterClass[] people = new CharacterClass[10];
+        //public void runCharacterTests()
+        //{
+        //    int i = 0;
+        //    CharacterClass[] people = new CharacterClass[10];
 
-            while (i < 10)
-            {
-                people[i] = new CharacterClass();                
-                ConstantClass.LOGGER.writeToDebugLog("Person " + i + ": Unique ID is " + people[i].getUniqueCharacterID().ToString());
-                i++;
-                ConstantClass.gameTime.set_days(1);
-            }
-        }
+        //    while (i++ < 10)
+        //    {
+        //        people[i] = new CharacterClass();                
+        //        //ConstantClass.LOGGER.writeToDebugLog("Person " + i + ": Unique ID is " + people[i].getUniqueCharacterID().ToString());                                
+        //    }
+        //}
     }
 }

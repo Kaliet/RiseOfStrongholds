@@ -11,7 +11,12 @@ namespace RiseOfStrongholds.Classes
         //TODO: Move all relevant constants to Configuration File
 
         /*enums*/
-        public enum DEBUG_LEVELS { OFF, LOW, HIGH };        
+        public enum DEBUG_LEVELS { OFF, LOW, HIGH };
+
+        /*character enums*/
+        public enum CHARACTER_ACTIONS { IDLE, EAT, SLEEP};
+        public enum CHARACTER_SLEEP_STATUS { AWAKE, SLEEPY}; //awake = can perform actions, sleepy = must sleep otherwise energy decreases to 0
+        public enum CHARACTER_HUNGER_STATUS { FULL, HUNGRY}; //hungry = top priority is to find food ; otherwise HP decreases
 
         /*LOGGER*/
         public static LoggerClass LOGGER; //logger for debugging purposes

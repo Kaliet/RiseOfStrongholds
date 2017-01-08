@@ -33,35 +33,37 @@ namespace RiseOfStrongholds
             //---------------
 
             //testcase.runGameTimeTests();
-            testcase.runCharacterTests();
+            //testcase.runCharacterTests();
 
-            //while (true) //game loop
-            //{
-            //    currentTick = DateTime.Now.Ticks; //checks time now.
-            //    elapsedTick = currentTick - lastTick; //calculates how much time elapsed
+            CharacterClass person = new CharacterClass();
 
-            //    if (elapsedTick < TimeSpan.TicksPerSecond)
-            //    {
-            //        //do nothing and check again until 1 second passes
-            //    }
-            //    else //more than 1 second has passed
-            //    {
-            //        /*UPDATE GAME TIME*/
-            //        elapsedSpan = new TimeSpan(elapsedTick);
-            //        ConstantClass.gameTime.updateGameTimeBasedOnElapsedTimeSpan(elapsedSpan); //gameTime is updated based on real time seconds elapse
-            //        ConstantClass.LOGGER.writeToDebugLog(ConstantClass.gameTime.ToString());
-            //        lastTick = currentTick;
-            //        /*-----------------*/
+            while (true) //game loop
+            {
+                currentTick = DateTime.Now.Ticks; //checks time now.
+                elapsedTick = currentTick - lastTick; //calculates how much time elapsed
 
-            //        //<-game code goes here.
-            //        ConstantClass.LOGGER.writeToGameLog("");
-            //    }
-            //}
+                if (elapsedTick < TimeSpan.TicksPerSecond)
+                {
+                    //do nothing and check again until 1 second passes
+                }
+                else //more than 1 second has passed
+                {
+                    /*UPDATE GAME TIME*/
+                    elapsedSpan = new TimeSpan(elapsedTick);
+                    ConstantClass.gameTime.updateGameTimeBasedOnElapsedTimeSpan(elapsedSpan); //gameTime is updated based on real time seconds elapse
+                    ConstantClass.LOGGER.writeToDebugLog(ConstantClass.gameTime.ToString());
+                    lastTick = currentTick;
+                    /*-----------------*/
+
+                    //<-game code goes here.
+                    ConstantClass.LOGGER.writeToGameLog("");
+                }
+            }
 
 
             //---------------
             /*PROGRAM END*/
-            
+
         }
     }
 }
