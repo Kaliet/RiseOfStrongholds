@@ -11,7 +11,7 @@ namespace RiseOfStrongholds.Classes
         //TODO: Move all relevant constants to Configuration File
 
         /*enums*/
-        public enum DEBUG_LEVELS { OFF, LOW, HIGH };
+        public enum DEBUG_LEVELS { OFF, LOW, HIGH };        
 
         /*LOGGER*/
         public static LoggerClass LOGGER; //logger for debugging purposes
@@ -30,6 +30,7 @@ namespace RiseOfStrongholds.Classes
         public static int MONTHS_IN_ONE_YEAR = 12;
 
         public static int GAME_SPEED = 1; //number of game minutes to 1 real life second
+       
     }
 }
 
