@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Classes\ActionClass.cs" />
     <Compile Include="Classes\AttributeClass.cs" />
+    <Compile Include="Classes\BlockClass.cs" />
     <Compile Include="Classes\CharacterClass.cs" />
     <Compile Include="Classes\ConstantClass.cs" />
     <Compile Include="Classes\GameTimeClass.cs" />
