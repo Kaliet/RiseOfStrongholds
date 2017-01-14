@@ -33,8 +33,10 @@ namespace RiseOfStrongholds.Classes
             m_stats = new StatsClass();
             m_stats.setHP(10);
             m_stats.setEnergy(10);
-            m_stats.initializeHungerRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.HOURS_IN_ONE_DAY));
-            m_stats.initializeSleepRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.HOURS_IN_ONE_DAY));
+            //m_stats.initializeHungerRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.HOURS_IN_ONE_DAY));
+            //m_stats.initializeSleepRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.HOURS_IN_ONE_DAY));
+            m_stats.initializeHungerRate(0, 2);
+            m_stats.initializeSleepRate(0, 2);
             m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.FULL);
             m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
 
@@ -48,7 +50,7 @@ namespace RiseOfStrongholds.Classes
         /*METHODS*/       
         public int returnIndexOfActionWithHighestIndex()//returns the FIRST index from m_action_this_turn that has the highest priority action
         {
-            int highestPriority = ConstantClass.ACTION_NO_PRIORITY; //0 is highest, then 1,2,3...is lower
+            int highestPriority = ConstantClass.ACTION_NO_PRIORITY; //0 is highest, then 1,2,3...is lower, no priority = 99999
             int index = -1;
 
             if (m_action_queue.getQueue().Count <= 0) { return -1; }
@@ -58,8 +60,11 @@ namespace RiseOfStrongholds.Classes
                 int count = 0;
                 foreach (ActionClass action in m_action_queue.getQueue())
                 {
-                    if (action.getPriority() < highestPriority) { highestPriority = action.getPriority(); } //found higher index
-                    index = count;
+                    if (action.getPriority() < highestPriority)
+                    {
+                        highestPriority = action.getPriority();  //found higher index
+                        index = count;
+                    }
                     count++;
                 }
                 return index;
@@ -88,7 +93,7 @@ namespace RiseOfStrongholds.Classes
                 //perform highest priority action in action list                
                 index = returnIndexOfActionWithHighestIndex();
                 if (index < 0) throw new Exception("Queue empty.");
-                if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.EAT) // TODO: need to correct from [0] to search highest priority
+                if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.EAT) // EAT
                 {
                     //TODO: character eats something or goes to find something to eat
                     ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is EATING");
@@ -97,7 +102,7 @@ namespace RiseOfStrongholds.Classes
                     ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is FULL");
                     m_action_queue.getQueue().RemoveAt(index); //EAT action completed - removed from queue
                 }
-                else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.SLEEP) // TODO: need to correct from [0] to search highest priority
+                else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.SLEEP) // SLEEP
                 {
                     //TODO: character goes to sleep until he replenishes his energey                    
                     if (m_action_queue.getQueue()[index].getVarForAction() > 0)//wait until MINIMUM_NUMBER_OF_SLEEP_HOURS 
@@ -132,7 +137,7 @@ namespace RiseOfStrongholds.Classes
 
                 /*DECISIONS BASED ON BIOLOGICAL NEEDS*/
                 if (m_stats.getHungerStatus() == ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY) { m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT,ConstantClass.ACTION_EAT_PRIORITY,ConstantClass.VARIABLE_FOR_ACTION_NONE)); }
-                if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY) { m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SLEEP,ConstantClass.ACTION_SLEEP_PRIORITY,ConstantClass.MINIMUM_NUMBER_OF_SLEEP_HOURS*ConstantClass.GAME_SPEED)); }
+                if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY) { m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SLEEP,ConstantClass.ACTION_SLEEP_PRIORITY,ConstantClass.MINIMUM_NUMBER_OF_SLEEP_HOURS*ConstantClass.MINUTES_IN_ONE_HOUR)); }
 
                 /*NOTHING ELSE TO DO*/
                 //if (m_stats.getHungerStatus() != ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY && //if not hungry and tired then remain idle

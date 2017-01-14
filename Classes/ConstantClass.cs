@@ -21,11 +21,11 @@ namespace RiseOfStrongholds.Classes
         /*biological constants*/
         public static int MINIMUM_NUMBER_OF_SLEEP_HOURS = 8;
         public static int HOURS_BETWEEN_EATING = 8;
-        public static int HOURS_BETWEEN_SLEEPING = 20;
+        public static int HOURS_BETWEEN_SLEEPING = 16;
 
         /*action priorities*/        
         public static int ACTION_EAT_PRIORITY = 10;
-        public static int ACTION_SLEEP_PRIORITY = 11;
+        public static int ACTION_SLEEP_PRIORITY = 1;
         public static int ACTION_NO_PRIORITY = 99999;
         public static int VARIABLE_FOR_ACTION_NONE = -1;
 
