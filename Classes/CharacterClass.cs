@@ -33,8 +33,8 @@ namespace RiseOfStrongholds.Classes
             m_stats = new StatsClass();
             m_stats.setHP(10);
             m_stats.setEnergy(10);
-            m_stats.initializeHungerRate(0, 6);
-            m_stats.initializeSleepRate(0, 20);
+            m_stats.initializeHungerRate(0, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.HOURS_IN_ONE_DAY);
+            m_stats.initializeSleepRate(0, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.HOURS_IN_ONE_DAY);
             m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.FULL);
             m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
 
@@ -46,56 +46,95 @@ namespace RiseOfStrongholds.Classes
         }
 
         /*METHODS*/
+        public int returnIndexOfActionWithHighestIndex()//returns the FIRST index from m_action_this_turn that has the highest priority action
+        {
+            int highestPriority = ConstantClass.ACTION_NO_PRIORITY; //0 is highest, then 1,2,3...is lower
+            int index = -1;
+
+            if (m_action_this_turn.Count <= 0) { return -1; }
+            else if (m_action_this_turn.Count == 1) { return 0; }
+            else //list has at least 2 elements
+            {
+                int count = 0;
+                foreach (ActionClass action in m_action_this_turn)
+                {                    
+                    if (action.getPriority() < highestPriority) { highestPriority = action.getPriority(); } //found higher index
+                    index = count;
+                    count++;
+                }
+                return index;
+            }
+        }
+
+
         public void updateAction() //character decides what to do now and performs the action
         {
             /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->updateAction()"); };
+            int index = -1;
 
-            m_stats.setHungerRate(1);
-            m_stats.setSleepRate(1);
+            m_stats.setHungerRate(ConstantClass.GAME_SPEED); //hunger increases based on game speed (1 sec = how many game time mins)
+            m_stats.setSleepRate(ConstantClass.GAME_SPEED); //sleepiness increases based on game speed (1 sec = how many game time mins)
 
             if (m_action_this_turn.Count > 0) //there are still actions left in the queue
             {
-                //perform highest priority action in action list
-                if (m_action_this_turn[0].getAction() == ConstantClass.CHARACTER_ACTIONS.EAT) // need to correct from [0] to search highest priority
+                //perform highest priority action in action list                
+                index = returnIndexOfActionWithHighestIndex();                
+
+                if (m_action_this_turn[index].getAction() == ConstantClass.CHARACTER_ACTIONS.EAT) // TODO: need to correct from [0] to search highest priority
                 {
                     //TODO: character eats something or goes to find something to eat
+                    ConstantClass.LOGGER.writeToGameLog("Person is EATING");
                     m_stats.initializeHungerRate(0, m_stats.getHungerRate().getMaxValue());
                     m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.FULL);
+                    ConstantClass.LOGGER.writeToGameLog("Person is FULL");
+                    m_action_this_turn.RemoveAt(index); //EAT action completed - removed from queue
                 }
-                else if (m_action_this_turn[0].getAction() == ConstantClass.CHARACTER_ACTIONS.SLEEP) // need to correct from [0] to search highest priority
+                else if (m_action_this_turn[index].getAction() == ConstantClass.CHARACTER_ACTIONS.SLEEP) // TODO: need to correct from [0] to search highest priority
                 {
-                    //TODO: character goes to sleep until he replenishes his energey
-                    m_stats.initializeSleepRate(0, m_stats.getSleepRate().getMaxValue());
-                    m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
+                    //TODO: character goes to sleep until he replenishes his energey                    
+                    if (m_action_this_turn[index].getVarForAction() > 0)//wait until MINIMUM_NUMBER_OF_SLEEP_HOURS 
+                    {
+                        //wait - character is sleeping
+                        ConstantClass.LOGGER.writeToGameLog("Person is SLEEPING");
+                        m_action_this_turn[index].modifyVarForAction(-1*ConstantClass.GAME_SPEED);
+                    }
+                    else //sleeping is over, reinitialize sleep rate and set status to AWAKE
+                    {
+                        m_stats.initializeSleepRate(0, m_stats.getSleepRate().getMaxValue());
+                        m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
+                        ConstantClass.LOGGER.writeToGameLog("Person is AWAKE");
+                        m_action_this_turn.RemoveAt(index); //SLEEP action completed - removed from queue
+                    }
                 }
-                m_action_this_turn.RemoveAt(0);
+                
             }
             else 
             {
                 /*UPDATE BIOLOGICAL DETERIORATION*/
                 if (m_stats.getHungerRate().getCurrentValue() == m_stats.getHungerRate().getMaxValue()) //current = max --> hunger state
                 {
+                    ConstantClass.LOGGER.writeToGameLog("Person is HUNGRY");
                     m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY);
                 }
                 if (m_stats.getSleepRate().getCurrentValue() == m_stats.getSleepRate().getMaxValue())
                 {
+                    ConstantClass.LOGGER.writeToGameLog("Person is SLEEPY");
                     m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY);
                 }
 
                 /*DECISIONS BASED ON BIOLOGICAL NEEDS*/
-                if (m_stats.getHungerStatus() == ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY) { m_action_this_turn.Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT)); }
-                if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY) { m_action_this_turn.Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SLEEP)); }
+                if (m_stats.getHungerStatus() == ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY) { m_action_this_turn.Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT,ConstantClass.ACTION_EAT_PRIORITY,ConstantClass.VARIABLE_FOR_ACTION_NONE)); }
+                if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY) { m_action_this_turn.Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SLEEP,ConstantClass.ACTION_SLEEP_PRIORITY,ConstantClass.MINIMUM_NUMBER_OF_SLEEP_HOURS*ConstantClass.GAME_SPEED)); }
 
                 /*NOTHING ELSE TO DO*/
                 //if (m_stats.getHungerStatus() != ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY && //if not hungry and tired then remain idle
                 //    m_stats.getSleepStatus() != ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY)
                 //{
                 //    m_action_this_turn.Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.IDLE)); 
-                //}
-
-                /*DEBUG HIGH*/
-                if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-updateAction()"); };
+                //}                
             }
+            /*DEBUG HIGH*/
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-updateAction()"); };
         }
     }
 }

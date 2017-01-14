@@ -33,13 +33,20 @@ namespace RiseOfStrongholds.Classes
 
         //method to change value, method ensures 0<=currentvalue <=maxvalue
         //RETURNS: 1 = SUCCESS , -1 = FAILED (currentVal is above maxValue or currentVal is below 0)
-        public int modifyCurrentValue(int value)
+        public void modifyCurrentValue(int value)
         {
             /*DEBUG HIGH*/
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->modifyCurrentValue()"); };
-            
-            if (currentValue + value > maxValue || currentValue + value < 0) { return -1; }
-            else { currentValue += value; return 1; }
+
+            if (currentValue + value > maxValue)
+            {
+                currentValue = maxValue;
+            }
+            else if (currentValue + value < 0)
+            {
+                currentValue = 0;
+            }
+            else { currentValue += value; }
 
             /*DEBUG HIGH*/
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-modifyCurrentValue()"); };

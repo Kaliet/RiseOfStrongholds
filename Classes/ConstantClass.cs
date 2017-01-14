@@ -18,6 +18,17 @@ namespace RiseOfStrongholds.Classes
         public enum CHARACTER_SLEEP_STATUS { AWAKE, SLEEPY}; //awake = can perform actions, sleepy = must sleep otherwise energy decreases to 0
         public enum CHARACTER_HUNGER_STATUS { FULL, HUNGRY}; //hungry = top priority is to find food ; otherwise HP decreases
 
+        /*biological constants*/
+        public static int MINIMUM_NUMBER_OF_SLEEP_HOURS = 8;
+        public static int HOURS_BETWEEN_EATING = 8;
+        public static int HOURS_BETWEEN_SLEEPING = 20;
+
+        /*action priorities*/        
+        public static int ACTION_EAT_PRIORITY = 10;
+        public static int ACTION_SLEEP_PRIORITY = 1;
+        public static int ACTION_NO_PRIORITY = 99999;
+        public static int VARIABLE_FOR_ACTION_NONE = -1;
+
         /*LOGGER*/
         public static LoggerClass LOGGER; //logger for debugging purposes
         public static string DEBUG_LOG_DIRECTORY = @"..\..\Debug\";
@@ -34,7 +45,7 @@ namespace RiseOfStrongholds.Classes
         public static int DAYS_IN_ONE_MONTH = 30;
         public static int MONTHS_IN_ONE_YEAR = 12;
 
-        public static int GAME_SPEED = 1; //number of game minutes to 1 real life second
+        public static int GAME_SPEED = 30; //number of game minutes to 1 real life second
        
     }
 }

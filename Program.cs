@@ -57,7 +57,7 @@ namespace RiseOfStrongholds
 
                     //<-game code goes here.
                     person.updateAction(); //person does something each second
-                    ConstantClass.LOGGER.writeToGameLog("Person hunger state: "+person.getStats().printHungerStatus() +" | sleep state: "+ person.getStats().printSleepStatus());
+                    ConstantClass.LOGGER.writeToGameLog("Person hunger state: "+person.getStats().printHungerStatus() +"\t|\tsleep state: "+ person.getStats().printSleepStatus());
                 }
             }
 
