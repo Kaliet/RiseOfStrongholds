@@ -35,9 +35,11 @@ namespace RiseOfStrongholds
             //testcase.runGameTimeTests();
             //testcase.runCharacterTests();
             //testcase.runRandomGeneratorTests();
+            //testcase.runMappingTableTests();
 
             CharacterClass person = new CharacterClass();
             CharacterClass person2 = new CharacterClass();
+
 
             while (true) //game loop
             {

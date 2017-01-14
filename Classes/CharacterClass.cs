@@ -50,6 +50,8 @@ namespace RiseOfStrongholds.Classes
         /*METHODS*/       
         public int returnIndexOfActionWithHighestIndex()//returns the FIRST index from m_action_this_turn that has the highest priority action
         {
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->returnIndexOfActionWithHighestIndex()"); };
+
             int highestPriority = ConstantClass.ACTION_NO_PRIORITY; //0 is highest, then 1,2,3...is lower, no priority = 99999
             int index = -1;
 
@@ -69,11 +71,15 @@ namespace RiseOfStrongholds.Classes
                 }
                 return index;
             }
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-returnIndexOfActionWithHighestIndex()"); };
         }
 
         public string outputPersonGUID()
         {
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->outputPersonGUID()"); };
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-outputPersonGUID()"); };
             return "Person " + m_unique_character_id.ToString().Substring(4,2);
+
         }
 
 

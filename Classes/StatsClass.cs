@@ -111,8 +111,7 @@ namespace RiseOfStrongholds.Classes
 
         public string printSleepStatus()
         {
-            /*DEBUG HIGH*/
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->printSleepStatus()"); };
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->printSleepStatus()"); };
 
             string output = "";
 
@@ -122,8 +121,7 @@ namespace RiseOfStrongholds.Classes
 
             output += "(" + m_sleep_rate.getCurrentValue() + "/" + m_sleep_rate.getMaxValue() + ")";
 
-            /*DEBUG HIGH*/
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-printSleepStatus()"); };
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-printSleepStatus()"); };
 
             return output;
         }
