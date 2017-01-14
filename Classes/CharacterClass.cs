@@ -33,8 +33,8 @@ namespace RiseOfStrongholds.Classes
             m_stats = new StatsClass();
             m_stats.setHP(10);
             m_stats.setEnergy(10);
-            m_stats.initializeHungerRate(0, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.HOURS_IN_ONE_DAY);
-            m_stats.initializeSleepRate(0, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.HOURS_IN_ONE_DAY);
+            m_stats.initializeHungerRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.HOURS_IN_ONE_DAY));
+            m_stats.initializeSleepRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.HOURS_IN_ONE_DAY));
             m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.FULL);
             m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
 
@@ -66,13 +66,18 @@ namespace RiseOfStrongholds.Classes
             }
         }
 
+        public string outputPersonGUID()
+        {
+            return "Person " + m_unique_character_id.ToString().Substring(4,2);
+        }
+
 
         public void updateAction() //character decides what to do now and performs the action
         {
             /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->updateAction()"); };
             int index = -1;
 
-            ConstantClass.LOGGER.writeToQueueLog("Person " + m_character_name + " = " + m_action_queue.printQueue());//print queue
+            ConstantClass.LOGGER.writeToQueueLog(outputPersonGUID() + " = " + m_action_queue.printQueue());//print queue
 
 
             m_stats.setHungerRate(ConstantClass.GAME_SPEED); //hunger increases based on game speed (1 sec = how many game time mins)
@@ -86,10 +91,10 @@ namespace RiseOfStrongholds.Classes
                 if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.EAT) // TODO: need to correct from [0] to search highest priority
                 {
                     //TODO: character eats something or goes to find something to eat
-                    ConstantClass.LOGGER.writeToGameLog("Person is EATING");
+                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is EATING");
                     m_stats.initializeHungerRate(0, m_stats.getHungerRate().getMaxValue());
                     m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.FULL);
-                    ConstantClass.LOGGER.writeToGameLog("Person is FULL");
+                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is FULL");
                     m_action_queue.getQueue().RemoveAt(index); //EAT action completed - removed from queue
                 }
                 else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.SLEEP) // TODO: need to correct from [0] to search highest priority
@@ -98,14 +103,14 @@ namespace RiseOfStrongholds.Classes
                     if (m_action_queue.getQueue()[index].getVarForAction() > 0)//wait until MINIMUM_NUMBER_OF_SLEEP_HOURS 
                     {
                         //wait - character is sleeping
-                        ConstantClass.LOGGER.writeToGameLog("Person is SLEEPING");
+                        ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is SLEEPING");
                         m_action_queue.getQueue()[index].modifyVarForAction(-1*ConstantClass.GAME_SPEED);
                     }
                     else //sleeping is over, reinitialize sleep rate and set status to AWAKE
                     {
                         m_stats.initializeSleepRate(0, m_stats.getSleepRate().getMaxValue());
                         m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
-                        ConstantClass.LOGGER.writeToGameLog("Person is AWAKE");
+                        ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is AWAKE");
                         m_action_queue.getQueue().RemoveAt(index); //SLEEP action completed - removed from queue
                     }
                 }
@@ -116,12 +121,12 @@ namespace RiseOfStrongholds.Classes
                 /*UPDATE BIOLOGICAL DETERIORATION*/
                 if (m_stats.getHungerRate().getCurrentValue() == m_stats.getHungerRate().getMaxValue()) //current = max --> hunger state
                 {
-                    ConstantClass.LOGGER.writeToGameLog("Person is HUNGRY");
+                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is HUNGRY");
                     m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY);
                 }
                 if (m_stats.getSleepRate().getCurrentValue() == m_stats.getSleepRate().getMaxValue())
                 {
-                    ConstantClass.LOGGER.writeToGameLog("Person is SLEEPY");
+                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is SLEEPY");
                     m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY);
                 }
 

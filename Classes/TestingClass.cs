@@ -66,5 +66,14 @@ namespace RiseOfStrongholds.Classes
         //        //ConstantClass.LOGGER.writeToDebugLog("Person " + i + ": Unique ID is " + people[i].getUniqueCharacterID().ToString());                                
         //    }
         //}
+
+        /*RANDOM TESTS CASES*/
+        public void runRandomGeneratorTests()
+        {
+            for (int i = 1; i <= 100; i++)
+            {
+                ConstantClass.LOGGER.writeToDebugLog("Iteration " + i + ":\t\t" + ConstantClass.RANDOMIZER.produceInt(1, 100));
+            }            
+        }
     }
 }

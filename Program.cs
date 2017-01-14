@@ -34,8 +34,10 @@ namespace RiseOfStrongholds
 
             //testcase.runGameTimeTests();
             //testcase.runCharacterTests();
+            //testcase.runRandomGeneratorTests();
 
             CharacterClass person = new CharacterClass();
+            CharacterClass person2 = new CharacterClass();
 
             while (true) //game loop
             {
@@ -57,7 +59,8 @@ namespace RiseOfStrongholds
 
                     //<-game code goes here.
                     person.updateAction(); //person does something each second
-                    ConstantClass.LOGGER.writeToGameLog("Person hunger state: "+person.getStats().printHungerStatus() +"\t|\tsleep state: "+ person.getStats().printSleepStatus());
+                    person2.updateAction(); //person does something each second
+                    //ConstantClass.LOGGER.writeToGameLog("Person hunger state: "+person.getStats().printHungerStatus() +"\t|\tsleep state: "+ person.getStats().printSleepStatus());
                 }
             }
 

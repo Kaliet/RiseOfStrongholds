@@ -34,7 +34,8 @@ namespace RiseOfStrongholds.Classes
             int index = 0;
             foreach (T element in m_queue)
             {
-                output = "[" + index + "/" + (m_queue.Count - 1) + "] - " + element.ToString() + " ";
+                output += "[" + (index + 1) + "/" + m_queue.Count + "] - " + element.ToString() + " , ";
+                index++;
             }
             return output;
         }

@@ -25,7 +25,7 @@ namespace RiseOfStrongholds.Classes
 
         /*action priorities*/        
         public static int ACTION_EAT_PRIORITY = 10;
-        public static int ACTION_SLEEP_PRIORITY = 1;
+        public static int ACTION_SLEEP_PRIORITY = 11;
         public static int ACTION_NO_PRIORITY = 99999;
         public static int VARIABLE_FOR_ACTION_NONE = -1;
 
@@ -47,7 +47,9 @@ namespace RiseOfStrongholds.Classes
         public static int MONTHS_IN_ONE_YEAR = 12;
 
         public static int GAME_SPEED = 30; //number of game minutes to 1 real life second
-       
+
+        /*RANDOM NUMBER GENERATOR*/
+        public static RandomClass RANDOMIZER = new RandomClass();
     }
 }
 
