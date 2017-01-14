@@ -59,7 +59,10 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-ActionClass()"); };
         }
 
-        /*METHODS*/
-
+        /*OVERRIDES*/
+        public override string ToString()
+        {
+            return "A: " + m_action.ToString() + "\tP: " + m_priority + "\tV: " + m_var_for_action;
+        }
     }
 }

@@ -34,6 +34,7 @@ namespace RiseOfStrongholds.Classes
         public static string DEBUG_LOG_DIRECTORY = @"..\..\Debug\";
         public static string DEBUG_LOG_FILENAME = "debug.log";
         public static string GAME_LOG_FILENAME = "gamelog.log";
+        public static string QUEUE_LOG_FILENAME = "queuelog.log";
 
         /*DEBUG LEVEL (default off*/
         public static DEBUG_LEVELS DEBUG_LOG_LEVEL = DEBUG_LEVELS.OFF;
