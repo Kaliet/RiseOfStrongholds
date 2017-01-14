@@ -54,7 +54,9 @@
     <Compile Include="Classes\QueueClass.cs" />
     <Compile Include="Classes\RandomClass.cs" />
     <Compile Include="Classes\StatsClass.cs" />
+	<Compile Include="Classes\PositionClass.cs" />
     <Compile Include="Classes\TestingClass.cs" />
+	<Compile Include="Classes\TerrainClass.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
