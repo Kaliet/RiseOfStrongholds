@@ -77,20 +77,20 @@ namespace RiseOfStrongholds.Classes
         }
 
         /*MAPPING TABLE CASES*/
-        public void runMappingTableTests()
-        {
-            MappingClass<CharacterClass> characterMapping = new MappingClass<CharacterClass>();
-            int i = 0;
-            CharacterClass[] people = new CharacterClass[10];
+        //public void runMappingTableTests()
+        //{
+        //    MappingClass<CharacterClass> characterMapping = new MappingClass<CharacterClass>();
+        //    int i = 0;
+        //    CharacterClass[] people = new CharacterClass[10];
 
-            while (i < 10)
-            {
-                people[i] = new CharacterClass();
-                characterMapping.getMappingTable().Add(people[i].getUniqueCharacterID(), people[i]);
-                i++;
-            }
+        //    while (i < 10)
+        //    {
+        //        people[i] = new CharacterClass();
+        //        characterMapping.getMappingTable().Add(people[i].getUniqueCharacterID(), people[i]);
+        //        i++;
+        //    }
 
-            CharacterClass x = characterMapping.getMappingTable()[people[6].getUniqueCharacterID()];
-        }
+        //    CharacterClass x = characterMapping.getMappingTable()[people[6].getUniqueCharacterID()];
+        //}
     }
 }

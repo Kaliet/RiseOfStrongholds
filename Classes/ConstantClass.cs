@@ -10,17 +10,22 @@ namespace RiseOfStrongholds.Classes
     {
         //TODO: Move all relevant constants to Configuration File
 
+        /*mapping tables*/
+        public static MappingClass<CharacterClass> MAPPING_TABLE_FOR_ALL_CHARS;
+        public static MappingClass<BlockClass> MAPPING_TABLE_FOR_ALL_BLOCKS;
+        public static MappingClass<TerrainClass> MAPPING_TABLE_FOR_ALL_TERRAINS;
+
         /*enums*/
         public enum DEBUG_LEVELS { OFF, LOW, HIGH };
 
         /*character enums*/
-        public enum CHARACTER_ACTIONS { IDLE, EAT, SLEEP};
+        public enum CHARACTER_ACTIONS { IDLE, EAT, SLEEP };
         public enum CHARACTER_SLEEP_STATUS { AWAKE, SLEEPY }; //awake = can perform actions, sleepy = must sleep otherwise energy decreases to 0
-        public enum CHARACTER_HUNGER_STATUS { FULL, HUNGRY}; //hungry = top priority is to find food ; otherwise HP decreases
+        public enum CHARACTER_HUNGER_STATUS { FULL, HUNGRY }; //hungry = top priority is to find food ; otherwise HP decreases
 
         /*biological constants*/
-        public static int MINIMUM_NUMBER_OF_SLEEP_HOURS = 8;
-        public static int HOURS_BETWEEN_EATING = 4;
+        public static int MINIMUM_NUMBER_OF_SLEEP_HOURS = 2;
+        public static int HOURS_BETWEEN_EATING = 8;
         public static int HOURS_BETWEEN_SLEEPING = 20;
 
         /*energy costs + regeneration*/
@@ -28,7 +33,7 @@ namespace RiseOfStrongholds.Classes
         public static int ENERGY_COST_WHEN_HUNGRY = -2; //how much energy is deducted when hungry
         public static int ENERGY_COST_WHEN_SLEEPY = -5; //how much energy is deducted when sleepy
         public static int ENERGY_ADD_WHEN_SLEEP = 5; //how much energy is added for each tick
-        
+
         /*action priorities*/
         public static int ACTION_EAT_PRIORITY = 10;
         public static int ACTION_SLEEP_PRIORITY = 1;
@@ -56,6 +61,13 @@ namespace RiseOfStrongholds.Classes
 
         /*RANDOM NUMBER GENERATOR*/
         public static RandomClass RANDOMIZER = new RandomClass();
+
+        /*TERRAIN TYPES*/
+        public enum TERRAIN_TYPE {GRASS, DESERT, HILL, DIRT};
+        public static int TERRAIN_FATIGUE_FOR_GRASS = 0;
+        public static int TERRAIN_FATIGUE_FOR_DIRT = 0;
+        public static int TERRAIN_FATIGUE_FOR_HILL = -5;
+        public static int TERRAIN_FATIGUE_FOR_DESERT = -10;
     }
 }
 

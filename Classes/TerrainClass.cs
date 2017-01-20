@@ -6,39 +6,44 @@ using System.Threading.Tasks;
 
 namespace RiseOfStrongholds.Classes
 {
-    class TerrainClass : StatsClass
+    public class TerrainClass : StatsClass
     {
         /* VARIABLES */
-        private Guid m_unique_character_id;
-        private GameTimeClass m_birthDate;
-        private BlockClass m_ownerBlockClass;
-
+        private Guid m_unique_terrain_id;                
         private int m_fatigueCost;
-        private string m_terrainType;
+        private ConstantClass.TERRAIN_TYPE m_terrainType;
 
         /*GET & SET*/
-        public Guid getGuid() { return m_unique_character_id; }
-        public GameTimeClass getBirthDate() { return m_birthDate; }
+        public Guid getUniqueTerrainID() { return m_unique_terrain_id; }        
         public int getFatigueCost() { return m_fatigueCost; }
-
-        public void setBlockOwner(BlockClass block) { m_ownerBlockClass = block; }
+        
 
         /*CONSTRUCTORS*/
-        public TerrainClass(BlockClass block, string terrainType)
+        public TerrainClass(ConstantClass.TERRAIN_TYPE terrainType)
         {
-            /*DEBUG HIGH*/
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->TerrainClass()"); };
-
-            m_birthDate = new GameTimeClass(ConstantClass.gameTime);
-            m_unique_character_id = new Guid();
-
-            m_fatigueCost = 0;
-            m_terrainType = terrainType;
-            setBlockOwner(block);
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->TerrainClass()"); };
             
+            m_unique_terrain_id = Guid.NewGuid();            
+            m_terrainType = terrainType;
+            switch (terrainType)
+            {
+                case ConstantClass.TERRAIN_TYPE.GRASS:
+                    m_fatigueCost = ConstantClass.TERRAIN_FATIGUE_FOR_GRASS;
+                    break;
+                case ConstantClass.TERRAIN_TYPE.DESERT:
+                    m_fatigueCost = ConstantClass.TERRAIN_FATIGUE_FOR_DESERT;
+                    break;
+                case ConstantClass.TERRAIN_TYPE.HILL:
+                    m_fatigueCost = ConstantClass.TERRAIN_FATIGUE_FOR_HILL;
+                    break;
+                case ConstantClass.TERRAIN_TYPE.DIRT:
+                    m_fatigueCost = ConstantClass.TERRAIN_FATIGUE_FOR_DIRT;
+                    break;
+            }
 
-            /*DEBUG HIGH*/
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-TerrainClass()"); };
+            ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable().Add(m_unique_terrain_id, this);
+
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-TerrainClass()"); };
         }
     }
 }

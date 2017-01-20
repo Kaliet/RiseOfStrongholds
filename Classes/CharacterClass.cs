@@ -14,17 +14,17 @@ namespace RiseOfStrongholds.Classes
         private GameTimeClass m_birthDate;
         private Guid m_unique_character_id;                
         private QueueClass<ActionClass> m_action_queue;
-        //private Guid m_block_id; //TODO: reference to where character is currently located on 2d map
+        private Guid m_block_id; 
 
         /*GET & SET*/
         public string getName() { return m_character_name; }
         public StatsClass getStats() { return m_stats; }
         public GameTimeClass getBirthDate() { return m_birthDate; }  
         public Guid getUniqueCharacterID () { return m_unique_character_id; } 
-        
+        public Guid getBlockID() { return m_block_id; }
 
         /*CONSTRUCTORS*/
-        public CharacterClass()
+        public CharacterClass(Guid blockID)
         {
             /*DEBUG HIGH*/if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->CharacterClass()"); };
             
@@ -32,16 +32,22 @@ namespace RiseOfStrongholds.Classes
 
             m_stats = new StatsClass();
             m_stats.initializeHP(10);
-            m_stats.initializeEnergy(5);
-            m_stats.initializeHungerRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.HOURS_IN_ONE_DAY));
-            m_stats.initializeSleepRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.HOURS_IN_ONE_DAY));
+            m_stats.initializeEnergy(50);
+            //m_stats.initializeHungerRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.HOURS_IN_ONE_DAY));
+            //m_stats.initializeSleepRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.HOURS_IN_ONE_DAY));
+            m_stats.initializeHungerRate(0, 2000);
+            m_stats.initializeSleepRate(0, 2000);
             m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.FULL);
             m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
 
             m_birthDate = new GameTimeClass(ConstantClass.gameTime);
             m_unique_character_id = Guid.NewGuid(); //unique id for character            
             m_action_queue = new QueueClass<ActionClass>();
-                                   
+
+            m_block_id = blockID;
+
+            ConstantClass.MAPPING_TABLE_FOR_ALL_CHARS.getMappingTable().Add(m_unique_character_id, this);
+                    
             /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-CharacterClass()"); };
         }
 
@@ -87,7 +93,9 @@ namespace RiseOfStrongholds.Classes
             int index = -1;
 
             ConstantClass.LOGGER.writeToQueueLog(outputPersonGUID() + " = " + m_action_queue.printQueue());//print queue
-
+            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is in block position (" + 
+                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionX() + "," + 
+                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionY() + "). Exits: " + ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].printAllAvailableExits());
 
             m_stats.modifyHungerRate(ConstantClass.GAME_SPEED); //hunger increases based on game speed (1 sec = how many game time mins)
             m_stats.modifySleepRate(ConstantClass.GAME_SPEED); //sleepiness increases based on game speed (1 sec = how many game time mins)

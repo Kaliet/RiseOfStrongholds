@@ -37,9 +37,21 @@ namespace RiseOfStrongholds
             //testcase.runRandomGeneratorTests();
             //testcase.runMappingTableTests();
 
-            CharacterClass person = new CharacterClass();
-            CharacterClass person2 = new CharacterClass();
+            /*INTIALIZING ALL MAPPING TABLES*/
+            ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS = new MappingClass<BlockClass>();
+            ConstantClass.MAPPING_TABLE_FOR_ALL_CHARS = new MappingClass<CharacterClass>();
+            ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS = new MappingClass<TerrainClass>();
+            
+            /*FIRST GENERATE THE WORLD */
+            TerrainClass grassTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.GRASS);
+            BlockClass block1 = new BlockClass(new PositionClass(0, 0), grassTerrain.getUniqueTerrainID());
+            BlockClass block2 = new BlockClass(new PositionClass(0, 1), grassTerrain.getUniqueTerrainID());
+            block1.setExits(Guid.Empty, Guid.Empty, Guid.Empty, block2.getUniqueBlockID());
+            block2.setExits(Guid.Empty, Guid.Empty, block1.getUniqueBlockID(), Guid.Empty);
 
+            /*SECOND GENERATE THE CHARACTERS*/
+            CharacterClass person = new CharacterClass(block1.getUniqueBlockID());
+            CharacterClass person2 = new CharacterClass(block2.getUniqueBlockID());
 
             while (true) //game loop
             {
