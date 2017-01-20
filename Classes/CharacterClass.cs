@@ -31,12 +31,10 @@ namespace RiseOfStrongholds.Classes
             m_character_name = "";
 
             m_stats = new StatsClass();
-            m_stats.setHP(10);
-            m_stats.setEnergy(10);
-            //m_stats.initializeHungerRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.HOURS_IN_ONE_DAY));
-            //m_stats.initializeSleepRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.HOURS_IN_ONE_DAY));
-            m_stats.initializeHungerRate(0, 2);
-            m_stats.initializeSleepRate(0, 2);
+            m_stats.initializeHP(10);
+            m_stats.initializeEnergy(5);
+            m_stats.initializeHungerRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.HOURS_IN_ONE_DAY));
+            m_stats.initializeSleepRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.HOURS_IN_ONE_DAY));
             m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.FULL);
             m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
 
@@ -78,7 +76,7 @@ namespace RiseOfStrongholds.Classes
         {
             /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->outputPersonGUID()"); };
             /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-outputPersonGUID()"); };
-            return "Person " + m_unique_character_id.ToString().Substring(4,2);
+            return "Person " + m_unique_character_id.ToString().Substring(4, 2) + "(" + m_stats.getEnergy().getCurrentValue() + "/" + m_stats.getEnergy().getMaxValue() + ")";
 
         }
 
@@ -91,8 +89,8 @@ namespace RiseOfStrongholds.Classes
             ConstantClass.LOGGER.writeToQueueLog(outputPersonGUID() + " = " + m_action_queue.printQueue());//print queue
 
 
-            m_stats.setHungerRate(ConstantClass.GAME_SPEED); //hunger increases based on game speed (1 sec = how many game time mins)
-            m_stats.setSleepRate(ConstantClass.GAME_SPEED); //sleepiness increases based on game speed (1 sec = how many game time mins)
+            m_stats.modifyHungerRate(ConstantClass.GAME_SPEED); //hunger increases based on game speed (1 sec = how many game time mins)
+            m_stats.modifySleepRate(ConstantClass.GAME_SPEED); //sleepiness increases based on game speed (1 sec = how many game time mins)
 
             if (m_action_queue.getQueue().Count > 0) //there are still actions left in the queue
             {
@@ -103,19 +101,22 @@ namespace RiseOfStrongholds.Classes
                 {
                     //TODO: character eats something or goes to find something to eat
                     ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is EATING");
+                    m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_EATING);
                     m_stats.initializeHungerRate(0, m_stats.getHungerRate().getMaxValue());
                     m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.FULL);
+                    //TODO: add HP from eating.
                     ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is FULL");
                     m_action_queue.getQueue().RemoveAt(index); //EAT action completed - removed from queue
                 }
                 else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.SLEEP) // SLEEP
                 {
-                    //TODO: character goes to sleep until he replenishes his energey                    
+                    //TODO: character goes to sleep until he replenishes his energy                    
                     if (m_action_queue.getQueue()[index].getVarForAction() > 0)//wait until MINIMUM_NUMBER_OF_SLEEP_HOURS 
                     {
                         //wait - character is sleeping
                         ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is SLEEPING");
                         m_action_queue.getQueue()[index].modifyVarForAction(-1*ConstantClass.GAME_SPEED);
+                        m_stats.modifyEnergy(ConstantClass.ENERGY_ADD_WHEN_SLEEP);
                     }
                     else //sleeping is over, reinitialize sleep rate and set status to AWAKE
                     {
@@ -135,15 +136,23 @@ namespace RiseOfStrongholds.Classes
                     ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is HUNGRY");
                     m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY);
                 }
-                if (m_stats.getSleepRate().getCurrentValue() == m_stats.getSleepRate().getMaxValue())
+                if (m_stats.getSleepRate().getCurrentValue() == m_stats.getSleepRate().getMaxValue() || (m_stats.getEnergy().getCurrentValue() == 0))
                 {
                     ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is SLEEPY");
                     m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY);
                 }
 
                 /*DECISIONS BASED ON BIOLOGICAL NEEDS*/
-                if (m_stats.getHungerStatus() == ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY) { m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT,ConstantClass.ACTION_EAT_PRIORITY,ConstantClass.VARIABLE_FOR_ACTION_NONE)); }
-                if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY) { m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SLEEP,ConstantClass.ACTION_SLEEP_PRIORITY,ConstantClass.MINIMUM_NUMBER_OF_SLEEP_HOURS*ConstantClass.MINUTES_IN_ONE_HOUR)); }
+                if (m_stats.getHungerStatus() == ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY)
+                {
+                    m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT,ConstantClass.ACTION_EAT_PRIORITY,ConstantClass.VARIABLE_FOR_ACTION_NONE));
+                    m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_HUNGRY); //if hungry , start deducting energy
+                }
+                if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY)
+                {
+                    m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SLEEP,ConstantClass.ACTION_SLEEP_PRIORITY,ConstantClass.MINIMUM_NUMBER_OF_SLEEP_HOURS*ConstantClass.MINUTES_IN_ONE_HOUR));
+                    m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_SLEEPY); //if sleepy , start deducting energy
+                }
 
                 /*NOTHING ELSE TO DO*/
                 //if (m_stats.getHungerStatus() != ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY && //if not hungry and tired then remain idle

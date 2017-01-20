@@ -66,21 +66,26 @@ namespace RiseOfStrongholds.Classes
 
         /*GET & SET*/
         public statStruct getHP() { return m_HP; }
-        public statStruct getEnergey() { return m_Energy; }
+        public statStruct getEnergy() { return m_Energy; }
         public statStruct getHungerRate() { return m_hunger_rate; }
         public statStruct getSleepRate() { return m_sleep_rate; }
         public ConstantClass.CHARACTER_HUNGER_STATUS getHungerStatus() { return m_hunger_status; }
         public ConstantClass.CHARACTER_SLEEP_STATUS getSleepStatus() { return m_sleep_status; }
-
-        public void setHP(int value) { m_HP = new statStruct(value); }
-        public void setEnergy (int value) { m_Energy = new statStruct(value); }        
+               
         public void setHungerStatus (ConstantClass.CHARACTER_HUNGER_STATUS newStatus) { m_hunger_status = newStatus; }
         public void setSleepStatus (ConstantClass.CHARACTER_SLEEP_STATUS newStatus) { m_sleep_status = newStatus; }
-        public void setHungerRate(int value) { m_hunger_rate.modifyCurrentValue(value); }
-        public void setSleepRate(int value) { m_sleep_rate.modifyCurrentValue(value); }
+        public void modifyHungerRate(int value) { m_hunger_rate.modifyCurrentValue(value); }
+        public void modifySleepRate(int value) { m_sleep_rate.modifyCurrentValue(value); }
+        public void modifyEnergy(int value) { m_Energy.modifyCurrentValue(value); }
+        public void modifyHP(int value) { m_HP.modifyCurrentValue(value); }
 
         public void initializeHungerRate(int current, int max) { m_hunger_rate = new statStruct(current, max); }
         public void initializeSleepRate(int current, int max) { m_sleep_rate = new statStruct(current, max); }
+        public void initializeEnergy(int value) { m_Energy = new statStruct(value); }
+        public void initializeHP(int value) { m_HP = new statStruct(value); }
+
+        public void fillEnergytoMax() { m_Energy.modifyCurrentValue(m_Energy.getMaxValue()); }
+        public void fillHPtoMax() { m_HP.modifyCurrentValue(m_HP.getMaxValue()); }
 
         /* METHODS */
 
