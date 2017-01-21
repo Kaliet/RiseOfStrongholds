@@ -42,14 +42,14 @@ namespace RiseOfStrongholds
             ConstantClass.MAPPING_TABLE_FOR_ALL_CHARS = new MappingClass<CharacterClass>();
             ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS = new MappingClass<TerrainClass>();
             
-            /*FIRST GENERATE THE WORLD */
+            /*FIRST GENERATE THE WORLD - EXAMPLE*/
             TerrainClass grassTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.GRASS);
             BlockClass block1 = new BlockClass(new PositionClass(0, 0), grassTerrain.getUniqueTerrainID());
             BlockClass block2 = new BlockClass(new PositionClass(0, 1), grassTerrain.getUniqueTerrainID());
             block1.setExits(Guid.Empty, Guid.Empty, Guid.Empty, block2.getUniqueBlockID());
-            block2.setExits(Guid.Empty, Guid.Empty, block1.getUniqueBlockID(), Guid.Empty);
+            block2.setExits(Guid.Empty, Guid.Empty, block1.getUniqueBlockID(), Guid.Empty);            
 
-            /*SECOND GENERATE THE CHARACTERS*/
+            /*SECOND GENERATE THE CHARACTERS IN THE WORLD*/
             CharacterClass person = new CharacterClass(block1.getUniqueBlockID());
             CharacterClass person2 = new CharacterClass(block2.getUniqueBlockID());
 

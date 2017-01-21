@@ -17,12 +17,14 @@ namespace RiseOfStrongholds.Classes
         private GameTimeClass m_createDate;
         private Guid m_terrain;
         private PositionClass m_position;
+        private BlockStatsClass m_stats;
 
         /*GET & SET*/
         public Guid getUniqueBlockID() { return m_unique_block_id; }        
         public GameTimeClass getCreateDate() { return m_createDate; }
         public Guid getTerrain() { return m_terrain; }
         public PositionClass getPosition() { return m_position; }
+        public BlockStatsClass getStats() { return m_stats; }
         
         public void setTerrainType(Guid terrain) { m_terrain = terrain; }
         public void setExits(Guid n,Guid s,Guid e, Guid w)

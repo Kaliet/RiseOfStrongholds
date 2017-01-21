@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RiseOfStrongholds.Classes
 {
-    public class TerrainClass : StatsClass
+    public class TerrainClass : CharacterStatsClass
     {
         /* VARIABLES */
         private Guid m_unique_terrain_id;                

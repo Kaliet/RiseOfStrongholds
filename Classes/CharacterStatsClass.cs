@@ -5,67 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace RiseOfStrongholds.Classes
-{
-    //generic stats structure
-    public struct statStruct
-    {
-        /*VARIABLES*/
-        private int maxValue;
-        private int currentValue;
-
-        /*CONSTRUCTORS*/
-        public statStruct(int current, int max)
-        {
-            currentValue = current;
-            maxValue = max;
-        }
-
-        //constructor with initial value, maxvalue = currentvalue = value
-        public statStruct(int value)
-        {
-            currentValue = value;
-            maxValue = currentValue;
-        }
-
-        /*GET & SET*/
-        public int getCurrentValue() { return currentValue; }        
-        public int getMaxValue() { return maxValue; }
-
-        //method to change value, method ensures 0<=currentvalue <=maxvalue
-        //RETURNS: 1 = SUCCESS , -1 = FAILED (currentVal is above maxValue or currentVal is below 0)
-        public void modifyCurrentValue(int value)
-        {
-            /*DEBUG HIGH*/
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->modifyCurrentValue()"); };
-
-            if (currentValue + value > maxValue)
-            {
-                currentValue = maxValue;
-            }
-            else if (currentValue + value < 0)
-            {
-                currentValue = 0;
-            }
-            else { currentValue += value; }
-
-            /*DEBUG HIGH*/
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-modifyCurrentValue()"); };
-        }
-    }
-
-    public class StatsClass
+{    
+    public class CharacterStatsClass:GenericStatsClass //inherits from GenericStatClass
     {
         /* VARIABLES */
         private ConstantClass.CHARACTER_HUNGER_STATUS m_hunger_status;
         private ConstantClass.CHARACTER_SLEEP_STATUS m_sleep_status;
 
         private statStruct m_hunger_rate; // max = how many hours character can last without eating, when current = max then hungry
-        private statStruct m_sleep_rate; //max = how many hours character can last without sleeping, when current = max, then sleepy
-        private statStruct m_HP;
+        private statStruct m_sleep_rate; //max = how many hours character can last without sleeping, when current = max, then sleepy        
         private statStruct m_Energy;
 
-        /*GET & SET*/
-        public statStruct getHP() { return m_HP; }
+        /*GET & SET*/        
         public statStruct getEnergy() { return m_Energy; }
         public statStruct getHungerRate() { return m_hunger_rate; }
         public statStruct getSleepRate() { return m_sleep_rate; }
@@ -76,21 +27,18 @@ namespace RiseOfStrongholds.Classes
         public void setSleepStatus (ConstantClass.CHARACTER_SLEEP_STATUS newStatus) { m_sleep_status = newStatus; }
         public void modifyHungerRate(int value) { m_hunger_rate.modifyCurrentValue(value); }
         public void modifySleepRate(int value) { m_sleep_rate.modifyCurrentValue(value); }
-        public void modifyEnergy(int value) { m_Energy.modifyCurrentValue(value); }
-        public void modifyHP(int value) { m_HP.modifyCurrentValue(value); }
+        public void modifyEnergy(int value) { m_Energy.modifyCurrentValue(value); }        
 
         public void initializeHungerRate(int current, int max) { m_hunger_rate = new statStruct(current, max); }
         public void initializeSleepRate(int current, int max) { m_sleep_rate = new statStruct(current, max); }
-        public void initializeEnergy(int value) { m_Energy = new statStruct(value); }
-        public void initializeHP(int value) { m_HP = new statStruct(value); }
+        public void initializeEnergy(int value) { m_Energy = new statStruct(value); }        
 
-        public void fillEnergytoMax() { m_Energy.modifyCurrentValue(m_Energy.getMaxValue()); }
-        public void fillHPtoMax() { m_HP.modifyCurrentValue(m_HP.getMaxValue()); }
+        public void fillEnergytoMax() { m_Energy.modifyCurrentValue(m_Energy.getMaxValue()); }        
 
         /* METHODS */
 
         //constructor
-        public StatsClass()
+        public CharacterStatsClass()
         {
             /*DEBUG HIGH*/if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->StatsClass()"); };
                                                                          

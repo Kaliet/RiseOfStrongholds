@@ -10,7 +10,7 @@ namespace RiseOfStrongholds.Classes
     {
         /* VARIABLES */
         private string m_character_name; 
-        private StatsClass m_stats;
+        private CharacterStatsClass m_stats;
         private GameTimeClass m_birthDate;
         private Guid m_unique_character_id;                
         private QueueClass<ActionClass> m_action_queue;
@@ -18,7 +18,7 @@ namespace RiseOfStrongholds.Classes
 
         /*GET & SET*/
         public string getName() { return m_character_name; }
-        public StatsClass getStats() { return m_stats; }
+        public CharacterStatsClass getStats() { return m_stats; }
         public GameTimeClass getBirthDate() { return m_birthDate; }  
         public Guid getUniqueCharacterID () { return m_unique_character_id; } 
         public Guid getBlockID() { return m_block_id; }
@@ -30,7 +30,7 @@ namespace RiseOfStrongholds.Classes
             
             m_character_name = "";
 
-            m_stats = new StatsClass();
+            m_stats = new CharacterStatsClass();
             m_stats.initializeHP(10);
             m_stats.initializeEnergy(50);
             //m_stats.initializeHungerRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.HOURS_IN_ONE_DAY));
