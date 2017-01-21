@@ -9,12 +9,12 @@ namespace RiseOfStrongholds.Classes
     public class CharacterClass
     {
         /* VARIABLES */
-        private string m_character_name; 
-        private CharacterStatsClass m_stats;
-        private GameTimeClass m_birthDate;
-        private Guid m_unique_character_id;                
-        private QueueClass<ActionClass> m_action_queue;
-        private Guid m_block_id; 
+        private string m_character_name; //name
+        private CharacterStatsClass m_stats; //stats
+        private GameTimeClass m_birthDate; //date of birth
+        private Guid m_unique_character_id; //character's unique id
+        private QueueClass<ActionClass> m_action_queue; //queue of actions the character is doing
+        private Guid m_block_id; //in which block the character resides in
 
         /*GET & SET*/
         public string getName() { return m_character_name; }
@@ -32,7 +32,7 @@ namespace RiseOfStrongholds.Classes
 
             m_stats = new CharacterStatsClass();
             m_stats.initializeHP(10);
-            m_stats.initializeEnergy(50);
+            m_stats.initializeEnergy(20);
             //m_stats.initializeHungerRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.HOURS_IN_ONE_DAY));
             //m_stats.initializeSleepRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.HOURS_IN_ONE_DAY));
             m_stats.initializeHungerRate(0, 2000);
@@ -86,15 +86,51 @@ namespace RiseOfStrongholds.Classes
 
         }
 
+        public string printDirection(Guid[] allexits, Guid exitWalked)
+        {
+            string direction = "";
+            bool found = false;
+            int i = 0;
+
+            while (!found && i<allexits.Count())
+            {
+                if (allexits[i] == exitWalked) { found = true; }
+                else { i++; }
+            }
+
+            if (found)
+            {
+                switch (i)
+                {
+                    case (int)ConstantClass.EXITS.NORTH:
+                        direction = "North";
+                        break;
+                    case (int)ConstantClass.EXITS.SOUTH:
+                        direction = "South";
+                        break;
+                    case (int)ConstantClass.EXITS.EAST:
+                        direction = "East";
+                        break;
+                    case (int)ConstantClass.EXITS.WEST:
+                        direction = "West";
+                        break;
+                }
+            }
+            else direction = "ERROR";
+
+            return direction;
+        }
+
 
         public void updateAction() //character decides what to do now and performs the action
         {
             /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->updateAction()"); };
             int index = -1;
 
+            /*DEBUG PRINTING*/
             ConstantClass.LOGGER.writeToQueueLog(outputPersonGUID() + " = " + m_action_queue.printQueue());//print queue
-            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is in block position (" + 
-                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionX() + "," + 
+            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is in block " + m_block_id.ToString().Substring(0, 2) + " position(" + 
+                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionX() + "," +
                 ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionY() + "). Exits: " + ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].printAllAvailableExits());
 
             m_stats.modifyHungerRate(ConstantClass.GAME_SPEED); //hunger increases based on game speed (1 sec = how many game time mins)
@@ -134,6 +170,28 @@ namespace RiseOfStrongholds.Classes
                         m_action_queue.getQueue().RemoveAt(index); //SLEEP action completed - removed from queue
                     }
                 }
+                else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.WALK) // WALKS
+                {
+                    //TODO: character wants to walk to a random exit (before AI introduction)
+                    Guid[] allExits = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getAllExits(); //get all exits from character's residing block
+                    List<Guid> possibleExitsToWalk = new List<Guid>();
+
+                    foreach (Guid id in allExits) //go through all exits and check which ones are exitable
+                    {
+                        if (id != Guid.Empty) { possibleExitsToWalk.Add(id); }
+                    }
+
+                    if (possibleExitsToWalk.Count == 0) { ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot walk out of the current block."); }
+                    else //character walks out of one of the exits
+                    {
+                        int exitNumber = ConstantClass.RANDOMIZER.produceInt(1, 100); //randomizing which exit to take                        
+                                                
+                        m_block_id = possibleExitsToWalk[exitNumber % possibleExitsToWalk.Count];
+
+                        ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " walks " + printDirection(allExits, m_block_id) + " into block " + m_block_id.ToString().Substring(0, 2) + ".");
+                    }
+                    m_action_queue.getQueue().RemoveAt(index); //remove from index
+                }
                 
             }
             else 
@@ -146,7 +204,7 @@ namespace RiseOfStrongholds.Classes
                 }
                 if (m_stats.getSleepRate().getCurrentValue() == m_stats.getSleepRate().getMaxValue() || (m_stats.getEnergy().getCurrentValue() == 0))
                 {
-                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is SLEEPY");
+                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is TIRED and SLEEPY");
                     m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY);
                 }
 
@@ -162,6 +220,10 @@ namespace RiseOfStrongholds.Classes
                     m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_SLEEPY); //if sleepy , start deducting energy
                 }
 
+                m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE));
+                int additionalTerrainFatigue = ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getTerrainID()].getFatigueCost();
+
+                m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_WALKING + additionalTerrainFatigue);
                 /*NOTHING ELSE TO DO*/
                 //if (m_stats.getHungerStatus() != ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY && //if not hungry and tired then remain idle
                 //    m_stats.getSleepStatus() != ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY)

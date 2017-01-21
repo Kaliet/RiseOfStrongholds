@@ -19,7 +19,7 @@ namespace RiseOfStrongholds.Classes
         public enum DEBUG_LEVELS { OFF, LOW, HIGH };
 
         /*character enums*/
-        public enum CHARACTER_ACTIONS { IDLE, EAT, SLEEP };
+        public enum CHARACTER_ACTIONS { IDLE, EAT, SLEEP , WALK};
         public enum CHARACTER_SLEEP_STATUS { AWAKE, SLEEPY }; //awake = can perform actions, sleepy = must sleep otherwise energy decreases to 0
         public enum CHARACTER_HUNGER_STATUS { FULL, HUNGRY }; //hungry = top priority is to find food ; otherwise HP decreases
 
@@ -33,10 +33,12 @@ namespace RiseOfStrongholds.Classes
         public static int ENERGY_COST_WHEN_HUNGRY = -2; //how much energy is deducted when hungry
         public static int ENERGY_COST_WHEN_SLEEPY = -5; //how much energy is deducted when sleepy
         public static int ENERGY_ADD_WHEN_SLEEP = 5; //how much energy is added for each tick
+        public static int ENERGY_COST_FOR_WALKING = -1; //how much energy is deducted for walking 1 block
 
         /*action priorities*/
         public static int ACTION_EAT_PRIORITY = 10;
         public static int ACTION_SLEEP_PRIORITY = 1;
+        public static int ACTION_WALK_PRIORITY = 50;
         public static int ACTION_NO_PRIORITY = 99999;
         public static int VARIABLE_FOR_ACTION_NONE = -1;
 
@@ -68,6 +70,9 @@ namespace RiseOfStrongholds.Classes
         public static int TERRAIN_FATIGUE_FOR_DIRT = 0;
         public static int TERRAIN_FATIGUE_FOR_HILL = -5;
         public static int TERRAIN_FATIGUE_FOR_DESERT = -10;
+
+        /*BLOCK EXITS*/
+        public enum EXITS { NORTH, SOUTH, EAST, WEST};
     }
 }
 
