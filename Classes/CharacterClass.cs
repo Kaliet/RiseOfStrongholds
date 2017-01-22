@@ -223,13 +223,8 @@ namespace RiseOfStrongholds.Classes
                 m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE));
                 int additionalTerrainFatigue = ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getTerrainID()].getFatigueCost();
 
-                m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_WALKING + additionalTerrainFatigue);
-                /*NOTHING ELSE TO DO*/
-                //if (m_stats.getHungerStatus() != ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY && //if not hungry and tired then remain idle
-                //    m_stats.getSleepStatus() != ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY)
-                //{
-                //    m_action_this_turn.Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.IDLE)); 
-                //}                
+                m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_WALKING + additionalTerrainFatigue); //for now start walking
+                
             }
             /*DEBUG HIGH*/
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-updateAction()"); };
@@ -238,10 +233,7 @@ namespace RiseOfStrongholds.Classes
         /*EVENTS HANDLER*/
         public void OnGameTicked (object source, EventArgs args)
         {
-            ConstantClass.LOGGER.writeToQueueLog(outputPersonGUID() + " = " + m_action_queue.printQueue());//print queue
-            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is in block " + m_block_id.ToString().Substring(0, 2) + " position(" +
-                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionX() + "," +
-                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionY() + "). Exits: " + ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].printAllAvailableExits());
+            updateAction(); //update action for every game tick
         }
     }
 }

@@ -65,8 +65,7 @@ namespace RiseOfStrongholds
             CharacterClass person = new CharacterClass(block1.getUniqueBlockID());
             CharacterClass person2 = new CharacterClass(block2.getUniqueBlockID());
 
-            ConstantClass.gameTime.GameTicked += person.OnGameTicked;
-            ConstantClass.gameTime.GameTicked += person2.OnGameTicked;
+            ConstantClass.gameTime.GameTicked += person.OnGameTicked;            
             //---------------
             /*PROGRAM END*/
 
