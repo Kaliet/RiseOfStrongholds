@@ -66,8 +66,7 @@ namespace RiseOfStrongholds.Classes
 
         public int getTotalMins ()
         {
-            /*DEBUG HIGH*/
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->getTotalMins()"); };
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->getTotalMins()"); };
 
             return (game_mins +
                     game_hours * ConstantClass.MINUTES_IN_ONE_HOUR +
@@ -75,8 +74,7 @@ namespace RiseOfStrongholds.Classes
                     game_month * ConstantClass.DAYS_IN_ONE_MONTH * ConstantClass.HOURS_IN_ONE_DAY * ConstantClass.MINUTES_IN_ONE_HOUR +
                     game_year * ConstantClass.MONTHS_IN_ONE_YEAR * ConstantClass.DAYS_IN_ONE_MONTH * ConstantClass.HOURS_IN_ONE_DAY * ConstantClass.MINUTES_IN_ONE_HOUR);
 
-            /*DEBUG HIGH*/
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-getTotalMins()"); };
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-getTotalMins()"); };
         }
 
         /*CONSTRUCTORS*/
@@ -179,8 +177,50 @@ namespace RiseOfStrongholds.Classes
 
             set_mins((int)elapsedTime.TotalSeconds * ConstantClass.GAME_SPEED);
 
-            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-updateGameTimeBasedOnElapsedTimeSpan()"); };
-            
+            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-updateGameTimeBasedOnElapsedTimeSpan()"); };            
+        }
+
+        /*EVENT HANDLERS*/
+        public event EventHandler GameTicked;
+
+        protected virtual void OnGameTicked ()
+        {
+            if (GameTicked != null)
+            {
+                GameTicked(this, EventArgs.Empty);
+            }
+        }
+
+        /*START GAME TIME*/
+        public void startGameTime()
+        {
+            /*VARIABLES*/
+            long lastTick = DateTime.Now.Ticks;
+            long currentTick;
+            long elapsedTick;
+            TimeSpan elapsedSpan;
+
+            while (true) //game loop
+            {
+                currentTick = DateTime.Now.Ticks; //checks time now.
+                elapsedTick = currentTick - lastTick; //calculates how much time elapsed
+
+                if (elapsedTick < TimeSpan.TicksPerSecond)
+                {
+                    //do nothing and check again until 1 second passes
+                }
+                else //more than 1 second has passed
+                {
+                    /*UPDATE GAME TIME*/
+                    elapsedSpan = new TimeSpan(elapsedTick);
+                    ConstantClass.gameTime.updateGameTimeBasedOnElapsedTimeSpan(elapsedSpan); //gameTime is updated based on real time seconds elapse
+                    ConstantClass.LOGGER.writeToDebugLog(ConstantClass.gameTime.ToString());
+                    lastTick = currentTick;
+
+                    /*EVENT HANDLING*/
+                    OnGameTicked();
+                }
+            }
         }
     }
 }

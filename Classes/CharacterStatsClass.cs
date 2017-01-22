@@ -15,8 +15,8 @@ namespace RiseOfStrongholds.Classes
         private statStruct m_hunger_rate; // max = how many hours character can last without eating, when current = max then hungry
         private statStruct m_sleep_rate; //max = how many hours character can last without sleeping, when current = max, then sleepy        
         private statStruct m_Energy;
-
-        /*GET & SET*/        
+        
+        /*GET & SET*/
         public statStruct getEnergy() { return m_Energy; }
         public statStruct getHungerRate() { return m_hunger_rate; }
         public statStruct getSleepRate() { return m_sleep_rate; }

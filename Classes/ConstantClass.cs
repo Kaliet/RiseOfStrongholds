@@ -59,7 +59,7 @@ namespace RiseOfStrongholds.Classes
         public static int DAYS_IN_ONE_MONTH = 30;
         public static int MONTHS_IN_ONE_YEAR = 12;
 
-        public static int GAME_SPEED = 30; //number of game minutes to 1 real life second
+        public static int GAME_SPEED = 60; //number of game minutes to 1 real life second
 
         /*RANDOM NUMBER GENERATOR*/
         public static RandomClass RANDOMIZER = new RandomClass();
