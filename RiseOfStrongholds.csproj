@@ -51,6 +51,7 @@
     <Compile Include="Classes\ConstantClass.cs" />
     <Compile Include="Classes\GameTimeClass.cs" />
     <Compile Include="Classes\GenericStatsClass.cs" />
+    <Compile Include="Classes\InventoryClass.cs" />
     <Compile Include="Classes\LoggerClass.cs" />
     <Compile Include="Classes\MappingClass.cs" />
     <Compile Include="Classes\QueueClass.cs" />

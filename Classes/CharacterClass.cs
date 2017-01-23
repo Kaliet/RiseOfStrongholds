@@ -14,8 +14,8 @@ namespace RiseOfStrongholds.Classes
         private GameTimeClass m_birthDate; //date of birth
         private Guid m_unique_character_id; //character's unique id
         private QueueClass<ActionClass> m_action_queue; //queue of actions the character is doing
-        private Guid m_block_id; //in which block the character resides in
-
+        private Guid m_block_id; //in which block the character resides in        
+        
         /*GET & SET*/
         public string getName() { return m_character_name; }
         public CharacterStatsClass getStats() { return m_stats; }
