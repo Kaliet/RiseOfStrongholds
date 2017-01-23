@@ -50,7 +50,7 @@ namespace RiseOfStrongholds.Classes
         public static string QUEUE_LOG_FILENAME = "queuelog.log";
 
         /*DEBUG LEVEL (default off*/
-        public static DEBUG_LEVELS DEBUG_LOG_LEVEL = DEBUG_LEVELS.OFF;
+        public static DEBUG_LEVELS DEBUG_LOG_LEVEL;
 
         /*GAME TIME*/
         public static GameTimeClass gameTime;

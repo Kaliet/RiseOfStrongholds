@@ -21,8 +21,8 @@ namespace RiseOfStrongholds.Classes
         /*CONSTRUCTORS*/
         public TerrainClass(ConstantClass.TERRAIN_TYPE terrainType)
         {
-            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t->TerrainClass()"); };
-            
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
             m_unique_terrain_id = Guid.NewGuid();            
             m_terrainType = terrainType;
             switch (terrainType)
@@ -43,7 +43,7 @@ namespace RiseOfStrongholds.Classes
 
             ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable().Add(m_unique_terrain_id, this);
 
-            /*DEBUG HIGH*/ if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("\t<-TerrainClass()"); };
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
     }
 }

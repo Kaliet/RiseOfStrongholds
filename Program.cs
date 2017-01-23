@@ -13,6 +13,13 @@ namespace RiseOfStrongholds
     {
         static void Main(string[] args)
         {
+            ConstantClass.DEBUG_LOG_LEVEL = ConstantClass.DEBUG_LEVELS.HIGH;
+
+            /*Defining LOGGER*/
+            ConstantClass.LOGGER = new LoggerClass();
+            ConstantClass.LOGGER.createNewFiles();
+
+
             TestingClass testcase = new TestingClass(); //for making tests
 
             /*GAMETIME*/
@@ -20,13 +27,11 @@ namespace RiseOfStrongholds
             Thread startGameTimeThread = new Thread(new ThreadStart(ConstantClass.gameTime.startGameTime));
             startGameTimeThread.Start();
              
-            ConstantClass.DEBUG_LOG_LEVEL = ConstantClass.DEBUG_LEVELS.OFF;
-
-            /*Defining LOGGER*/
-            ConstantClass.LOGGER = new LoggerClass();
-            ConstantClass.LOGGER.createNewFiles();
             
-            /*PROGRAM START*/ConstantClass.LOGGER.writeToDebugLog("Starting program...");
+
+            
+            /*PROGRAM START*/
+            ConstantClass.LOGGER.writeToDebugLog("Starting program...");
             //---------------
 
             //testcase.runGameTimeTests();
