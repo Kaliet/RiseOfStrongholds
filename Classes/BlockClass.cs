@@ -37,12 +37,35 @@ namespace RiseOfStrongholds.Classes
         }
         
         public void setTerrainType(Guid terrain) { m_terrain_id = terrain; }
-        public void setExits(Guid n, Guid s, Guid w, Guid e)
+        public void setAllExits(Guid n, Guid s, Guid w, Guid e)
         {
             m_NorthExit = n;
             m_SouthExit = s;
             m_EastExit = e;
             m_WestExit = w;
+        }
+
+        public void setExit(Guid neighborBlockID, ConstantClass.EXITS exit)//add exit without changing the exits of others.
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            switch (exit)
+            {
+                case ConstantClass.EXITS.NORTH:
+                    m_NorthExit = neighborBlockID;
+                    break;
+                case ConstantClass.EXITS.SOUTH:
+                    m_SouthExit = neighborBlockID;
+                    break;
+                case ConstantClass.EXITS.WEST:
+                    m_WestExit = neighborBlockID;
+                    break;
+                case ConstantClass.EXITS.EAST:
+                    m_EastExit = neighborBlockID;
+                    break;
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
         /*CONSTRUCTORS*/
@@ -56,7 +79,7 @@ namespace RiseOfStrongholds.Classes
 
             m_position = position;           
             m_terrain_id = terrainUniqueID;
-            setExits(Guid.Empty, Guid.Empty, Guid.Empty, Guid.Empty);
+            setAllExits(Guid.Empty, Guid.Empty, Guid.Empty, Guid.Empty);
             
             ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable().Add(m_unique_block_id, this);
 
@@ -83,5 +106,7 @@ namespace RiseOfStrongholds.Classes
 
             return output;
         }
+
+
     }
 }
