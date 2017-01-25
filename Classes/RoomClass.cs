@@ -124,20 +124,21 @@ namespace RiseOfStrongholds.Classes
 
             string output = "";
             
+            
             for (int i = 0; i < m_size; i++) 
             {
                 for (int j = 0; j < m_size; j++)
                 {
                     output += "|\t\t";                    
-                    if (m_Room[i, j].existsNorthExit()) { output += "N"; }
-                    if (m_Room[i, j].existsSouthExit()) { output += "S"; }
-                    if (m_Room[i, j].existsWestExit()) { output += "W"; }
-                    if (m_Room[i, j].existsEastExit()) { output += "E"; }         
+                    //if (m_Room[i, j].existsNorthExit()) { output += "N"; }
+                    //if (m_Room[i, j].existsSouthExit()) { output += "S"; }
+                    //if (m_Room[i, j].existsWestExit()) { output += "W"; }
+                    //if (m_Room[i, j].existsEastExit()) { output += "E"; }         
                     if (m_Room[i,j].getListOfOccupants().Count > 0) //block is not empty, has occupants
                     {
                         foreach (Guid id in m_Room[i, j].getListOfOccupants())// go through list and print the occupants
                         {
-                            output += "*";
+                            output += id.ToString().Substring(0, 1);                            
                         }
                     }           
                     output += "\t\t|";
@@ -148,8 +149,8 @@ namespace RiseOfStrongholds.Classes
             return output;            
         }
 
-        /*EVENT HANLDER*/
-        public void OnGameTicked (object source, EventArgs args)
+        /*EVENT HANDLER*/
+        public void OnActionUpdated(object source, EventArgs args)
         {
             ConstantClass.LOGGER.writeToMapLog(printRoom()); //sometimes the room is printed first before the character moves.
         }

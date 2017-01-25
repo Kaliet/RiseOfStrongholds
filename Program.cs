@@ -55,11 +55,11 @@ namespace RiseOfStrongholds
 
             TerrainClass grassTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.GRASS);
             TerrainClass hillTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.HILL);
-            RoomClass room1 = new RoomClass(3);
+            RoomClass room1 = new RoomClass(5);
             room1.initializeRoom(grassTerrain);
             room1.linkAllBlocksTogetherHorizontally();
             room1.linkAllBlocksTogetherVertically();  //CHECK WHY WALKING NORTH ALL THE TIME AND NOT RANDOM , CHECK THERE IS LOOP BEWTEEN BLOCKS
-            Console.WriteLine(room1.printRoom()); 
+            //Console.WriteLine(room1.printRoom()); 
             //BlockClass block1 = new BlockClass(new PositionClass(0, 0), grassTerrain.getUniqueTerrainID());
             //BlockClass block2 = new BlockClass(new PositionClass(1, 0), hillTerrain.getUniqueTerrainID());
             //BlockClass block3 = new BlockClass(new PositionClass(2, 0), grassTerrain.getUniqueTerrainID());
@@ -73,10 +73,12 @@ namespace RiseOfStrongholds
 
             ///*SECOND GENERATE THE CHARACTERS IN THE WORLD*/
             CharacterClass person = new CharacterClass(room1.getRoom()[0,0].getUniqueBlockID());
-            //CharacterClass person2 = new CharacterClass(room1.getRoom()[0,0].getUniqueBlockID());
+            CharacterClass person2 = new CharacterClass(room1.getRoom()[0,0].getUniqueBlockID());
 
             ConstantClass.gameTime.GameTicked += person.OnGameTicked;
-            ConstantClass.gameTime.GameTicked += room1.OnGameTicked;          
+            ConstantClass.gameTime.GameTicked += person2.OnGameTicked;
+            person.ActionUpdated += room1.OnActionUpdated;
+            person2.ActionUpdated += room1.OnActionUpdated;
             //---------------
             /*PROGRAM END*/
 

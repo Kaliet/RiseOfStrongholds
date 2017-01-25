@@ -242,10 +242,22 @@ namespace RiseOfStrongholds.Classes
                 
             }
 
+            OnActionUpdated(); //raise event
+
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
         /*EVENTS HANDLER*/
+        public event EventHandler ActionUpdated;
+
+        protected virtual void OnActionUpdated()
+        {
+            if (ActionUpdated != null)
+            {
+                ActionUpdated(this, EventArgs.Empty);
+            }
+        }
+
         public void OnGameTicked (object source, EventArgs args)
         {
             updateAction(); //update action for every game tick
