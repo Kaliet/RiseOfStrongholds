@@ -9,12 +9,14 @@ namespace RiseOfStrongholds.Classes
     public class RoomClass //room consisting of x*x blocks
     {
         /*VARIABLES*/
+        private Guid m_room_id;
         private BlockClass[,] m_Room;
         private int m_size;
 
         /*GET & SET*/
         public BlockClass[,] getRoom() { return m_Room; }
         public int getSize() { return m_size; }
+        public Guid getUniqueRoomID() { return m_room_id; }
 
         /*CONSTRUCTORS*/
         public RoomClass(int size)
@@ -26,6 +28,7 @@ namespace RiseOfStrongholds.Classes
             {
                 m_size = size;
                 m_Room = new BlockClass[size, size];
+                m_room_id = Guid.NewGuid();
             }
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
@@ -42,31 +45,53 @@ namespace RiseOfStrongholds.Classes
              *  <-> [1,0] <-. [1,1] <->
              *        |         |
              * *       
-             */
-            PositionClass pos = new PositionClass(0, 0);
-            
+             */                       
             //initialize all blocks in 2d array
             for (int i = 0; i < m_size ; i++)
                 for (int j = 0; j < m_size ; j++)
                 {
-                    pos.setPositionX(i);
-                    pos.setPositionY(j);
-                    m_Room[i, j] = new BlockClass(pos, terrainType.getUniqueTerrainID());
+                    m_Room[i, j] = new BlockClass(new PositionClass(i, j), terrainType.getUniqueTerrainID());
+                    m_Room[i, j].setRoom(m_room_id); //links the block to the room id                   
                 }
+        }
 
-            //links all rooms together horizontally
+        public void linkAllBlocksTogetherHorizontally() //links all the blocks horizontally
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            //links all blocks together horizontally
             if (m_size == 1) { }//no need to link 1x1 room
             else if (m_size >= 2) //at least 2 x 2
             {
-                for (int i = 0; i < m_size ; i++) //for each row                    0,1,2
+                for (int i = 0; i < m_size; i++) //for each row                    0,1,2
                     for (int j = 0; j <= m_size - 2; j++) //for each column         0,1
                     {
-                        linkTwoBlocksWithExit(m_Room[i, j], m_Room[i, j + 1], ConstantClass.EXITS.EAST);
+                        if (j < m_size - 1) { linkTwoBlocksWithExit(m_Room[i, j], ConstantClass.EXITS.EAST, m_Room[i, j + 1]); }//last column cannot have east exit
                     }
             }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
-        public void linkTwoBlocksWithExit (BlockClass room1 , BlockClass room2, ConstantClass.EXITS exitFromRoom1) //link two rooms based on exit from room1 perspective
+        public void linkAllBlocksTogetherVertically() //links all the blocks vertically
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            //links all blocks together horizontally
+            if (m_size == 1) { }//no need to link 1x1 room
+            else if (m_size >= 2) //at least 2 x 2
+            {
+                for (int i = 0; i < m_size; i++) //for each row                    0,1,2
+                    for (int j = 0; j <= m_size - 1; j++) //for each column         0,1
+                    {
+                        if (i > 0) { linkTwoBlocksWithExit(m_Room[i, j], ConstantClass.EXITS.NORTH, m_Room[i - 1, j]); } //first row cannot have north exit                        
+                    }
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+
+        public void linkTwoBlocksWithExit (BlockClass room1 , ConstantClass.EXITS exitFromRoom1,  BlockClass room2) //link two rooms based on exit from room1 perspective
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
            
@@ -98,20 +123,35 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
             string output = "";
-
-            for (int i = 0; i < m_size; i++)
+            
+            for (int i = 0; i < m_size; i++) 
             {
                 for (int j = 0; j < m_size; j++)
                 {
-                    output += "x";
-                    if (m_Room[i,j].) //check if exit then mark in string drawing
+                    output += "|\t\t";                    
+                    if (m_Room[i, j].existsNorthExit()) { output += "N"; }
+                    if (m_Room[i, j].existsSouthExit()) { output += "S"; }
+                    if (m_Room[i, j].existsWestExit()) { output += "W"; }
+                    if (m_Room[i, j].existsEastExit()) { output += "E"; }         
+                    if (m_Room[i,j].getListOfOccupants().Count > 0) //block is not empty, has occupants
+                    {
+                        foreach (Guid id in m_Room[i, j].getListOfOccupants())// go through list and print the occupants
+                        {
+                            output += "*";
+                        }
+                    }           
+                    output += "\t\t|";
                 }
                 output += "\n";
             }
-
-            return output;
-
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            return output;            
+        }
+
+        /*EVENT HANLDER*/
+        public void OnGameTicked (object source, EventArgs args)
+        {
+            ConstantClass.LOGGER.writeToMapLog(printRoom()); //sometimes the room is printed first before the character moves.
         }
     }
 }

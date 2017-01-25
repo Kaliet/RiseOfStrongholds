@@ -67,14 +67,12 @@ namespace RiseOfStrongholds.Classes
         public int getTotalMins ()
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH            
             return (game_mins +
                 game_hours * ConstantClass.MINUTES_IN_ONE_HOUR +
                 game_day * ConstantClass.HOURS_IN_ONE_DAY * ConstantClass.MINUTES_IN_ONE_HOUR +
                 game_month * ConstantClass.DAYS_IN_ONE_MONTH * ConstantClass.HOURS_IN_ONE_DAY * ConstantClass.MINUTES_IN_ONE_HOUR +
-                game_year * ConstantClass.MONTHS_IN_ONE_YEAR * ConstantClass.DAYS_IN_ONE_MONTH * ConstantClass.HOURS_IN_ONE_DAY * ConstantClass.MINUTES_IN_ONE_HOUR);
-
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH            
+                game_year * ConstantClass.MONTHS_IN_ONE_YEAR * ConstantClass.DAYS_IN_ONE_MONTH * ConstantClass.HOURS_IN_ONE_DAY * ConstantClass.MINUTES_IN_ONE_HOUR);            
         }
 
         /*CONSTRUCTORS*/
@@ -226,9 +224,9 @@ namespace RiseOfStrongholds.Classes
                     /*EVENT HANDLING*/
                     OnGameTicked();
                 }
+                if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             }
-
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            
         }
     }
 }

@@ -18,13 +18,17 @@ namespace RiseOfStrongholds.Classes
         private Guid m_terrain_id;
         private PositionClass m_position;
         private BlockStatsClass m_stats;
+        private Guid m_room_id;
+        private List<Guid> m_list_of_occupants;        
 
         /*GET & SET*/
         public Guid getUniqueBlockID() { return m_unique_block_id; }        
         public GameTimeClass getCreateDate() { return m_createDate; }
         public Guid getTerrainID() { return m_terrain_id; }
+        public Guid getRoomID() { return m_room_id; }
         public PositionClass getPosition() { return m_position; }
         public BlockStatsClass getStats() { return m_stats; }
+        public List<Guid> getListOfOccupants() { return m_list_of_occupants; }
         public Guid[] getAllExits() //return array of all exits
         {
             Guid[] exits = new Guid[4];
@@ -37,6 +41,7 @@ namespace RiseOfStrongholds.Classes
         }
         
         public void setTerrainType(Guid terrain) { m_terrain_id = terrain; }
+        public void setRoom(Guid room) { m_room_id = room; }
         public void setAllExits(Guid n, Guid s, Guid w, Guid e)
         {
             m_NorthExit = n;
@@ -80,8 +85,10 @@ namespace RiseOfStrongholds.Classes
             m_position = position;           
             m_terrain_id = terrainUniqueID;
             setAllExits(Guid.Empty, Guid.Empty, Guid.Empty, Guid.Empty);
-            
-            ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable().Add(m_unique_block_id, this);
+            m_list_of_occupants = new List<Guid>();
+            m_stats = new BlockStatsClass();
+
+            ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable().Add(m_unique_block_id, this); //maps to mapping table
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
@@ -107,6 +114,32 @@ namespace RiseOfStrongholds.Classes
             return output;
         }
 
+        public bool existsNorthExit() //return true if there is exit to north, return false if no exit
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            return !(m_NorthExit == Guid.Empty);                        
+        }
 
+        public bool existsSouthExit() //return true if there is exit to south, return false if no exit
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            return !(m_SouthExit == Guid.Empty);            
+        }
+
+        public bool existsWestExit() //return true if there is exit to west, return false if no exit
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            return !(m_WestExit == Guid.Empty);            
+        }
+
+        public bool existsEastExit() //return true if there is exit to east, return false if no exit
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            return !(m_EastExit == Guid.Empty);            
+        }
     }
 }

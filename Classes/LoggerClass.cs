@@ -18,6 +18,7 @@ namespace RiseOfStrongholds.Classes
                 System.IO.File.WriteAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.DEBUG_LOG_FILENAME, "");
                 System.IO.File.WriteAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.GAME_LOG_FILENAME, "");
                 System.IO.File.WriteAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.QUEUE_LOG_FILENAME, "");
+                System.IO.File.WriteAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.MAP_LOG_FILENAME, "");
             }                  
             catch (DirectoryNotFoundException e)
             {
@@ -82,6 +83,18 @@ namespace RiseOfStrongholds.Classes
             try
             {
                 System.IO.File.AppendAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.QUEUE_LOG_FILENAME, text);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        public void writeToMapLog(string text)
+        {            
+            try
+            {
+                System.IO.File.WriteAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.MAP_LOG_FILENAME, text);
             }
             catch (Exception e)
             {
