@@ -45,14 +45,19 @@ namespace RiseOfStrongholds.Classes
              *  <-> [1,0] <-. [1,1] <->
              *        |         |
              * *       
-             */                       
+             */
             //initialize all blocks in 2d array
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
             for (int i = 0; i < m_size ; i++)
                 for (int j = 0; j < m_size ; j++)
                 {
                     m_Room[i, j] = new BlockClass(new PositionClass(i, j), terrainType.getUniqueTerrainID());
                     m_Room[i, j].setRoom(m_room_id); //links the block to the room id                   
                 }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
         public void linkAllBlocksTogetherHorizontally() //links all the blocks horizontally
@@ -152,7 +157,11 @@ namespace RiseOfStrongholds.Classes
         /*EVENT HANDLER*/
         public void OnActionUpdated(object source, EventArgs args)
         {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
             ConstantClass.LOGGER.writeToMapLog(printRoom()); //sometimes the room is printed first before the character moves.
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
     }
 }

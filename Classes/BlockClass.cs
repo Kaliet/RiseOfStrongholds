@@ -41,13 +41,17 @@ namespace RiseOfStrongholds.Classes
         }
         
         public void setTerrainType(Guid terrain) { m_terrain_id = terrain; }
-        public void setRoom(Guid room) { m_room_id = room; }
+        public void setRoom(Guid room){ m_room_id = room; }
         public void setAllExits(Guid n, Guid s, Guid w, Guid e)
         {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
             m_NorthExit = n;
             m_SouthExit = s;
             m_EastExit = e;
             m_WestExit = w;
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
         public void setExit(Guid neighborBlockID, ConstantClass.EXITS exit)//add exit without changing the exits of others.
@@ -76,7 +80,6 @@ namespace RiseOfStrongholds.Classes
         /*CONSTRUCTORS*/
         public BlockClass(PositionClass position, Guid terrainUniqueID)
         {
-
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
             m_createDate = new GameTimeClass(ConstantClass.gameTime);

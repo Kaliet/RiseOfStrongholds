@@ -185,19 +185,20 @@ namespace RiseOfStrongholds.Classes
         public event EventHandler GameTicked;
 
         protected virtual void OnGameTicked ()
-        {
+        {        
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
             if (GameTicked != null)
             {
                 GameTicked(this, EventArgs.Empty);
             }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
         /*START GAME TIME*/
         public void startGameTime()
-        {
-
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-
+        {            
             /*VARIABLES*/
             long lastTick = DateTime.Now.Ticks;
             long currentTick;
@@ -223,8 +224,7 @@ namespace RiseOfStrongholds.Classes
 
                     /*EVENT HANDLING*/
                     OnGameTicked();
-                }
-                if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+                }                
             }
             
         }

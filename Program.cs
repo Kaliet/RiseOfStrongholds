@@ -18,6 +18,7 @@ namespace RiseOfStrongholds
             /*Defining LOGGER*/
             ConstantClass.LOGGER = new LoggerClass();
             ConstantClass.LOGGER.createNewFiles();
+            
 
 
             TestingClass testcase = new TestingClass(); //for making tests
@@ -55,30 +56,14 @@ namespace RiseOfStrongholds
 
             TerrainClass grassTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.GRASS);
             TerrainClass hillTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.HILL);
-            RoomClass room1 = new RoomClass(5);
+            RoomClass room1 = new RoomClass(10);
             room1.initializeRoom(grassTerrain);
             room1.linkAllBlocksTogetherHorizontally();
-            room1.linkAllBlocksTogetherVertically();  //CHECK WHY WALKING NORTH ALL THE TIME AND NOT RANDOM , CHECK THERE IS LOOP BEWTEEN BLOCKS
-            //Console.WriteLine(room1.printRoom()); 
-            //BlockClass block1 = new BlockClass(new PositionClass(0, 0), grassTerrain.getUniqueTerrainID());
-            //BlockClass block2 = new BlockClass(new PositionClass(1, 0), hillTerrain.getUniqueTerrainID());
-            //BlockClass block3 = new BlockClass(new PositionClass(2, 0), grassTerrain.getUniqueTerrainID());
-            //BlockClass block4 = new BlockClass(new PositionClass(2, 1), hillTerrain.getUniqueTerrainID());
-            //BlockClass block5 = new BlockClass(new PositionClass(1, 1), hillTerrain.getUniqueTerrainID());
-            //block1.setExits(Guid.Empty, Guid.Empty, Guid.Empty, Guid.Empty);
-            //block2.setExits(block5.getUniqueBlockID(), Guid.Empty, block1.getUniqueBlockID(), block3.getUniqueBlockID());
-            //block3.setExits(block4.getUniqueBlockID(), Guid.Empty, block2.getUniqueBlockID(), Guid.Empty);
-            //block4.setExits(Guid.Empty, block3.getUniqueBlockID(), block5.getUniqueBlockID(), Guid.Empty);
-            //block5.setExits(Guid.Empty, block2.getUniqueBlockID(), Guid.Empty, block4.getUniqueBlockID());
+            room1.linkAllBlocksTogetherVertically();
 
             ///*SECOND GENERATE THE CHARACTERS IN THE WORLD*/
-            CharacterClass person = new CharacterClass(room1.getRoom()[0,0].getUniqueBlockID());
-            CharacterClass person2 = new CharacterClass(room1.getRoom()[0,0].getUniqueBlockID());
+            testcase.runRoomTestWithMultipleChars(room1);
 
-            ConstantClass.gameTime.GameTicked += person.OnGameTicked;
-            ConstantClass.gameTime.GameTicked += person2.OnGameTicked;
-            person.ActionUpdated += room1.OnActionUpdated;
-            person2.ActionUpdated += room1.OnActionUpdated;
             //---------------
             /*PROGRAM END*/
 

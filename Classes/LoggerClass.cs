@@ -39,6 +39,7 @@ namespace RiseOfStrongholds.Classes
             int hour = DateTime.Now.Hour;
             int mins = DateTime.Now.Minute;
             int secs = DateTime.Now.Second;
+            int milisec = DateTime.Now.Millisecond;
 
             string datetime = "";
             datetime += year;
@@ -52,6 +53,8 @@ namespace RiseOfStrongholds.Classes
             datetime += (mins < 10) ? "0" + mins.ToString() : mins.ToString();
             datetime += ":";
             datetime += (secs < 10) ? "0" + secs.ToString() : secs.ToString();
+            datetime += ":";
+            datetime += milisec;
 
             text = datetime + "\t\t - \t" + text + "\n";
             try

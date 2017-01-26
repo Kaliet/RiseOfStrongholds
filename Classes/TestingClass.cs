@@ -92,5 +92,17 @@ namespace RiseOfStrongholds.Classes
 
         //    CharacterClass x = characterMapping.getMappingTable()[people[6].getUniqueCharacterID()];
         //}
+
+        /*SIMULATED ROOM TEST WITH MULTIPLE CHARACTERS*/
+        public void runRoomTestWithMultipleChars(RoomClass room)
+        {
+            List<CharacterClass> people = new List<CharacterClass>();
+            for (int i = 0; i < 10; i++)
+            {
+                people.Add(new CharacterClass(room.getRoom()[0, 0].getUniqueBlockID()));
+                ConstantClass.gameTime.GameTicked += people[i].OnGameTicked;
+                people[i].ActionUpdated += room.OnActionUpdated;
+            }
+        }
     }
 }
