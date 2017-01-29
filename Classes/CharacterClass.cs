@@ -134,18 +134,17 @@ namespace RiseOfStrongholds.Classes
             return direction;
         }
 
-
         public void updateAction() //character decides what to do now and performs the action
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             int index = -1;
 
             /*DEBUG PRINTING*/
-            /*ConstantClass.LOGGER.writeToQueueLog(outputPersonGUID() + " = " + m_action_queue.printQueue());//print queue
+            ConstantClass.LOGGER.writeToQueueLog(outputPersonGUID() + " = " + m_action_queue.printQueue());//print queue
             ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is in block " + m_block_id.ToString().Substring(0, 2) + " position(" + 
                 ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionX() + "," +
                 ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionY() + "). Exits: " + ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].printAllAvailableExits());
-                */
+              
             m_stats.modifyHungerRate(ConstantClass.GAME_SPEED); //hunger increases based on game speed (1 sec = how many game time mins)
             m_stats.modifySleepRate(ConstantClass.GAME_SPEED); //sleepiness increases based on game speed (1 sec = how many game time mins)
 
@@ -203,7 +202,7 @@ namespace RiseOfStrongholds.Classes
                         m_block_id = possibleExitsToWalk[exitNumber % possibleExitsToWalk.Count]; //character moves to a different block - new id defined
                         ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Add(m_unique_character_id); //adds character id as part of block list of occupants
 
-                        ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " walks " + printDirection(allExits, m_block_id) + " into block " + m_block_id.ToString().Substring(0, 2) + ".");
+                        ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is going to walk " + printDirection(allExits, m_block_id) + " into block " + m_block_id.ToString().Substring(0, 2) + ".");
                     }
                     m_action_queue.getQueue().RemoveAt(index); //remove from index
                 }
@@ -226,16 +225,16 @@ namespace RiseOfStrongholds.Classes
                 /*DECISIONS BASED ON BIOLOGICAL NEEDS*/
                 if (m_stats.getHungerStatus() == ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY)
                 {
-                    m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT,ConstantClass.ACTION_EAT_PRIORITY,ConstantClass.VARIABLE_FOR_ACTION_NONE));
+                    m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT,ConstantClass.ACTION_EAT_PRIORITY,ConstantClass.VARIABLE_FOR_ACTION_NONE,Guid.Empty));
                     m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_HUNGRY); //if hungry , start deducting energy
                 }
                 if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY)
                 {
-                    m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SLEEP,ConstantClass.ACTION_SLEEP_PRIORITY,ConstantClass.MINIMUM_NUMBER_OF_SLEEP_HOURS*ConstantClass.MINUTES_IN_ONE_HOUR));
+                    m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SLEEP,ConstantClass.ACTION_SLEEP_PRIORITY,ConstantClass.MINIMUM_NUMBER_OF_SLEEP_HOURS*ConstantClass.MINUTES_IN_ONE_HOUR,Guid.Empty));
                     m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_SLEEPY); //if sleepy , start deducting energy
                 }
 
-                m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE));
+                m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE,m_block_id));
                 int additionalTerrainFatigue = ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getTerrainID()].getFatigueCost();
 
                 m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_WALKING + additionalTerrainFatigue); //for now start walking
@@ -266,8 +265,7 @@ namespace RiseOfStrongholds.Classes
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            updateAction(); //update action for every game tick
-            //ConstantClass.LOGGER.writeToMapLog(ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getRoomID()].printRoom());
+            updateAction(); //update action for every game tick                       
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }

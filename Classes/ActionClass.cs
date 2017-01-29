@@ -12,6 +12,7 @@ namespace RiseOfStrongholds.Classes
         private ConstantClass.CHARACTER_ACTIONS m_action;
         private int m_priority; //0 = highest, 1, 2....lower
         private int m_var_for_action;
+        private Guid m_guid_for_action; //guid variable for some actions
 
         /*GET & SET*/
         public ConstantClass.CHARACTER_ACTIONS getAction() { return m_action; }
@@ -40,11 +41,12 @@ namespace RiseOfStrongholds.Classes
             m_action = action;
             m_priority = -1; //undefined
             m_var_for_action = -1; //undefined
+            m_guid_for_action = Guid.Empty;
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
-        public ActionClass(ConstantClass.CHARACTER_ACTIONS action, int priority, int varForAction)
+        public ActionClass(ConstantClass.CHARACTER_ACTIONS action, int priority, int varForAction, Guid guidForAction)
         {
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
@@ -52,6 +54,7 @@ namespace RiseOfStrongholds.Classes
             m_action = action;
             m_priority = priority;
             m_var_for_action = varForAction;
+            m_guid_for_action = guidForAction;
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
@@ -59,7 +62,7 @@ namespace RiseOfStrongholds.Classes
         /*OVERRIDES*/
         public override string ToString()
         {
-            return "A: " + m_action.ToString() + "\tP: " + m_priority + "\tV: " + m_var_for_action;
+            return "A: " + m_action.ToString() + "\tP: " + m_priority + "\tV: " + m_var_for_action + "\tG: " + m_guid_for_action;
         }
     }
 }

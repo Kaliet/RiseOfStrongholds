@@ -55,6 +55,7 @@
     <Compile Include="Classes\InventoryClass.cs" />
     <Compile Include="Classes\LoggerClass.cs" />
     <Compile Include="Classes\MappingClass.cs" />
+    <Compile Include="Classes\PathFindingClass.cs" />
     <Compile Include="Classes\QueueClass.cs" />
     <Compile Include="Classes\RandomClass.cs" />
     <Compile Include="Classes\CharacterStatsClass.cs" />

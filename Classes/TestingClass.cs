@@ -97,12 +97,13 @@ namespace RiseOfStrongholds.Classes
         public void runRoomTestWithMultipleChars(RoomClass room)
         {
             List<CharacterClass> people = new List<CharacterClass>();
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 1; i++)
             {
                 people.Add(new CharacterClass(room.getRoom()[0, 0].getUniqueBlockID()));
                 ConstantClass.gameTime.GameTicked += people[i].OnGameTicked;
                 people[i].ActionUpdated += room.OnActionUpdated;
             }
+            //people.Add(new CharacterClass(room.getRoom()[3, 3].getUniqueBlockID()));
         }
     }
 }

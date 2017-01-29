@@ -39,8 +39,7 @@ namespace RiseOfStrongholds.Classes
             switch (m_type)
             {
                 case (ConstantClass.BUILDING.WALL): //case building type is WALL
-                    {
-                        
+                    {                        
                         break;
                     }                    
             }
