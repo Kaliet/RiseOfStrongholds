@@ -58,17 +58,40 @@ namespace RiseOfStrongholds
 
             TerrainClass grassTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.GRASS);
             TerrainClass hillTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.HILL);
+            RegionClass region1 = new RegionClass();
+
             RoomClass room1 = new RoomClass(4);
             room1.initializeRoom(grassTerrain);
             room1.linkAllBlocksTogetherHorizontally();
             room1.linkAllBlocksTogetherVertically();
-            //room1.getRoom()[1, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            room1.getRoom()[1, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
             room1.getRoom()[1, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
             room1.getRoom()[1, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
             room1.getRoom()[2, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
             room1.getRoom()[2, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
+
+            RoomClass room2 = new RoomClass(3);
+            room2.initializeRoom(grassTerrain);
+            room2.linkAllBlocksTogetherHorizontally();
+            room2.linkAllBlocksTogetherVertically();
+
+            //RoomClass room3 = new RoomClass(3);
+            //room3.initializeRoom(grassTerrain);
+            //room3.linkAllBlocksTogetherHorizontally();
+            //room3.linkAllBlocksTogetherVertically();
+
+            //region1.addRoom(room3.getUniqueRoomID());
+            region1.addRoom(room1.getUniqueRoomID());
+            region1.addRoom(room2.getUniqueRoomID());
+            
+            
+
+            region1.linkTwoRoomsWithExit(room1, ConstantClass.EXITS.SOUTH, room2);
+            //region1.linkTwoRoomsWithExit(room2, ConstantClass.EXITS.NORTH, room3);
+
             ///*SECOND GENERATE THE CHARACTERS IN THE WORLD*/
-            testcase.runRoomTestWithMultipleChars(room1);
+            testcase.runRoomTestWithMultipleChars(room1, region1);
+            testcase.runRoomTestWithMultipleChars(room2, region1);
 
             //---------------
             /*PROGRAM END*/

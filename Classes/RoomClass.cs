@@ -10,6 +10,8 @@ namespace RiseOfStrongholds.Classes
     {
         /*VARIABLES*/
         private Guid m_room_id;
+        private Guid m_region_id;
+        private List<Guid> m_neighboring_rooms;
         private BlockClass[,] m_Room;
         private int m_size;
 
@@ -17,6 +19,9 @@ namespace RiseOfStrongholds.Classes
         public BlockClass[,] getRoom() { return m_Room; }
         public int getSize() { return m_size; }
         public Guid getUniqueRoomID() { return m_room_id; }
+        public List<Guid> getNeighboringRooms() { return m_neighboring_rooms; }
+        public Guid getRegionID() { return m_region_id; }
+        public void setRegionID(Guid regionID) { m_region_id = regionID; }
 
         /*CONSTRUCTORS*/
         public RoomClass(int size)
@@ -29,6 +34,8 @@ namespace RiseOfStrongholds.Classes
                 m_size = size;
                 m_Room = new BlockClass[size, size];
                 m_room_id = Guid.NewGuid();
+                m_region_id = Guid.Empty;
+                m_neighboring_rooms = new List<Guid>();
             }
 
             ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable().Add(m_room_id, this);
@@ -150,7 +157,7 @@ namespace RiseOfStrongholds.Classes
                     //if (m_Room[i, j].existsNorthExit()) { output += "N"; }
                     //if (m_Room[i, j].existsSouthExit()) { output += "S"; }
                     //if (m_Room[i, j].existsWestExit()) { output += "W"; }
-                    //if (m_Room[i, j].existsEastExit()) { output += "E"; }         
+                    //if (m_Room[i, j].existsEastExit()) { output += "E"; }
                     if (m_Room[i,j].getListOfOccupants().Count > 0) //block is not empty, has occupants
                     {
                         foreach (Guid id in m_Room[i, j].getListOfOccupants())// go through list and print the occupants
@@ -171,9 +178,10 @@ namespace RiseOfStrongholds.Classes
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            ConstantClass.LOGGER.writeToMapLog(printRoom()); //sometimes the room is printed first before the character moves.
-            Console.Clear();
-            Console.WriteLine(printRoom());
+            //ConstantClass.LOGGER.writeToMapLog(printRoom()); //sometimes the room is printed first before the character moves.
+            //Console.Clear();
+            //Console.WriteLine(printRoom());
+
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }

@@ -94,7 +94,7 @@ namespace RiseOfStrongholds.Classes
         //}
 
         /*SIMULATED ROOM TEST WITH MULTIPLE CHARACTERS*/
-        public void runRoomTestWithMultipleChars(RoomClass room)
+        public void runRoomTestWithMultipleChars(RoomClass room, RegionClass region)
         {
             List<CharacterClass> people = new List<CharacterClass>();
             for (int i = 0; i < 1; i++)
@@ -102,6 +102,7 @@ namespace RiseOfStrongholds.Classes
                 people.Add(new CharacterClass(room.getRoom()[0, 0].getUniqueBlockID()));
                 ConstantClass.gameTime.GameTicked += people[i].OnGameTicked;
                 people[i].ActionUpdated += room.OnActionUpdated;
+                people[i].ActionUpdated += region.OnActionUpdated;
             }
             //people.Add(new CharacterClass(room.getRoom()[3, 3].getUniqueBlockID()));
         }

@@ -8,7 +8,7 @@ namespace RiseOfStrongholds.Classes
 {
     public class Node
     {
-        private 
+        
     }
 
     public class PathFindingClass
