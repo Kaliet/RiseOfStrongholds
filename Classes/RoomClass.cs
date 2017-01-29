@@ -31,6 +31,8 @@ namespace RiseOfStrongholds.Classes
                 m_room_id = Guid.NewGuid();
             }
 
+            ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable().Add(m_room_id, this);
+            
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
@@ -96,27 +98,27 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
-        public void linkTwoBlocksWithExit (BlockClass room1 , ConstantClass.EXITS exitFromRoom1,  BlockClass room2) //link two rooms based on exit from room1 perspective
+        public void linkTwoBlocksWithExit (BlockClass block1 , ConstantClass.EXITS exitFromBlock1,  BlockClass block2) //link two rooms based on exit from room1 perspective
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
            
-            switch (exitFromRoom1)
+            switch (exitFromBlock1)
             {                
                 case ConstantClass.EXITS.NORTH: //room2 is located north of room1
-                    room1.setExit(room2.getUniqueBlockID(), ConstantClass.EXITS.NORTH); //room1 north exit = room2 id
-                    room2.setExit(room1.getUniqueBlockID(), ConstantClass.EXITS.SOUTH); //room2 south exit = room1 id
+                    block1.setExit(block2.getUniqueBlockID(), ConstantClass.EXITS.NORTH); //room1 north exit = room2 id
+                    block2.setExit(block1.getUniqueBlockID(), ConstantClass.EXITS.SOUTH); //room2 south exit = room1 id
                     break;
                 case ConstantClass.EXITS.SOUTH: //room2 is located south of room1
-                    room1.setExit(room2.getUniqueBlockID(), ConstantClass.EXITS.SOUTH); //room1 south exit = room2 id
-                    room2.setExit(room1.getUniqueBlockID(), ConstantClass.EXITS.NORTH); //room2 norht exit = room1 id
+                    block1.setExit(block2.getUniqueBlockID(), ConstantClass.EXITS.SOUTH); //room1 south exit = room2 id
+                    block2.setExit(block1.getUniqueBlockID(), ConstantClass.EXITS.NORTH); //room2 norht exit = room1 id
                     break;
                 case ConstantClass.EXITS.WEST: //room2 is located west of room1
-                    room1.setExit(room2.getUniqueBlockID(), ConstantClass.EXITS.WEST); //room1 west exit = room2 id
-                    room2.setExit(room1.getUniqueBlockID(), ConstantClass.EXITS.EAST); //room2 east exit = room1 id
+                    block1.setExit(block2.getUniqueBlockID(), ConstantClass.EXITS.WEST); //room1 west exit = room2 id
+                    block2.setExit(block1.getUniqueBlockID(), ConstantClass.EXITS.EAST); //room2 east exit = room1 id
                     break;
                 case ConstantClass.EXITS.EAST: //room2 is located west of room1
-                    room1.setExit(room2.getUniqueBlockID(), ConstantClass.EXITS.EAST); //room1 east exit = room2 id
-                    room2.setExit(room1.getUniqueBlockID(), ConstantClass.EXITS.WEST); //room2 west exit = room1 id
+                    block1.setExit(block2.getUniqueBlockID(), ConstantClass.EXITS.EAST); //room1 east exit = room2 id
+                    block2.setExit(block1.getUniqueBlockID(), ConstantClass.EXITS.WEST); //room2 west exit = room1 id
                     break;
             }
 
@@ -134,7 +136,17 @@ namespace RiseOfStrongholds.Classes
             {
                 for (int j = 0; j < m_size; j++)
                 {
-                    output += "|\t\t";                    
+                    output += "|\t\t";
+
+                    if (m_Room[i, j].getBuildingID() != Guid.Empty) //there is a building here.
+                    {
+                        switch (ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[m_Room[i, j].getBuildingID()].getType())
+                        {
+                            case ConstantClass.BUILDING.WALL: //if building is a WALL
+                                output += "WALL";
+                                break;
+                        }
+                    }
                     //if (m_Room[i, j].existsNorthExit()) { output += "N"; }
                     //if (m_Room[i, j].existsSouthExit()) { output += "S"; }
                     //if (m_Room[i, j].existsWestExit()) { output += "W"; }
@@ -142,8 +154,8 @@ namespace RiseOfStrongholds.Classes
                     if (m_Room[i,j].getListOfOccupants().Count > 0) //block is not empty, has occupants
                     {
                         foreach (Guid id in m_Room[i, j].getListOfOccupants())// go through list and print the occupants
-                        {
-                            output += id.ToString().Substring(0, 1);                            
+                        {                            
+                            output += id.ToString().Substring(0, 1); 
                         }
                     }           
                     output += "\t\t|";
@@ -160,6 +172,8 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
             ConstantClass.LOGGER.writeToMapLog(printRoom()); //sometimes the room is printed first before the character moves.
+            Console.Clear();
+            Console.WriteLine(printRoom());
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }

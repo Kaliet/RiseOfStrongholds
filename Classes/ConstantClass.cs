@@ -14,6 +14,8 @@ namespace RiseOfStrongholds.Classes
         public static MappingClass<CharacterClass> MAPPING_TABLE_FOR_ALL_CHARS;
         public static MappingClass<BlockClass> MAPPING_TABLE_FOR_ALL_BLOCKS;
         public static MappingClass<TerrainClass> MAPPING_TABLE_FOR_ALL_TERRAINS;
+        public static MappingClass<BuildingClass> MAPPING_TABLE_FOR_ALL_BUILDINGS;
+        public static MappingClass<RoomClass> MAPPING_TABLE_FOR_ALL_ROOMS;
 
         /*enums*/
         public enum DEBUG_LEVELS { OFF, LOW, HIGH };
@@ -74,6 +76,9 @@ namespace RiseOfStrongholds.Classes
 
         /*BLOCK EXITS*/
         public enum EXITS { NORTH, SOUTH, EAST, WEST};
+
+        /*BUILDING TYPE*/
+        public enum BUILDING { HUT, FARM, WALL, STORAGE};
     }
 }
 

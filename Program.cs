@@ -44,6 +44,8 @@ namespace RiseOfStrongholds
             ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS = new MappingClass<BlockClass>();
             ConstantClass.MAPPING_TABLE_FOR_ALL_CHARS = new MappingClass<CharacterClass>();
             ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS = new MappingClass<TerrainClass>();
+            ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS = new MappingClass<BuildingClass>();
+            ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS = new MappingClass<RoomClass>();
             
             /*FIRST GENERATE THE WORLD - EXAMPLE*/  
             /*
@@ -56,11 +58,15 @@ namespace RiseOfStrongholds
 
             TerrainClass grassTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.GRASS);
             TerrainClass hillTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.HILL);
-            RoomClass room1 = new RoomClass(10);
+            RoomClass room1 = new RoomClass(4);
             room1.initializeRoom(grassTerrain);
             room1.linkAllBlocksTogetherHorizontally();
             room1.linkAllBlocksTogetherVertically();
-
+            //room1.getRoom()[1, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            room1.getRoom()[1, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            room1.getRoom()[1, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            room1.getRoom()[2, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            room1.getRoom()[2, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
             ///*SECOND GENERATE THE CHARACTERS IN THE WORLD*/
             testcase.runRoomTestWithMultipleChars(room1);
 
