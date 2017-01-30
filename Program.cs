@@ -48,13 +48,6 @@ namespace RiseOfStrongholds
             ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS = new MappingClass<RoomClass>();
             
             /*FIRST GENERATE THE WORLD - EXAMPLE*/  
-            /*
-             * 
-             *                   block5 <-> block4
-             *                      |         |
-             *        block1 <-> block2 <-> block3
-             * 
-             */
 
             TerrainClass grassTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.GRASS);
             TerrainClass hillTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.HILL);
@@ -64,16 +57,17 @@ namespace RiseOfStrongholds
             room1.initializeRoom(grassTerrain);
             room1.linkAllBlocksTogetherHorizontally();
             room1.linkAllBlocksTogetherVertically();
-            room1.getRoom()[1, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            
             room1.getRoom()[1, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
             room1.getRoom()[1, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
             room1.getRoom()[2, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            room1.getRoom()[2, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            room1.getRoom()[2, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);            
 
-            RoomClass room2 = new RoomClass(3);
+            RoomClass room2 = new RoomClass(4);
             room2.initializeRoom(grassTerrain);
             room2.linkAllBlocksTogetherHorizontally();
             room2.linkAllBlocksTogetherVertically();
+            room2.getRoom()[0, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
 
             //RoomClass room3 = new RoomClass(3);
             //room3.initializeRoom(grassTerrain);
@@ -86,7 +80,7 @@ namespace RiseOfStrongholds
             
             
 
-            region1.linkTwoRoomsWithExit(room1, ConstantClass.EXITS.SOUTH, room2);
+            region1.linkTwoRoomsWithExit(room1, ConstantClass.EXITS.SOUTH, room2, 3);
             //region1.linkTwoRoomsWithExit(room2, ConstantClass.EXITS.NORTH, room3);
 
             ///*SECOND GENERATE THE CHARACTERS IN THE WORLD*/

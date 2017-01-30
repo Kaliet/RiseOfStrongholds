@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 namespace RiseOfStrongholds.Classes
 {
+    /* 
+     *    [0,0] [0,1] [0,2] [0,size-1]
+     *    [1,0]   .     .     .
+     *    [2,0]   .     .     .
+     *    [size-1,0]
+     * 
+     * 
+     */
     public class RoomClass //room consisting of x*x blocks
     {
         /*VARIABLES*/
@@ -154,10 +162,10 @@ namespace RiseOfStrongholds.Classes
                                 break;
                         }
                     }
-                    //if (m_Room[i, j].existsNorthExit()) { output += "N"; }
-                    //if (m_Room[i, j].existsSouthExit()) { output += "S"; }
-                    //if (m_Room[i, j].existsWestExit()) { output += "W"; }
-                    //if (m_Room[i, j].existsEastExit()) { output += "E"; }
+                    if (m_Room[i, j].existsNorthExit()) { output += "N"; }
+                    if (m_Room[i, j].existsSouthExit()) { output += "S"; }
+                    if (m_Room[i, j].existsWestExit()) { output += "W"; }
+                    if (m_Room[i, j].existsEastExit()) { output += "E"; }
                     if (m_Room[i,j].getListOfOccupants().Count > 0) //block is not empty, has occupants
                     {
                         foreach (Guid id in m_Room[i, j].getListOfOccupants())// go through list and print the occupants
