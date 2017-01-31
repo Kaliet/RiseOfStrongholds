@@ -60,14 +60,20 @@ namespace RiseOfStrongholds
             
             room1.getRoom()[1, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
             room1.getRoom()[1, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            room1.getRoom()[2, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
             room1.getRoom()[2, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
             room1.getRoom()[2, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);            
+            room1.getRoom()[3, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            room1.getRoom()[3, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            room1.getRoom()[3, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            room1.getRoom()[3, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);            
 
-            RoomClass room2 = new RoomClass(4);
+
+            RoomClass room2 = new RoomClass(3);
             room2.initializeRoom(grassTerrain);
             room2.linkAllBlocksTogetherHorizontally();
             room2.linkAllBlocksTogetherVertically();
-            room2.getRoom()[0, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            room2.getRoom()[0, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);            
 
             //RoomClass room3 = new RoomClass(3);
             //room3.initializeRoom(grassTerrain);
@@ -75,12 +81,12 @@ namespace RiseOfStrongholds
             //room3.linkAllBlocksTogetherVertically();
 
             //region1.addRoom(room3.getUniqueRoomID());
-            region1.addRoom(room1.getUniqueRoomID());
             region1.addRoom(room2.getUniqueRoomID());
+            region1.addRoom(room1.getUniqueRoomID());
             
             
 
-            region1.linkTwoRoomsWithExit(room1, ConstantClass.EXITS.SOUTH, room2, 3);
+            region1.linkTwoRoomsWithExit(room1, ConstantClass.EXITS.WEST, room2, 5);
             //region1.linkTwoRoomsWithExit(room2, ConstantClass.EXITS.NORTH, room3);
 
             ///*SECOND GENERATE THE CHARACTERS IN THE WORLD*/

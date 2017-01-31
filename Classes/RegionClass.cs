@@ -8,6 +8,8 @@ namespace RiseOfStrongholds.Classes
 {
     public class RegionClass
     {
+        //room [row,column]
+
         /*VARIABLES*/
         private Guid m_region_id;
         private List<Guid> m_list_of_rooms;
@@ -41,18 +43,99 @@ namespace RiseOfStrongholds.Classes
         public void linkTwoRoomsWithExit(RoomClass room1, ConstantClass.EXITS exitFromRoom1, RoomClass room2, int numberOfSharedExits) //links 2 rooms based on defined number of exits (min = 1, max = smallest room size)
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-            //TODO: Must check if block is wall then it cannot go as common block
-            
-            //1. find common blocks between two rooms
-            int totalCommonBlocks = Math.Min(room1.getSize(), room2.getSize()); //total # of common blocks is the smallest room size            
+            //TODO: Must check if block is wall then it cannot go as common block                        
+
             int randomBlock;
+            int room1Size, room2Size;
 
             List<int> blocks = new List<int>();
 
-            for (int i = 0; i < totalCommonBlocks; i++)
+            for (int i = 0; i < Math.Min(room1.getSize(), room2.getSize()); i++)
             {
-                blocks.Add(i); //add all block indices to list
+                blocks.Add(i); //add all block indices from smallest room to list
             }
+
+            //1. find common blocks between two rooms minus number of walls
+            room1Size = room1.getSize();
+            room2Size = room2.getSize();
+
+            //go over room1 and check if there are walls. if so, exclude it from shared blocks list
+            for (int i = 0; i < room1.getSize(); i++) 
+            {
+                if (exitFromRoom1 == ConstantClass.EXITS.NORTH) //room2 is north of room1 --> go over room1 [0,i] and room2[getSize-1,i]
+                {
+                    if (room1.getRoom()[0,i].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room1.getRoom()[0, i].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
+                    {
+                        if (blocks.Contains(i)) { blocks.Remove(i); }
+                        room1Size--;
+                    } 
+                }
+                else if (exitFromRoom1 == ConstantClass.EXITS.SOUTH) //room2 is south of room1 --> go over room1[getSize-1,i] and room2[0,i]
+                {
+                    if (room1.getRoom()[room1.getSize() - 1, i].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room1.getRoom()[room1.getSize() - 1, i].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
+                    {
+                        if (blocks.Contains(i)) { blocks.Remove(i); }
+                        room1Size--;
+                    } 
+                }
+                else if (exitFromRoom1 == ConstantClass.EXITS.WEST) //room2 is west of room1 --> go over room1[i,0] and room2[i,getSize-1]
+                {
+                    if (room1.getRoom()[i, 0].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room1.getRoom()[i, 0].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
+                    {
+                        if (blocks.Contains(i)) { blocks.Remove(i); }
+                        room1Size--;
+                    } 
+                }
+                else if (exitFromRoom1 == ConstantClass.EXITS.EAST) //room2 is east of room1 --> go over room1[i,getSize-1] and room2[i,0]
+                {
+                    if (room1.getRoom()[i, room1.getSize() - 1].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room1.getRoom()[i, room1.getSize() - 1].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
+                    {
+                        if (blocks.Contains(i)) { blocks.Remove(i); }
+                        room1Size--;
+                    } 
+                } 
+            }
+
+            for (int i = 0; i < room2.getSize(); i++) //go over room2 and check if there are walls. if so, exclude it from blocks list
+            {
+                if (exitFromRoom1 == ConstantClass.EXITS.NORTH) //room2 is north of room1 --> go over room1 [0,i] and room2[getSize-1,i]
+                {                    
+                    if (room2.getRoom()[room2.getSize() - 1, i].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room2.getRoom()[room2.getSize() - 1, i].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
+                    {
+                        if (blocks.Contains(i)) { blocks.Remove(i); }
+                        room2Size--;
+                    } 
+                }
+                else if (exitFromRoom1 == ConstantClass.EXITS.SOUTH) //room2 is south of room1 --> go over room1[getSize-1,i] and room2[0,i]
+                {                    
+                    if (room2.getRoom()[0, i].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room2.getRoom()[0, i].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
+                    {
+                        if (blocks.Contains(i)) { blocks.Remove(i); }
+                        room2Size--;
+                    } 
+                }
+                else if (exitFromRoom1 == ConstantClass.EXITS.WEST) //room2 is west of room1 --> go over room1[i,0] and room2[i,getSize-1]
+                {                    
+                    if (room2.getRoom()[i, room2.getSize() - 1].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room2.getRoom()[i, room2.getSize() - 1].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
+                    {
+                        if (blocks.Contains(i)) { blocks.Remove(i); }
+                        room2Size--;
+                    } 
+                }
+                else if (exitFromRoom1 == ConstantClass.EXITS.EAST) //room2 is east of room1 --> go over room1[i,getSize-1] and room2[i,0]
+                {                    
+                    if (room2.getRoom()[i, 0].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room2.getRoom()[i, 0].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
+                    {
+                        if (blocks.Contains(i)) { blocks.Remove(i); }
+                        room2Size--;
+                    } 
+                }
+            }
+
+            int totalCommonBlocks = Math.Min(room1Size,room2Size); //total # of common blocks is the smallest room size            
+                             
+            if (totalCommonBlocks == 0) { return; } //if there are no common blocks , then return without doing anything
+            if (totalCommonBlocks < numberOfSharedExits) { numberOfSharedExits = totalCommonBlocks; } //cannot define more shared exits can what is possible
 
             if (numberOfSharedExits >= 1 && numberOfSharedExits <= totalCommonBlocks) //number of shared exits must be greater than 1 and less than equal to smallest room size
             {                
