@@ -133,8 +133,8 @@ namespace RiseOfStrongholds.Classes
             }
 
             int totalCommonBlocks = Math.Min(room1Size,room2Size); //total # of common blocks is the smallest room size            
-                             
-            if (totalCommonBlocks == 0) { return; } //if there are no common blocks , then return without doing anything
+
+            if (totalCommonBlocks == 0 || blocks.Count == 0) { return; } //if there are no common blocks or block list is empty, then return without doing anything
             if (totalCommonBlocks < numberOfSharedExits) { numberOfSharedExits = totalCommonBlocks; } //cannot define more shared exits can what is possible
 
             if (numberOfSharedExits >= 1 && numberOfSharedExits <= totalCommonBlocks) //number of shared exits must be greater than 1 and less than equal to smallest room size
