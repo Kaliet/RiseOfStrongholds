@@ -18,10 +18,12 @@ namespace RiseOfStrongholds.Classes
         public ConstantClass.CHARACTER_ACTIONS getAction() { return m_action; }
         public int getPriority() { return m_priority; }
         public int getVarForAction() { return m_var_for_action; }
+        public Guid getGuidForAction() { return m_guid_for_action; }
 
         public void setAction(ConstantClass.CHARACTER_ACTIONS action) { m_action = action; }
         public void setPriority(int value) { m_priority = value; }
         public void setVarForAction (int value) { m_var_for_action = value; }
+        public void setGuidForAction(Guid value) { m_guid_for_action = value; }
         public void modifyVarForAction (int value) { m_var_for_action += value; }
 
         /*CONSTRUCTORS*/

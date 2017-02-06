@@ -206,6 +206,27 @@ namespace RiseOfStrongholds.Classes
                     }
                     m_action_queue.getQueue().RemoveAt(index); //remove from index
                 }
+                else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.SEARCH) //SEARCHES
+                {
+                    Guid targetBlockID = m_action_queue.getQueue()[index].getGuidForAction();
+
+                    if (targetBlockID == m_block_id) //arrived
+                    {
+                        m_action_queue.getQueue().RemoveAt(index); //remove from index
+                    }
+                    else if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //wall
+                    {
+                        m_action_queue.getQueue().RemoveAt(index); //remove from index
+                    }
+                    else
+                    {
+                        PathFindingClass searchPath = new PathFindingClass(m_block_id, targetBlockID);
+
+                        ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Remove(m_unique_character_id);//remove character id from previuos block list of occupants
+                        m_block_id = searchPath.returnNextBlockGuidToMove();
+                        ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Add(m_unique_character_id); //adds character id as part of block list of occupants
+                    }
+                }
                 
             }
             else 
@@ -234,7 +255,17 @@ namespace RiseOfStrongholds.Classes
                     m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_SLEEPY); //if sleepy , start deducting energy
                 }
 
-                m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE,m_block_id));
+                /*TEST BLOCK FOR WALK ACTION*/
+                //m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE,m_block_id)); //walks
+                /*-*/
+
+                /*TEST BLOCK FOR SEARCH ACTION*/
+                Guid roomID = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getRoomID();
+                int roomSize = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[roomID].getSize();
+                Guid targetBlockID = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[roomID].getRoom()[0, 2].getUniqueBlockID();
+                m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SEARCH, ConstantClass.ACTION_SEARCH_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE, targetBlockID)); //searches
+                /*-*/
+
                 int additionalTerrainFatigue = ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getTerrainID()].getFatigueCost();
 
                 m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_WALKING + additionalTerrainFatigue); //for now start walking

@@ -12,7 +12,7 @@ namespace RiseOfStrongholds.Classes
         private List<T> m_queue;
 
         /*GET & SET*/
-        public List<T> getQueue() { return m_queue; }
+        public List<T> getQueue()  { return m_queue; }
 
         /*CONSTRUCTOR*/
         public QueueClass()
