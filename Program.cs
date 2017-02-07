@@ -71,13 +71,13 @@ namespace RiseOfStrongholds
             //room1.getRoom()[3, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);            
 
 
-            RoomClass room2 = new RoomClass(3);
-            room2.initializeRoom(grassTerrain);
-            room2.linkAllBlocksTogetherHorizontally();
-            room2.linkAllBlocksTogetherVertically();
-            room2.getRoom()[1, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            room2.getRoom()[1, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            room2.getRoom()[1, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            //RoomClass room2 = new RoomClass(3);
+            //room2.initializeRoom(grassTerrain);
+            //room2.linkAllBlocksTogetherHorizontally();
+            //room2.linkAllBlocksTogetherVertically();
+            //room2.getRoom()[1, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            //room2.getRoom()[1, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            //room2.getRoom()[1, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
 
             //RoomClass room3 = new RoomClass(2);
             //room3.initializeRoom(grassTerrain);

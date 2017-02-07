@@ -104,17 +104,17 @@ namespace RiseOfStrongholds.Classes
                 people[i].ActionUpdated += room.OnActionUpdated;
                 people[i].ActionUpdated += region.OnActionUpdated;
             }
-            CharacterClass person2 = new CharacterClass(room.getRoom()[2, 2].getUniqueBlockID());
+            CharacterClass person2 = new CharacterClass(room.getRoom()[0, 2].getUniqueBlockID());
             ConstantClass.gameTime.GameTicked += person2.OnGameTicked;
             person2.ActionUpdated += room.OnActionUpdated;
             person2.ActionUpdated += region.OnActionUpdated;            
             //person2.FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_SEARCH_PRIORITY, 0, room.getRoom()[1,0].getUniqueBlockID()));
-            person2.FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_SEARCH_PRIORITY, 0, people[0].getUniqueCharacterID()));
+            person2.FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_CHAR, ConstantClass.ACTION_SEARCH_PRIORITY, 0, people[0].getUniqueCharacterID()));
 
             people.Add(person2);
-
-            //Guid p2blockID = people[1].getBlockID();
-            //people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SEARCH, ConstantClass.ACTION_SEARCH_PRIORITY, 0, ref p2blockID));            
+            
+            people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_SEARCH_PRIORITY, 0, room.getRoom()[2,2].getUniqueBlockID()));
+            
         }
     }
 }

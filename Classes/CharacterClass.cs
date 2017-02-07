@@ -201,14 +201,27 @@ namespace RiseOfStrongholds.Classes
                         ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Remove(m_unique_character_id);//remove character id from previuos block list of occupants
                         m_block_id = possibleExitsToWalk[exitNumber % possibleExitsToWalk.Count]; //character moves to a different block - new id defined
                         ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Add(m_unique_character_id); //adds character id as part of block list of occupants
+                        deductEnergyBasedOnTerrain();
 
                         ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is going to walk " + printDirection(allExits, m_block_id) + " into block " + m_block_id.ToString().Substring(0, 2) + ".");
                     }
                     m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
                 }
-                else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK) //SEARCHES FOR SPECIFIC BLOCK - immobile
+                else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK ||
+                         m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_CHAR) //SEARCHES FOR SPECIFIC BLOCK or CHAR
                 {
-                    Guid targetBlockID = m_action_queue.getQueue()[index].getGuidForAction();
+                    Guid targetBlockID = Guid.Empty;
+                    Guid targetCharID = Guid.Empty;
+
+                    if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_CHAR)
+                    {
+                        targetCharID = m_action_queue.getQueue()[index].getGuidForAction();
+                        targetBlockID = ConstantClass.MAPPING_TABLE_FOR_ALL_CHARS.getMappingTable()[targetCharID].getBlockID();
+                    }
+                    else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK)
+                    {
+                        targetBlockID = m_action_queue.getQueue()[index].getGuidForAction();
+                    }
 
                     if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable().ContainsKey(targetBlockID)) //checks if targetblockID is a block ID
                     {
@@ -227,6 +240,7 @@ namespace RiseOfStrongholds.Classes
                             ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Remove(m_unique_character_id);//remove character id from previuos block list of occupants
                             m_block_id = searchPath.returnNextBlockGuidToMove();
                             ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Add(m_unique_character_id); //adds character id as part of block list of occupants
+                            deductEnergyBasedOnTerrain();
                         }
                     }
                     else
@@ -234,13 +248,7 @@ namespace RiseOfStrongholds.Classes
                         ConstantClass.LOGGER.writeToGameLog(targetBlockID + " is not a blockID. Removing action.");
                         m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
                     }
-                }
-                else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_CHAR) //SEARCHES FOR SPECIFIC CHARACTER - might be mobile
-                {
-                    Guid targetCharID = m_action_queue.getQueue()[index].getGuidForAction();
-
-                }
-                
+                }                
             }
             else 
             {
@@ -279,11 +287,10 @@ namespace RiseOfStrongholds.Classes
                 //m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SEARCH, ConstantClass.ACTION_SEARCH_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE, targetBlockID)); //searches
                 /*-*/
 
-                int additionalTerrainFatigue = ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getTerrainID()].getFatigueCost();
+                deductEnergyBasedOnTerrain();
 
-                m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_WALKING + additionalTerrainFatigue); //for now start walking
-                
             }
+
 
             OnActionUpdated(); //raise event
 
@@ -297,6 +304,16 @@ namespace RiseOfStrongholds.Classes
             m_action_queue.getQueue().Add(action); //searches
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+
+        private void deductEnergyBasedOnTerrain()
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            int additionalTerrainFatigue = ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getTerrainID()].getFatigueCost();
+            m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_WALKING + additionalTerrainFatigue); //for now start walking
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
         /*EVENTS HANDLER*/
