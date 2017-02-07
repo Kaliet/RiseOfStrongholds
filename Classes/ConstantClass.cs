@@ -21,7 +21,7 @@ namespace RiseOfStrongholds.Classes
         public enum DEBUG_LEVELS { OFF, LOW, HIGH };
 
         /*character enums*/
-        public enum CHARACTER_ACTIONS { IDLE, EAT, SLEEP , WALK, SEARCH};
+        public enum CHARACTER_ACTIONS { IDLE, EAT, SLEEP , WALK, FIND_BLOCK, FIND_CHAR};
         public enum CHARACTER_SLEEP_STATUS { AWAKE, SLEEPY }; //awake = can perform actions, sleepy = must sleep otherwise energy decreases to 0
         public enum CHARACTER_HUNGER_STATUS { FULL, HUNGRY }; //hungry = top priority is to find food ; otherwise HP decreases
 
@@ -80,6 +80,10 @@ namespace RiseOfStrongholds.Classes
 
         /*BUILDING TYPE*/
         public enum BUILDING { HUT, FARM, WALL, STORAGE};
+
+        /*PATHFINDING PENALTIES*/
+        public static int WALL_PENALTY_TO_H_VALUE = 10;
+                
     }
 }
 

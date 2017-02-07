@@ -57,25 +57,27 @@ namespace RiseOfStrongholds
             room1.initializeRoom(grassTerrain);
             room1.linkAllBlocksTogetherHorizontally();
             room1.linkAllBlocksTogetherVertically();
-            
+
             room1.getRoom()[1, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
             room1.getRoom()[1, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            room1.getRoom()[2, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            room1.getRoom()[1, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            //room1.getRoom()[2, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
             room1.getRoom()[2, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            room1.getRoom()[2, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);            
-            room1.getRoom()[3, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            //room1.getRoom()[2, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);            
+            room1.getRoom()[2, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);            
+            //room1.getRoom()[3, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
             room1.getRoom()[3, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            room1.getRoom()[3, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            room1.getRoom()[3, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);            
+            //room1.getRoom()[3, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            //room1.getRoom()[3, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);            
 
 
-            //RoomClass room2 = new RoomClass(3);
-            //room2.initializeRoom(grassTerrain);
-            //room2.linkAllBlocksTogetherHorizontally();
-            //room2.linkAllBlocksTogetherVertically();
-            //room2.getRoom()[1, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            //room2.getRoom()[1, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            //room2.getRoom()[1, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            RoomClass room2 = new RoomClass(3);
+            room2.initializeRoom(grassTerrain);
+            room2.linkAllBlocksTogetherHorizontally();
+            room2.linkAllBlocksTogetherVertically();
+            room2.getRoom()[1, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            room2.getRoom()[1, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            room2.getRoom()[1, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
 
             //RoomClass room3 = new RoomClass(2);
             //room3.initializeRoom(grassTerrain);
@@ -101,3 +103,20 @@ namespace RiseOfStrongholds
         }
     }
 }
+
+
+/* GIT COMMANDS
+ * 
+ *  
+    fetch:
+    git -c diff.mnemonicprefix=false -c core.quotepath=false fetch origin
+
+    pull:
+    git -c diff.mnemonicprefix=false -c core.quotepath=false fetch origin
+    git -c diff.mnemonicprefix=false -c core.quotepath=false pull origin master
+    git -c diff.mnemonicprefix=false -c core.quotepath=false submodule update --init --recursive
+
+
+
+ * 
+ */

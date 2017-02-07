@@ -146,7 +146,67 @@ namespace RiseOfStrongholds.Classes
                         && obj.m_Y_value == adjBlock.m_Y_value) == null)
                     {
                         adjBlock.m_G_value = g;
-                        adjBlock.m_H_value = calculateH(adjBlock.m_X_value, adjBlock.m_Y_value, m_endNode.m_X_value, m_endNode.m_Y_value);
+                        adjBlock.m_H_value = calculateH(adjBlock.m_X_value, adjBlock.m_Y_value, m_endNode.m_X_value, m_endNode.m_Y_value); //calculates the city block distance
+                        /*check if walls are in the way, if yes then H values increases dramatically*/
+                        int minX = Math.Min(adjBlock.m_X_value, m_endNode.m_X_value);
+                        int maxX = Math.Max(adjBlock.m_X_value, m_endNode.m_X_value);
+                        int minY = Math.Min(adjBlock.m_Y_value, m_endNode.m_Y_value);
+                        int maxY = Math.Max(adjBlock.m_Y_value, m_endNode.m_Y_value);
+
+                        /*scan route to see there are no walls - penalize if there are*/
+                        Guid buildingID = Guid.Empty;
+                        int i, j;
+                        if (adjBlock.m_X_value <= adjBlock.m_Y_value)
+                        {
+                            //1. check horizontal then vertical path to see if there are walls along the route
+                            //check in horizontal movement if there are walls in the way (to compensate heurestic calculations of A* pathfinding)
+                            for (j = minY; j <= maxY; j++)
+                            {
+                                buildingID = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[m_currentRoomID].getRoom()[0, j].getBuildingID();
+                                if (buildingID == Guid.Empty) { continue; } // if empty block then continue to next counter
+                                else if (ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[buildingID].getType() == ConstantClass.BUILDING.WALL) //if block has WALL
+                                {
+                                    adjBlock.m_H_value += ConstantClass.WALL_PENALTY_TO_H_VALUE;
+                                }
+                            }                            
+                            //check in vertical movement if there are walls in the way (to compensate heurestic calculations of A* pathfinding)
+                            for (i = minX; i <= maxX; i++)
+                            {
+                                buildingID = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[m_currentRoomID].getRoom()[i, maxY].getBuildingID();
+                                if (buildingID == Guid.Empty) { continue; } // if empty block then continue to next counter
+                                else if (ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[buildingID].getType() == ConstantClass.BUILDING.WALL) //if block has WALL
+                                {
+                                    adjBlock.m_H_value += ConstantClass.WALL_PENALTY_TO_H_VALUE;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //2. check vertical path to see if there are walls along the route
+                            //check in vertical movement if there are walls in the way (to compensate heurestic calculations of A* pathfinding)
+                            for (i = minX; i <= maxX; i++)
+                            {
+                                buildingID = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[m_currentRoomID].getRoom()[i, 0].getBuildingID();
+                                if (buildingID == Guid.Empty) { continue; } // if empty block then continue to next counter
+                                else if (ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[buildingID].getType() == ConstantClass.BUILDING.WALL) //if block has WALL
+                                {
+                                    adjBlock.m_H_value += ConstantClass.WALL_PENALTY_TO_H_VALUE;
+                                }
+                            }
+
+                            //check in horizontal movement if there are walls in the way (to compensate heurestic calculations of A* pathfinding)
+                            for (j = minY; j <= maxY; j++)
+                            {
+                                buildingID = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[m_currentRoomID].getRoom()[maxX, j].getBuildingID();
+                                if (buildingID == Guid.Empty) { continue; } // if empty block then continue to next counter
+                                else if (ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[buildingID].getType() == ConstantClass.BUILDING.WALL) //if block has WALL
+                                {
+                                    adjBlock.m_H_value += ConstantClass.WALL_PENALTY_TO_H_VALUE;
+                                }
+                            }
+                        }          
+                        /*-*/
+
                         adjBlock.m_F_value = adjBlock.m_G_value + adjBlock.m_H_value;
                         adjBlock.m_parent = m_currentNode;
 
@@ -173,7 +233,7 @@ namespace RiseOfStrongholds.Classes
             return m_currentNode.m_blockID;
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH            
-        }
+        }        
 
         private List<Node> findWalkableAdjBlocks(int x, int y)
         {
@@ -181,61 +241,31 @@ namespace RiseOfStrongholds.Classes
 
             List<Node> proposal = new List<Node>();
             RoomClass room = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[m_currentRoomID];
-
-            //Node rightNode = new Node(x + 1, y, room.getRoom()[x + 1, y].getUniqueBlockID()); //right of node
-            //Node leftNode = new Node(x - 1, y, room.getRoom()[x - 1, y].getUniqueBlockID()); //left of node
-            //Node bottomNode = new Node(x, y + 1, room.getRoom()[x, y + 1].getUniqueBlockID()); //bottom of node
-            //Node topNode = new Node(x, y - 1, room.getRoom()[x, y - 1].getUniqueBlockID()); //top of node
             Node rightNode = null;
             Node leftNode = null;
             Node bottomNode = null;
             Node topNode = null;
-
             bool rightFlag = true;
             bool leftFlag = true;
             bool bottomFlag = true;
             bool topFlag = true;
 
-            //proposal.Add(rightNode);
-            //proposal.Add(leftNode);
-            //proposal.Add(bottomNode);
-            //proposal.Add(topNode);
-
             //do not add x - 1(left node)
-            if (x == 0 || (room.getRoom()[x - 1, y].getBuildingID() != Guid.Empty)) //out of room bounds or building exists 
-            {
-                //rightNode = new Node(x + 1, y, room.getRoom()[x + 1, y].getUniqueBlockID()); //right of node                
-                //bottomNode = new Node(x, y + 1, room.getRoom()[x, y + 1].getUniqueBlockID()); //bottom of node
-                //topNode = new Node(x, y - 1, room.getRoom()[x, y - 1].getUniqueBlockID()); //top of node
-                leftFlag = false;
-            }
+            if (x == 0 || (room.getRoom()[x - 1, y].getBuildingID() != Guid.Empty && //block is not empty - condition mandatory to avoid looking up building with guid.empty
+                (ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room.getRoom()[x - 1, y].getBuildingID()].getType() == ConstantClass.BUILDING.WALL))) { leftFlag = false; } //out of room bounds or WALL exists
 
             //do not add y - 1 (top node)
-            if (y == 0 || (room.getRoom()[x, y - 1].getBuildingID() != Guid.Empty)) //out of room bounds or building exists 
-            {
-                //rightNode = new Node(x + 1, y, room.getRoom()[x + 1, y].getUniqueBlockID()); //right of node
-                //leftNode = new Node(x - 1, y, room.getRoom()[x - 1, y].getUniqueBlockID()); //left of node
-                //bottomNode = new Node(x, y + 1, room.getRoom()[x, y + 1].getUniqueBlockID()); //bottom of node                
-                topFlag = false;
-            }
+            if (y == 0 || (room.getRoom()[x, y - 1].getBuildingID() != Guid.Empty && //block is not empty - condition mandatory to avoid looking up building with guid.empty
+                (ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room.getRoom()[x, y - 1].getBuildingID()].getType() == ConstantClass.BUILDING.WALL))) { topFlag = false; }//out of room bounds or WALL exists 
 
             //do not add x + 1 (right node)
-            if ((x == room.getSize() - 1) || (room.getRoom()[x + 1, y].getBuildingID() != Guid.Empty)) //out of room bounds or building exists 
-            {
-                //leftNode = new Node(x - 1, y, room.getRoom()[x - 1, y].getUniqueBlockID()); //left of node
-                //bottomNode = new Node(x, y + 1, room.getRoom()[x, y + 1].getUniqueBlockID()); //bottom of node
-                //topNode = new Node(x, y - 1, room.getRoom()[x, y - 1].getUniqueBlockID()); //top of node
-                rightFlag = false;
-            }
+            if ((x == room.getSize() - 1) || (room.getRoom()[x + 1, y].getBuildingID() != Guid.Empty && //block is not empty - condition mandatory to avoid looking up building with guid.empty
+                (ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room.getRoom()[x + 1, y].getBuildingID()].getType() == ConstantClass.BUILDING.WALL))) { rightFlag = false; }//out of room bounds or WALL exists 
 
             // do not add y + 1 (bottom node)
-            if ((y == room.getSize() - 1) || (room.getRoom()[x, y + 1].getBuildingID() != Guid.Empty)) //out of room bounds or building exists
-            {
-                //rightNode = new Node(x + 1, y, room.getRoom()[x + 1, y].getUniqueBlockID()); //right of node
-                //leftNode = new Node(x - 1, y, room.getRoom()[x - 1, y].getUniqueBlockID()); //left of node                
-                //topNode = new Node(x, y - 1, room.getRoom()[x, y - 1].getUniqueBlockID()); //top of node
-                bottomFlag = false;
-            }
+            if ((y == room.getSize() - 1) || (room.getRoom()[x, y + 1].getBuildingID() != Guid.Empty && //block is not empty - condition mandatory to avoid looking up building with guid.empty
+                (ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room.getRoom()[x, y + 1].getBuildingID()].getType() == ConstantClass.BUILDING.WALL))) { bottomFlag = false; }//out of room bounds or WALL exists
+
 
             if (topFlag)
             {

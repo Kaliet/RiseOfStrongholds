@@ -142,8 +142,8 @@ namespace RiseOfStrongholds.Classes
             /*DEBUG PRINTING*/
             ConstantClass.LOGGER.writeToQueueLog(outputPersonGUID() + " = " + m_action_queue.printQueue());//print queue
             ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is in block " + m_block_id.ToString().Substring(0, 2) + " position(" + 
-                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionX() + "," +
-                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionY() + "). Exits: " + ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].printAllAvailableExits());
+                        ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionX() + "," +
+                        ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionY() + "). Exits: " + ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].printAllAvailableExits());
               
             m_stats.modifyHungerRate(ConstantClass.GAME_SPEED); //hunger increases based on game speed (1 sec = how many game time mins)
             m_stats.modifySleepRate(ConstantClass.GAME_SPEED); //sleepiness increases based on game speed (1 sec = how many game time mins)
@@ -204,28 +204,41 @@ namespace RiseOfStrongholds.Classes
 
                         ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is going to walk " + printDirection(allExits, m_block_id) + " into block " + m_block_id.ToString().Substring(0, 2) + ".");
                     }
-                    m_action_queue.getQueue().RemoveAt(index); //remove from index
+                    m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
                 }
-                else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.SEARCH) //SEARCHES
+                else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK) //SEARCHES FOR SPECIFIC BLOCK - immobile
                 {
                     Guid targetBlockID = m_action_queue.getQueue()[index].getGuidForAction();
 
-                    if (targetBlockID == m_block_id) //arrived
+                    if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable().ContainsKey(targetBlockID)) //checks if targetblockID is a block ID
                     {
-                        m_action_queue.getQueue().RemoveAt(index); //remove from index
-                    }
-                    else if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //wall
-                    {
-                        m_action_queue.getQueue().RemoveAt(index); //remove from index
+                        if (targetBlockID == m_block_id) //arrived
+                        {
+                            m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
+                        }
+                        else if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //wall
+                        {
+                            m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
+                        }
+                        else
+                        {
+                            PathFindingClass searchPath = new PathFindingClass(m_block_id, targetBlockID);
+
+                            ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Remove(m_unique_character_id);//remove character id from previuos block list of occupants
+                            m_block_id = searchPath.returnNextBlockGuidToMove();
+                            ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Add(m_unique_character_id); //adds character id as part of block list of occupants
+                        }
                     }
                     else
                     {
-                        PathFindingClass searchPath = new PathFindingClass(m_block_id, targetBlockID);
-
-                        ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Remove(m_unique_character_id);//remove character id from previuos block list of occupants
-                        m_block_id = searchPath.returnNextBlockGuidToMove();
-                        ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Add(m_unique_character_id); //adds character id as part of block list of occupants
+                        ConstantClass.LOGGER.writeToGameLog(targetBlockID + " is not a blockID. Removing action.");
+                        m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
                     }
+                }
+                else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_CHAR) //SEARCHES FOR SPECIFIC CHARACTER - might be mobile
+                {
+                    Guid targetCharID = m_action_queue.getQueue()[index].getGuidForAction();
+
                 }
                 
             }
@@ -243,15 +256,15 @@ namespace RiseOfStrongholds.Classes
                     m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY);
                 }
 
-                /*DECISIONS BASED ON BIOLOGICAL NEEDS*/
+                /*DECISIONS BASED ON BIOLOGICAL NEEDS*/                
                 if (m_stats.getHungerStatus() == ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY)
-                {
-                    m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT,ConstantClass.ACTION_EAT_PRIORITY,ConstantClass.VARIABLE_FOR_ACTION_NONE,Guid.Empty));
+                {                    
+                    m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT, ConstantClass.ACTION_EAT_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE, Guid.Empty));
                     m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_HUNGRY); //if hungry , start deducting energy
                 }
                 if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY)
                 {
-                    m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SLEEP,ConstantClass.ACTION_SLEEP_PRIORITY,ConstantClass.MINIMUM_NUMBER_OF_SLEEP_HOURS*ConstantClass.MINUTES_IN_ONE_HOUR,Guid.Empty));
+                    m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SLEEP, ConstantClass.ACTION_SLEEP_PRIORITY, ConstantClass.MINIMUM_NUMBER_OF_SLEEP_HOURS * ConstantClass.MINUTES_IN_ONE_HOUR, Guid.Empty));
                     m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_SLEEPY); //if sleepy , start deducting energy
                 }
 
@@ -260,10 +273,10 @@ namespace RiseOfStrongholds.Classes
                 /*-*/
 
                 /*TEST BLOCK FOR SEARCH ACTION*/
-                Guid roomID = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getRoomID();
-                int roomSize = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[roomID].getSize();
-                Guid targetBlockID = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[roomID].getRoom()[0, 2].getUniqueBlockID();
-                m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SEARCH, ConstantClass.ACTION_SEARCH_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE, targetBlockID)); //searches
+                //Guid roomID = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getRoomID();
+                //int roomSize = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[roomID].getSize();
+                //Guid targetBlockID = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[roomID].getRoom()[1, 0].getUniqueBlockID();                
+                //m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SEARCH, ConstantClass.ACTION_SEARCH_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE, targetBlockID)); //searches
                 /*-*/
 
                 int additionalTerrainFatigue = ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getTerrainID()].getFatigueCost();
@@ -277,14 +290,13 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
-        public void searchBlock(Guid targetBlock)
+        public void FOR_DEBUG_addActionInQueue(ActionClass action)
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            
+            m_action_queue.getQueue().Add(action); //searches
 
-            PathFindingClass pathFind = new PathFindingClass(m_block_id, targetBlock);
-            Guid nextMove = pathFind.returnNextBlockGuidToMove();
-
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
         /*EVENTS HANDLER*/
