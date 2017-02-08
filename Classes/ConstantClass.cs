@@ -8,7 +8,7 @@ namespace RiseOfStrongholds.Classes
 {
     public class ConstantClass
     {
-        //TODO: Move all relevant constants to Configuration File
+        //TODO: Move all relevant constants to Configuration Files
 
         /*mapping tables*/
         public static MappingClass<CharacterClass> MAPPING_TABLE_FOR_ALL_CHARS;
