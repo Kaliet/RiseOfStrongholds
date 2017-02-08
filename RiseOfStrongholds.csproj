@@ -55,12 +55,14 @@
     <Compile Include="Classes\InventoryClass.cs" />
     <Compile Include="Classes\LoggerClass.cs" />
     <Compile Include="Classes\MappingClass.cs" />
+    <Compile Include="Classes\MappingPairClass.cs" />
     <Compile Include="Classes\PathFindingClass.cs" />
     <Compile Include="Classes\QueueClass.cs" />
     <Compile Include="Classes\RandomClass.cs" />
     <Compile Include="Classes\CharacterStatsClass.cs" />
     <Compile Include="Classes\PositionClass.cs" />
     <Compile Include="Classes\RegionClass.cs" />
+    <Compile Include="Classes\GuidPairClass.cs" />
     <Compile Include="Classes\RoomClass.cs" />
     <Compile Include="Classes\TestingClass.cs" />
     <Compile Include="Classes\TerrainClass.cs" />

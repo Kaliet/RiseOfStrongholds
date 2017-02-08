@@ -211,9 +211,9 @@ namespace RiseOfStrongholds.Classes
                          m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_CHAR) //SEARCHES FOR SPECIFIC BLOCK or CHAR
                 {
                     Guid targetBlockID = Guid.Empty;
-                    Guid targetCharID = Guid.Empty;
+                    Guid targetCharID = Guid.Empty;                                       
 
-                    if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_CHAR)
+                    if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_CHAR) //if find char, then get targetBlockID of the char
                     {
                         targetCharID = m_action_queue.getQueue()[index].getGuidForAction();
                         targetBlockID = ConstantClass.MAPPING_TABLE_FOR_ALL_CHARS.getMappingTable()[targetCharID].getBlockID();
@@ -223,17 +223,36 @@ namespace RiseOfStrongholds.Classes
                         targetBlockID = m_action_queue.getQueue()[index].getGuidForAction();
                     }
 
+                    Guid targetBlockRoomID = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getRoomID();
+                    Guid targetCharRoomID = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getRoomID();
+
                     if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable().ContainsKey(targetBlockID)) //checks if targetblockID is a block ID
                     {
                         if (targetBlockID == m_block_id) //arrived
                         {
                             m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
                         }
-                        else if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //wall
+                        else if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID() != Guid.Empty && 
+                                 ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //wall
                         {
                             m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
                         }
-                        else
+                        else if (targetBlockRoomID != targetCharRoomID) //target block is in another room than the character
+                        {
+                            //START WITH 2 DIRECTLY SHARED ROOMS
+
+                            //1. check if there is a link between target block room and character
+                            GuidPairClass roomsPair = new GuidPairClass(targetBlockRoomID, targetCharRoomID);
+                            if (ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable().ContainsKey(roomsPair))
+                            {
+                                List<GuidPairClass> listOfSharedBlocks = ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable()[roomsPair];
+                            }
+                            
+
+                            //2. add to queue new action character to find shared exit block id with higher priority than current action
+                            
+                        }
+                        else //block is in the same room as character
                         {
                             PathFindingClass searchPath = new PathFindingClass(m_block_id, targetBlockID);
 

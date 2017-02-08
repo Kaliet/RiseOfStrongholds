@@ -6,23 +6,22 @@ using System.Threading.Tasks;
 
 namespace RiseOfStrongholds.Classes
 {
-    public class MappingClass<T>
+    public class MappingPairClass<T>
     {
         /*VARIABLES*/
-        private Dictionary<Guid,T> m_mappingTable;
+        private Dictionary<GuidPairClass, T> m_mappingTable;
 
         /*GET & SET*/
-        public Dictionary<Guid,T> getMappingTable() { return m_mappingTable; }
+        public Dictionary<GuidPairClass, T> getMappingTable() { return m_mappingTable; }
 
-        /*CONSTRUCTORS*/
-        public MappingClass()
+        /*CONSTRUCTOR*/
+        public MappingPairClass()
         {
-
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            m_mappingTable = new Dictionary<Guid, T>();
+            m_mappingTable = new Dictionary<GuidPairClass, T>();
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
-    }    
+    }
 }

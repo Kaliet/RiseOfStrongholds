@@ -46,7 +46,7 @@ namespace RiseOfStrongholds.Classes
                 m_neighboring_rooms = new List<Guid>();
             }
 
-            ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable().Add(m_room_id, this);
+            ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable().Add(m_room_id, this);            
             
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
@@ -162,10 +162,10 @@ namespace RiseOfStrongholds.Classes
                                 break;
                         }
                     }
-                    //if (m_Room[i, j].existsNorthExit()) { output += "N"; }
-                    //if (m_Room[i, j].existsSouthExit()) { output += "S"; }
-                    //if (m_Room[i, j].existsWestExit()) { output += "W"; }
-                    //if (m_Room[i, j].existsEastExit()) { output += "E"; }
+                    if (m_Room[i, j].existsNorthExit()) { output += "N"; }
+                    if (m_Room[i, j].existsSouthExit()) { output += "S"; }
+                    if (m_Room[i, j].existsWestExit()) { output += "W"; }
+                    if (m_Room[i, j].existsEastExit()) { output += "E"; }
                     if (m_Room[i,j].getListOfOccupants().Count > 0) //block is not empty, has occupants
                     {
                         foreach (Guid id in m_Room[i, j].getListOfOccupants())// go through list and print the occupants

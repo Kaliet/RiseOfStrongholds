@@ -46,6 +46,7 @@ namespace RiseOfStrongholds
             ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS = new MappingClass<TerrainClass>();
             ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS = new MappingClass<BuildingClass>();
             ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS = new MappingClass<RoomClass>();
+            ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS = new MappingPairClass<List<GuidPairClass>>();
             
             /*FIRST GENERATE THE WORLD - EXAMPLE*/  
 
@@ -71,13 +72,13 @@ namespace RiseOfStrongholds
             //room1.getRoom()[3, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);            
 
 
-            //RoomClass room2 = new RoomClass(3);
-            //room2.initializeRoom(grassTerrain);
-            //room2.linkAllBlocksTogetherHorizontally();
-            //room2.linkAllBlocksTogetherVertically();
-            //room2.getRoom()[1, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            //room2.getRoom()[1, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            //room2.getRoom()[1, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            RoomClass room2 = new RoomClass(3);
+            room2.initializeRoom(grassTerrain);
+            room2.linkAllBlocksTogetherHorizontally();
+            room2.linkAllBlocksTogetherVertically();
+            room2.getRoom()[1, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            room2.getRoom()[1, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
+            room2.getRoom()[1, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
 
             //RoomClass room3 = new RoomClass(2);
             //room3.initializeRoom(grassTerrain);
@@ -85,18 +86,17 @@ namespace RiseOfStrongholds
             //room3.linkAllBlocksTogetherVertically();
 
             region1.addRoom(room1.getUniqueRoomID());
-            //region1.addRoom(room2.getUniqueRoomID());
+            region1.addRoom(room2.getUniqueRoomID());
             //region1.addRoom(room3.getUniqueRoomID());
 
 
 
-            //region1.linkTwoRoomsWithExit(room1, ConstantClass.EXITS.SOUTH, room2, 1);
+            region1.linkTwoRoomsWithExit(room1, ConstantClass.EXITS.SOUTH, room2, 2);
             //region1.linkTwoRoomsWithExit(room2, ConstantClass.EXITS.NORTH, room3, 1);
 
             ///*SECOND GENERATE THE CHARACTERS IN THE WORLD*/
-            testcase.runRoomTestWithMultipleChars(room1, region1);
-            //testcase.runRoomTestWithMultipleChars(room2, region1);
-
+            testcase.runRoomTestWithMultipleChars(room1, region1, room2);
+            //testcase.runRoomTestWithMultipleChars(room2, region1);            
             //---------------
             /*PROGRAM END*/
 

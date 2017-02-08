@@ -26,6 +26,7 @@ namespace RiseOfStrongholds.Classes
     {
         /*VARIABLES*/
         public Guid m_blockID;
+        public Guid m_roomID;
         public int m_X_value;
         public int m_Y_value;
         public int m_F_value;
@@ -48,6 +49,7 @@ namespace RiseOfStrongholds.Classes
             m_X_value = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[blockID].getPosition().getPositionX();
             m_Y_value = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[blockID].getPosition().getPositionY();
             m_blockID = blockID;
+            if (blockID != Guid.Empty) { m_roomID = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[blockID].getRoomID(); }
             
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
@@ -58,7 +60,8 @@ namespace RiseOfStrongholds.Classes
 
             m_X_value = x;
             m_Y_value = y;
-            m_blockID = blockID;            
+            m_blockID = blockID;
+            if (blockID != Guid.Empty) { m_roomID = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[blockID].getRoomID(); }
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
@@ -126,7 +129,7 @@ namespace RiseOfStrongholds.Classes
                 m_closedList.Add(m_currentNode);                                                //3. add current node to close list
                 m_openList.Remove(m_currentNode);                                               //4. remove current node from closed list
                 if (m_closedList.FirstOrDefault(obj => obj.m_X_value == m_endNode.m_X_value     //5. if current nocde equals endnode then we finished.
-                    && obj.m_Y_value == m_endNode.m_Y_value) != null)
+                    && obj.m_Y_value == m_endNode.m_Y_value && obj.m_blockID == m_endNode.m_blockID) != null)
                 {
                     break;
                 }

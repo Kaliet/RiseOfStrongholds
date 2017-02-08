@@ -137,8 +137,14 @@ namespace RiseOfStrongholds.Classes
             if (totalCommonBlocks == 0 || blocks.Count == 0) { return; } //if there are no common blocks or block list is empty, then return without doing anything
             if (totalCommonBlocks < numberOfSharedExits) { numberOfSharedExits = totalCommonBlocks; } //cannot define more shared exits can what is possible
 
+            GuidPairClass blockPair = null;
+            List<GuidPairClass> listOfSharedBlocksRoom1ToRoom2 = new List<GuidPairClass>();
+            List<GuidPairClass> listOfSharedBlocksRoom2ToRoom1 = new List<GuidPairClass>();
+            GuidPairClass room1Room2Pairs = new GuidPairClass(room1.getUniqueRoomID(), room2.getUniqueRoomID());
+            GuidPairClass room2Room1Pairs = new GuidPairClass(room2.getUniqueRoomID(), room1.getUniqueRoomID());
+
             if (numberOfSharedExits >= 1 && numberOfSharedExits <= totalCommonBlocks) //number of shared exits must be greater than 1 and less than equal to smallest room size
-            {                
+            {
                 //2. randomize and choose the blocks to become exit                
                 for (int i = 0; i < numberOfSharedExits; i++)
                 {
@@ -151,28 +157,68 @@ namespace RiseOfStrongholds.Classes
                             {
                                 room1.getRoom()[0, randomBlock].setExit(room2.getRoom()[room2.getSize() - 1, randomBlock].getUniqueBlockID(), ConstantClass.EXITS.NORTH); //room1 block's north exit = room2 block id
                                 room2.getRoom()[room2.getSize() - 1, randomBlock].setExit(room1.getRoom()[0, randomBlock].getUniqueBlockID(), ConstantClass.EXITS.SOUTH); //room2 block's south exit = room1 block id
+
+                                //room1 to room2
+                                blockPair = new GuidPairClass(room1.getRoom()[0, randomBlock].getUniqueBlockID(), room2.getRoom()[room2.getSize() - 1, randomBlock].getUniqueBlockID());
+                                listOfSharedBlocksRoom1ToRoom2.Add(blockPair);                                
+
+                                //room2 to room1
+                                blockPair = new GuidPairClass(room2.getRoom()[room2.getSize() - 1, randomBlock].getUniqueBlockID(), room1.getRoom()[0, randomBlock].getUniqueBlockID());
+                                listOfSharedBlocksRoom2ToRoom1.Add(blockPair);                                
+
                                 break;
                             }
                         case (ConstantClass.EXITS.SOUTH): //room2 is south of room1
                             {
                                 room1.getRoom()[room1.getSize() - 1, randomBlock].setExit(room2.getRoom()[0, randomBlock].getUniqueBlockID(), ConstantClass.EXITS.SOUTH); //room1 block's south exit = room2 block id
                                 room2.getRoom()[0, randomBlock].setExit(room1.getRoom()[room1.getSize() - 1, randomBlock].getUniqueBlockID(), ConstantClass.EXITS.NORTH); //room2 block's north exit = room1 block id
+
+                                //room1 to room2
+                                blockPair = new GuidPairClass(room1.getRoom()[room1.getSize() - 1, randomBlock].getUniqueBlockID(), room2.getRoom()[0, randomBlock].getUniqueBlockID());
+                                listOfSharedBlocksRoom1ToRoom2.Add(blockPair);                                
+
+                                //room2 to room1
+                                blockPair = new GuidPairClass(room2.getRoom()[0, randomBlock].getUniqueBlockID(), room1.getRoom()[room1.getSize() - 1, randomBlock].getUniqueBlockID());
+                                listOfSharedBlocksRoom2ToRoom1.Add(blockPair);                                
+
                                 break;
                             }
                         case (ConstantClass.EXITS.WEST): //room2 is west of room1
                             {
                                 room1.getRoom()[randomBlock, 0].setExit(room2.getRoom()[randomBlock, room2.getSize() - 1].getUniqueBlockID(), ConstantClass.EXITS.WEST); //room1 block's west exit = room2 block id
                                 room2.getRoom()[randomBlock, room2.getSize() - 1].setExit(room1.getRoom()[randomBlock, 0].getUniqueBlockID(), ConstantClass.EXITS.EAST); //room2 block's east exit = room1 block id
+
+                                //room1 to room2
+                                blockPair = new GuidPairClass(room1.getRoom()[randomBlock, 0].getUniqueBlockID(), room2.getRoom()[randomBlock, room2.getSize() - 1].getUniqueBlockID());
+                                listOfSharedBlocksRoom1ToRoom2.Add(blockPair);                                
+
+                                //room2 to room1
+                                blockPair = new GuidPairClass(room2.getRoom()[randomBlock, room2.getSize() - 1].getUniqueBlockID(), room1.getRoom()[randomBlock, 0].getUniqueBlockID());
+                                listOfSharedBlocksRoom2ToRoom1.Add(blockPair);                                
+
                                 break;
                             }
                         case (ConstantClass.EXITS.EAST): //room2 is east of room1
                             {
                                 room1.getRoom()[randomBlock, room1.getSize() - 1].setExit(room2.getRoom()[randomBlock, 0].getUniqueBlockID(), ConstantClass.EXITS.EAST); //room1 block's east exit = room2 block id
                                 room2.getRoom()[randomBlock, 0].setExit(room1.getRoom()[randomBlock, room1.getSize() - 1].getUniqueBlockID(), ConstantClass.EXITS.WEST); //room2 block's west exit = room1 block id
+
+                                //room1 to room2
+                                blockPair = new GuidPairClass(room1.getRoom()[randomBlock, room1.getSize() - 1].getUniqueBlockID(), room2.getRoom()[randomBlock, 0].getUniqueBlockID());
+                                listOfSharedBlocksRoom1ToRoom2.Add(blockPair);                                
+
+                                //room2 to room1
+                                blockPair = new GuidPairClass(room2.getRoom()[randomBlock, 0].getUniqueBlockID(), room1.getRoom()[randomBlock, room1.getSize() - 1].getUniqueBlockID());
+                                listOfSharedBlocksRoom2ToRoom1.Add(blockPair);                                
+
                                 break;
                             }
-                    }
-                }
+                    } //end switch                    
+
+                }//for loop
+
+                ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable().Add(room1Room2Pairs, listOfSharedBlocksRoom1ToRoom2);
+                ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable().Add(room2Room1Pairs, listOfSharedBlocksRoom2ToRoom1);
             }
             else
             {

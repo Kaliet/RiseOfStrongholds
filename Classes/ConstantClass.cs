@@ -16,6 +16,7 @@ namespace RiseOfStrongholds.Classes
         public static MappingClass<TerrainClass> MAPPING_TABLE_FOR_ALL_TERRAINS;
         public static MappingClass<BuildingClass> MAPPING_TABLE_FOR_ALL_BUILDINGS;
         public static MappingClass<RoomClass> MAPPING_TABLE_FOR_ALL_ROOMS;
+        public static MappingPairClass<List<GuidPairClass>> MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS; //<(room1,room2) -> list of (block1 of room1,block2 of room2) with shared exit
 
         /*enums*/
         public enum DEBUG_LEVELS { OFF, LOW, HIGH };

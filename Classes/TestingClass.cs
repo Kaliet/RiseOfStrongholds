@@ -94,7 +94,7 @@ namespace RiseOfStrongholds.Classes
         //}
 
         /*SIMULATED ROOM TEST WITH MULTIPLE CHARACTERS*/
-        public void runRoomTestWithMultipleChars(RoomClass room, RegionClass region)
+        public void runRoomTestWithMultipleChars(RoomClass room, RegionClass region, RoomClass room2)
         {
             List<CharacterClass> people = new List<CharacterClass>();
             for (int i = 0; i < 1; i++)
@@ -104,17 +104,18 @@ namespace RiseOfStrongholds.Classes
                 people[i].ActionUpdated += room.OnActionUpdated;
                 people[i].ActionUpdated += region.OnActionUpdated;
             }
-            CharacterClass person2 = new CharacterClass(room.getRoom()[0, 2].getUniqueBlockID());
-            ConstantClass.gameTime.GameTicked += person2.OnGameTicked;
-            person2.ActionUpdated += room.OnActionUpdated;
-            person2.ActionUpdated += region.OnActionUpdated;            
+            //CharacterClass person2 = new CharacterClass(room.getRoom()[0, 2].getUniqueBlockID());
+            //ConstantClass.gameTime.GameTicked += person2.OnGameTicked;
+            //person2.ActionUpdated += room.OnActionUpdated;
+            //person2.ActionUpdated += region.OnActionUpdated;            
             //person2.FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_SEARCH_PRIORITY, 0, room.getRoom()[1,0].getUniqueBlockID()));
-            person2.FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_CHAR, ConstantClass.ACTION_SEARCH_PRIORITY, 0, people[0].getUniqueCharacterID()));
+            //person2.FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_CHAR, ConstantClass.ACTION_SEARCH_PRIORITY, 0, people[0].getUniqueCharacterID()));
 
-            people.Add(person2);
-            
-            people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_SEARCH_PRIORITY, 0, room.getRoom()[2,2].getUniqueBlockID()));
-            
+            //people.Add(person2);
+
+            //people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_SEARCH_PRIORITY, 0, room.getRoom()[4,4].getUniqueBlockID()));
+            people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_SEARCH_PRIORITY, 0, room2.getRoom()[0,0].getUniqueBlockID()));
+
         }
     }
 }
