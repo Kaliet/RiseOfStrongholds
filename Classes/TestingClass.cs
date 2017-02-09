@@ -114,7 +114,7 @@ namespace RiseOfStrongholds.Classes
             //people.Add(person2);
 
             //people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_SEARCH_PRIORITY, 0, room.getRoom()[4,4].getUniqueBlockID()));
-            people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_SEARCH_PRIORITY, 0, room2.getRoom()[0,0].getUniqueBlockID()));
+            people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_SEARCH_PRIORITY, 0, room2.getRoom()[3,0].getUniqueBlockID()));
 
         }
     }

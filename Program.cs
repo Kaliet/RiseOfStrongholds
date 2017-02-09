@@ -72,7 +72,7 @@ namespace RiseOfStrongholds
             //room1.getRoom()[3, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);            
 
 
-            RoomClass room2 = new RoomClass(3);
+            RoomClass room2 = new RoomClass(4);
             room2.initializeRoom(grassTerrain);
             room2.linkAllBlocksTogetherHorizontally();
             room2.linkAllBlocksTogetherVertically();
@@ -91,7 +91,7 @@ namespace RiseOfStrongholds
 
 
 
-            region1.linkTwoRoomsWithExit(room1, ConstantClass.EXITS.SOUTH, room2, 2);
+            region1.linkTwoRoomsWithExit(room1, ConstantClass.EXITS.SOUTH, room2, 3);
             //region1.linkTwoRoomsWithExit(room2, ConstantClass.EXITS.NORTH, room3, 1);
 
             ///*SECOND GENERATE THE CHARACTERS IN THE WORLD*/

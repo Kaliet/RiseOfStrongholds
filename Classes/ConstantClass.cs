@@ -85,6 +85,12 @@ namespace RiseOfStrongholds.Classes
         /*PATHFINDING PENALTIES*/
         public static int WALL_PENALTY_TO_H_VALUE = 10;
                 
+        /*METHODS*/
+        public static Guid GET_ROOMID_BASED_BLOCKID(Guid blockID)
+        {
+            if (blockID == Guid.Empty) { return Guid.Empty; }
+            else { return ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[blockID].getRoomID(); }
+        }
     }
 }
 
