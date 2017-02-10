@@ -95,7 +95,7 @@ namespace RiseOfStrongholds
             //region1.linkTwoRoomsWithExit(room2, ConstantClass.EXITS.NORTH, room3, 1);
 
             ///*SECOND GENERATE THE CHARACTERS IN THE WORLD*/
-            testcase.runRoomTestWithMultipleChars(room1, region1, room2);
+            testcase.runRoomTestWithMultipleChars(room2, region1, room1);
             //testcase.runRoomTestWithMultipleChars(room2, region1);            
             //---------------
             /*PROGRAM END*/

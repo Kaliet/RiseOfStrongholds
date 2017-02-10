@@ -32,10 +32,32 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             //return string should be [0] - info, [1] - info, etc.            
             string output = "";
-            int index = 0;
+            int index = 0;            
+
             foreach (T element in m_queue)
             {
                 output += "[" + (index + 1) + "/" + m_queue.Count + "] - " + element.ToString() + " , ";
+                index++;
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            return output;
+        }
+
+        public string printQueue(QueueClass<ActionClass> actionQueue) //prints everything in queue
+        {
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            //return string should be [0] - info, [1] - info, etc.            
+            string output = "";
+            int index = 0;
+
+            actionQueue.m_queue =  actionQueue.getQueue().OrderBy(obj => obj.getPriority()).ToList();
+
+            foreach (ActionClass element in actionQueue.getQueue())
+            {
+                output += "\n\t\t\t\t\t[" + (index + 1) + "/" + actionQueue.getQueue().Count + "] - " + element.ToString();
                 index++;
             }
 

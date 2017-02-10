@@ -140,7 +140,7 @@ namespace RiseOfStrongholds.Classes
             int index = -1;
 
             /*DEBUG PRINTING*/
-            ConstantClass.LOGGER.writeToQueueLog(outputPersonGUID() + " = " + m_action_queue.printQueue());//print queue
+            ConstantClass.LOGGER.writeToQueueLog(outputPersonGUID() + " = " + m_action_queue.printQueue(this.m_action_queue));//print queue
             //ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is in block " + m_block_id.ToString().Substring(0, 2) + " position(" + 
             //            ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionX() + "," +
             //            ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionY() + "). Exits: " + ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].printAllAvailableExits());
@@ -231,13 +231,15 @@ namespace RiseOfStrongholds.Classes
                     {
                         if (targetBlockID == m_block_id) //arrived
                         {
-                            m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
+                            m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index                            
                             ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " has found " + targetBlockID);
+                            updateAction(); //take next action since character move action completed beginning of this round.
                         }
                         else if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID() != Guid.Empty && 
                                  ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //wall
                         {
                             m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
+                            updateAction(); //take next action since character move action completed beginning of this round.
                         }
                         else if (targetBlockRoomID != currentCharRoomID) //target block is in another room than the character
                         {
@@ -286,7 +288,7 @@ namespace RiseOfStrongholds.Classes
                                 m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, chosenBlockOnAdjRoom));
                                 ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is looking for block " + targetBlockID + " in room ID " + targetBlockRoomID + "(" + (m_action_queue.getQueue()[index].getPriority()) + ")");
                                 ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " needs to find " + chosenBlockOnCharRoom + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(chosenBlockOnCharRoom) + "(" + (currentPriority - 2) + ")");
-                                ConstantClass.LOGGER.writeToGameLog(" and cross to block " + chosenBlockOnAdjRoom + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(chosenBlockOnAdjRoom) + "(" + (currentPriority - 1) + ")");
+                                ConstantClass.LOGGER.writeToGameLog("and cross to block " + chosenBlockOnAdjRoom + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(chosenBlockOnAdjRoom) + "(" + (currentPriority - 1) + ")");
                             }
                         }
                         else //block is in the same room as character
@@ -296,6 +298,7 @@ namespace RiseOfStrongholds.Classes
                             ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Remove(m_unique_character_id);//remove character id from previuos block list of occupants
                             m_block_id = searchPath.returnNextBlockGuidToMove();
                             ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Add(m_unique_character_id); //adds character id as part of block list of occupants
+                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " moves to block " + m_block_id);
                             deductEnergyBasedOnTerrain();
                             ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is finding " + targetBlockID + " with priority " + (m_action_queue.getQueue()[index].getPriority() - 1));
                         }
@@ -304,6 +307,7 @@ namespace RiseOfStrongholds.Classes
                     {
                         ConstantClass.LOGGER.writeToGameLog(targetBlockID + " is not a blockID. Removing action.");
                         m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
+                        updateAction(); //take next action since character move action completed beginning of this round.
                     }
                 }                
             }
@@ -402,7 +406,8 @@ namespace RiseOfStrongholds.Classes
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            updateAction(); //update action for every game tick                       
+            updateAction(); //update action for every game tick 
+            ConstantClass.LOGGER.writeToGameLog("----------------------------------------------------------------------------");
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
