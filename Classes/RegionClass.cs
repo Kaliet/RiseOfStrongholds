@@ -227,6 +227,26 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
+        public string printRoomLinks()
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            string output = "";
+            Dictionary<GuidPairClass, List<GuidPairClass>> sharedBlocks = ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable();
+
+            foreach (KeyValuePair<GuidPairClass,List<GuidPairClass>> pair in sharedBlocks)
+            {
+                foreach (GuidPairClass guidpair in pair.Value)
+                {
+                    output += "room id " + pair.Key.m_guid1 + " block " + guidpair.m_guid1 + "is linked to room id " + pair.Key.m_guid2 + " block " + guidpair.m_guid2 + "\n";                    
+                }                
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            return output;
+        }
+
         /*EVENT HANLDER*/
         public void OnActionUpdated(object source, EventArgs args)
         {
@@ -238,6 +258,8 @@ namespace RiseOfStrongholds.Classes
             {
                 Console.WriteLine(ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[id].printRoom());
             }
+
+            Console.WriteLine(ConstantClass.gameTime.ToString());
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }

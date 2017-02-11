@@ -97,7 +97,7 @@ namespace RiseOfStrongholds.Classes
         {            
             try
             {
-                System.IO.File.WriteAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.MAP_LOG_FILENAME, text);
+                System.IO.File.AppendAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.MAP_LOG_FILENAME, text);
             }
             catch (Exception e)
             {

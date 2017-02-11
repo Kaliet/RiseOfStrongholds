@@ -54,49 +54,31 @@ namespace RiseOfStrongholds
             TerrainClass hillTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.HILL);
             RegionClass region1 = new RegionClass();
 
-            RoomClass room1 = new RoomClass(5);
-            room1.initializeRoom(grassTerrain);
-            room1.linkAllBlocksTogetherHorizontally();
-            room1.linkAllBlocksTogetherVertically();
+            RoomClass[] rooms = new RoomClass[10];
+            for (int i = 0;i <10;i++)
+            {
+                rooms[i] = new RoomClass(2);
+                rooms[i].initializeRoom(grassTerrain);
+                rooms[i].linkAllBlocksTogetherHorizontally();
+                rooms[i].linkAllBlocksTogetherVertically();
+                ConstantClass.LOGGER.writeToMapLog("room" + i + " ID = " + rooms[i].getUniqueRoomID() + "\n");
+                region1.addRoom(rooms[i].getUniqueRoomID());                
+            }
 
-            room1.getRoom()[1, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            room1.getRoom()[1, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            room1.getRoom()[1, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            //room1.getRoom()[2, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            room1.getRoom()[2, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            //room1.getRoom()[2, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);            
-            room1.getRoom()[2, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);            
-            //room1.getRoom()[3, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            room1.getRoom()[3, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            //room1.getRoom()[3, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            //room1.getRoom()[3, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);            
+            region1.linkTwoRoomsWithExit(rooms[5], ConstantClass.EXITS.SOUTH, rooms[9], 1); //-> endless loop in backtracking
+            for (int i = 0; i < 8; i++)
+            {
+                region1.linkTwoRoomsWithExit(rooms[i], ConstantClass.EXITS.SOUTH, rooms[i + 1], 1);
+            }
+            
 
-
-            RoomClass room2 = new RoomClass(4);
-            room2.initializeRoom(grassTerrain);
-            room2.linkAllBlocksTogetherHorizontally();
-            room2.linkAllBlocksTogetherVertically();
-            room2.getRoom()[1, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            room2.getRoom()[1, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
-            room2.getRoom()[1, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
-
-            //RoomClass room3 = new RoomClass(2);
-            //room3.initializeRoom(grassTerrain);
-            //room3.linkAllBlocksTogetherHorizontally();
-            //room3.linkAllBlocksTogetherVertically();
-
-            region1.addRoom(room1.getUniqueRoomID());
-            region1.addRoom(room2.getUniqueRoomID());
-            //region1.addRoom(room3.getUniqueRoomID());
-
-
-
-            region1.linkTwoRoomsWithExit(room1, ConstantClass.EXITS.SOUTH, room2, 3);
-            //region1.linkTwoRoomsWithExit(room2, ConstantClass.EXITS.NORTH, room3, 1);
+            ConstantClass.LOGGER.writeToMapLog(region1.printRoomLinks());
 
             ///*SECOND GENERATE THE CHARACTERS IN THE WORLD*/
-            testcase.runRoomTestWithMultipleChars(room2, region1, room1);
+            testcase.runRoomTestWithMultipleChars(rooms[0], region1, rooms[9]);
             //testcase.runRoomTestWithMultipleChars(room2, region1);            
+
+
             //---------------
             /*PROGRAM END*/
 

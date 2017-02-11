@@ -18,16 +18,14 @@ namespace RiseOfStrongholds.Classes
     {
         /*VARIABLES*/
         private Guid m_room_id;
-        private Guid m_region_id;
-        private List<Guid> m_neighboring_rooms;
+        private Guid m_region_id;        
         private BlockClass[,] m_Room;
         private int m_size;
 
         /*GET & SET*/
         public BlockClass[,] getRoom() { return m_Room; }
         public int getSize() { return m_size; }
-        public Guid getUniqueRoomID() { return m_room_id; }
-        public List<Guid> getNeighboringRooms() { return m_neighboring_rooms; }
+        public Guid getUniqueRoomID() { return m_room_id; }        
         public Guid getRegionID() { return m_region_id; }
         public void setRegionID(Guid regionID) { m_region_id = regionID; }
 
@@ -42,8 +40,7 @@ namespace RiseOfStrongholds.Classes
                 m_size = size;
                 m_Room = new BlockClass[size, size];
                 m_room_id = Guid.NewGuid();
-                m_region_id = Guid.Empty;
-                m_neighboring_rooms = new List<Guid>();
+                m_region_id = Guid.Empty;                
             }
 
             ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable().Add(m_room_id, this);            

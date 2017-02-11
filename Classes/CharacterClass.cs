@@ -144,7 +144,7 @@ namespace RiseOfStrongholds.Classes
             //ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is in block " + m_block_id.ToString().Substring(0, 2) + " position(" + 
             //            ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionX() + "," +
             //            ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionY() + "). Exits: " + ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].printAllAvailableExits());
-            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is on block " + this.m_block_id + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id));
+            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is on block " + this.m_block_id + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id));            
 
             m_stats.modifyHungerRate(ConstantClass.GAME_SPEED); //hunger increases based on game speed (1 sec = how many game time mins)
             m_stats.modifySleepRate(ConstantClass.GAME_SPEED); //sleepiness increases based on game speed (1 sec = how many game time mins)
@@ -239,6 +239,7 @@ namespace RiseOfStrongholds.Classes
                                  ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //wall
                         {
                             m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
+                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot walk to  " + targetBlockID+ " due to building.");
                             updateAction(); //take next action since character move action completed beginning of this round.
                         }
                         else if (targetBlockRoomID != currentCharRoomID) //target block is in another room than the character
@@ -256,39 +257,50 @@ namespace RiseOfStrongholds.Classes
                             }
 
                             //1. go over all shared blocks and check if character is standing on shared block between the rooms
-                            foreach (GuidPairClass pair in listOfSharedBlocks)
+                            if (listOfSharedBlocks.Count > 0) //check list is not empty
                             {
-                                if (pair.returnSecondGuidPair(m_block_id) != Guid.Empty) //character is standing on a shared block between the rooms
+                                foreach (GuidPairClass pair in listOfSharedBlocks)
                                 {
-                                    //next action is to move to next room
-                                    ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Remove(m_unique_character_id);//remove character id from previuos block list of occupants
-                                    m_block_id = pair.returnSecondGuidPair(m_block_id); //character moves to a different block - new id defined                                    
-                                    ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Add(m_unique_character_id); //adds character id as part of block list of occupants
-                                    deductEnergyBasedOnTerrain();
-                                    crossedRoom = true;
-                                    m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
-                                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " crossed room to block " + m_block_id + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id));
-                                    break;
-                                }                                
-                            }
-                            if (!crossedRoom) //character is not standing on a shared block between the rooms
-                            {
-                                //2. choose randomly among the available shared blocks to walk into the other room
-                                int exitNumber = ConstantClass.RANDOMIZER.produceInt(1, 100); //randomizing which block to take
+                                    if (pair.isGuidOneofthePairs(m_block_id)) //character is standing on a shared block between the rooms
+                                    {
+                                        //next action is to move to next room
+                                        ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Remove(m_unique_character_id);//remove character id from previuos block list of occupants
+                                        m_block_id = pair.returnSecondGuidPair(m_block_id); //character moves to a different block - new id defined                                    
+                                        ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Add(m_unique_character_id); //adds character id as part of block list of occupants
+                                        deductEnergyBasedOnTerrain();
+                                        crossedRoom = true;
 
-                                if (listOfSharedBlocks.Count > 0)
-                                {
-                                    chosenBlockOnCharRoom = listOfSharedBlocks[exitNumber % listOfSharedBlocks.Count].m_guid2;
-                                    chosenBlockOnAdjRoom = listOfSharedBlocks[exitNumber % listOfSharedBlocks.Count].m_guid1;
+                                        //if character newly arrived block is still not target block id and last action item in queue is to reach target block id, then we do not remove it.
+                                        //needed for scenario where character starts at shared block and has only 1 action item in queue to reach to target block id in different room. without below, the last action will be removed and character will not move.
+                                        if (m_block_id != targetBlockID && m_action_queue.getQueue().Count == 1 && m_action_queue.getQueue()[0].getGuidForAction() == targetBlockID) { } 
+                                        else { m_action_queue.getQueue().RemoveAt(index); }//action completed, remove from index
+
+                                        ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " crossed room to block " + m_block_id + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id));
+
+                                        break;
+                                    }
                                 }
-                                //3. add to queue new action character to find shared exit block id with higher priority than current action
-                                int currentPriority = this.m_action_queue.getQueue()[index].getPriority();
+                                if (!crossedRoom) //character is not standing on a shared block between the rooms
+                                {
+                                    //2. choose randomly among the available shared blocks to walk into the other room
+                                    int exitNumber = ConstantClass.RANDOMIZER.produceInt(1, 100); //randomizing which block to take
 
-                                m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 2, ConstantClass.VARIABLE_FOR_ACTION_NONE, chosenBlockOnCharRoom));
-                                m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, chosenBlockOnAdjRoom));
-                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is looking for block " + targetBlockID + " in room ID " + targetBlockRoomID + "(" + (m_action_queue.getQueue()[index].getPriority()) + ")");
-                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " needs to find " + chosenBlockOnCharRoom + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(chosenBlockOnCharRoom) + "(" + (currentPriority - 2) + ")");
-                                ConstantClass.LOGGER.writeToGameLog("and cross to block " + chosenBlockOnAdjRoom + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(chosenBlockOnAdjRoom) + "(" + (currentPriority - 1) + ")");
+                                    if (listOfSharedBlocks.Count > 0)
+                                    {
+                                        chosenBlockOnCharRoom = listOfSharedBlocks[exitNumber % listOfSharedBlocks.Count].m_guid2;
+                                        chosenBlockOnAdjRoom = listOfSharedBlocks[exitNumber % listOfSharedBlocks.Count].m_guid1;
+                                    }
+                                    //3. add to queue new action character to find shared exit block id with higher priority than current action
+                                    int currentPriority = this.m_action_queue.getQueue()[index].getPriority();
+
+                                    m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 2, ConstantClass.VARIABLE_FOR_ACTION_NONE, chosenBlockOnCharRoom));
+                                    m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, chosenBlockOnAdjRoom));
+                                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is looking for block " + targetBlockID + " in room ID " + targetBlockRoomID + "(" + (m_action_queue.getQueue()[index].getPriority()) + ")");
+                                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " needs to find " + chosenBlockOnCharRoom + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(chosenBlockOnCharRoom) + "(" + (currentPriority - 2) + ")");
+                                    ConstantClass.LOGGER.writeToGameLog("and cross to block " + chosenBlockOnAdjRoom + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(chosenBlockOnAdjRoom) + "(" + (currentPriority - 1) + ")");
+
+                                    updateAction(); //take next action since character move action completed beginning of this round.
+                                }
                             }
                         }
                         else //block is in the same room as character
@@ -351,21 +363,45 @@ namespace RiseOfStrongholds.Classes
                 deductEnergyBasedOnTerrain();
 
             }
-
-
             OnActionUpdated(); //raise event
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
-        private Guid backTrackToAdjacentRoom (Guid targetRoomID, Guid startRoomID) //recursively backtracks from startRoomID to targetRoomID. Return adjacent room ID of targetRoomID, else return Guid.Empty
+        private Guid backTrackToAdjacentRoom (Guid endRoomID, Guid startRoomID) //recursively backtracks from startRoomID to targetRoomID. Return adjacent room ID of targetRoomID, else return Guid.Empty
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is backtracking from room ID " + startRoomID + " to get to target room ID " + endRoomID);
 
-            return targetRoomID;
-            return Guid.Empty;
+            GuidPairClass pair = new GuidPairClass(endRoomID, startRoomID);
+            
+            if (startRoomID == Guid.Empty || endRoomID == Guid.Empty) { return Guid.Empty; }
 
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            //1. if startRoomID and endRoomID have shared exit  && char room is the startroom then return endRoomID
+            if (ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable().ContainsKey(pair) && ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id) == startRoomID)
+            {
+                if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " backtracked to room ID " + endRoomID);
+                return endRoomID;
+            }
+            //2. else search in mapping table if endRoomID has a pair (aka neighbor room with exit)
+            else
+            {
+                //3.    if found pair , backTrackToAdjacentRoom (neighborrRoomID)
+                if (ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.isGuidAKey(endRoomID)) //if endRoomID has a neighbor = has entry in mapping table
+                {
+                    if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+                    return backTrackToAdjacentRoom(ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.returnGuidPair(endRoomID), startRoomID); //call recursively this function with neighborID
+                }
+                //4.    if not found pair, return Guid.Empty (aka no adjancent room next to startRoomID)
+                else
+                {
+                    if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot reach to room ID " + endRoomID);
+                    return Guid.Empty; //end room has no neighbor -> impossible to arrive there -> return empty Guid.
+                }
+            }                                                      
+            
         }
 
         public void FOR_DEBUG_addActionInQueue(ActionClass action)
