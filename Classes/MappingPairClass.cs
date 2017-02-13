@@ -39,13 +39,15 @@ namespace RiseOfStrongholds.Classes
             return false;
         }
 
-        public Guid returnGuidPair (Guid input)
+        public Guid returnNonVisitedGuidPair (Guid input, List<Guid> visitedGuids)
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
             foreach (KeyValuePair<GuidPairClass, T> pair in m_mappingTable)
             {
-                if (pair.Key.isGuidOneofthePairs(input)) return pair.Key.returnSecondGuidPair(input);
+                //check second Guid Pair to see if it is visited. to avoid endless loop
+                if (visitedGuids.Contains(pair.Key.returnSecondGuidPair(input))) { ConstantClass.LOGGER.writeToGameLog("Block ID " + pair.Key.returnSecondGuidPair(input) + " has been visited already. Skipping."); }
+                if (pair.Key.isGuidOneofthePairs(input) && !visitedGuids.Contains(pair.Key.returnSecondGuidPair(input))) return pair.Key.returnSecondGuidPair(input);
             }
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH

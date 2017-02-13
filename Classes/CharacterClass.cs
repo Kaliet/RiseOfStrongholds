@@ -245,7 +245,8 @@ namespace RiseOfStrongholds.Classes
                         else if (targetBlockRoomID != currentCharRoomID) //target block is in another room than the character
                         {
                             List<GuidPairClass> listOfSharedBlocks = new List<GuidPairClass>();
-                            Guid adjRoomIDOfCurrentRoomID = backTrackToAdjacentRoom(targetBlockRoomID, currentCharRoomID);
+                            List<Guid> backtrackedRooms = new List<Guid>();
+                            Guid adjRoomIDOfCurrentRoomID = backTrackToAdjacentRoom(targetBlockRoomID, currentCharRoomID, backtrackedRooms);
                             GuidPairClass roomsPair = new GuidPairClass(adjRoomIDOfCurrentRoomID, currentCharRoomID);
                             Guid chosenBlockOnAdjRoom = Guid.Empty;
                             Guid chosenBlockOnCharRoom = Guid.Empty;
@@ -368,13 +369,13 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
-        private Guid backTrackToAdjacentRoom (Guid endRoomID, Guid startRoomID) //recursively backtracks from startRoomID to targetRoomID. Return adjacent room ID of targetRoomID, else return Guid.Empty
+        private Guid backTrackToAdjacentRoom (Guid endRoomID, Guid startRoomID, List<Guid> backtrackedRooms) //recursively backtracks from startRoomID to targetRoomID. Return adjacent room ID of targetRoomID, else return Guid.Empty
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is backtracking from room ID " + startRoomID + " to get to target room ID " + endRoomID);
 
-            GuidPairClass pair = new GuidPairClass(endRoomID, startRoomID);
-            
+            GuidPairClass pair = new GuidPairClass(endRoomID, startRoomID);            
+
             if (startRoomID == Guid.Empty || endRoomID == Guid.Empty) { return Guid.Empty; }
 
             //1. if startRoomID and endRoomID have shared exit  && char room is the startroom then return endRoomID
@@ -387,11 +388,15 @@ namespace RiseOfStrongholds.Classes
             //2. else search in mapping table if endRoomID has a pair (aka neighbor room with exit)
             else
             {
+                Guid endRoomGuidPair = ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.returnNonVisitedGuidPair(endRoomID, backtrackedRooms);
+
                 //3.    if found pair , backTrackToAdjacentRoom (neighborrRoomID)
-                if (ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.isGuidAKey(endRoomID)) //if endRoomID has a neighbor = has entry in mapping table
+                if (ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.isGuidAKey(endRoomID)) //if endRoomID has a neighbor = has entry in mapping table and it was not visited
                 {
+
                     if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-                    return backTrackToAdjacentRoom(ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.returnGuidPair(endRoomID), startRoomID); //call recursively this function with neighborID
+                    backtrackedRooms.Add(endRoomID); 
+                    return backTrackToAdjacentRoom(endRoomGuidPair, startRoomID, backtrackedRooms); //call recursively this function with neighborID
                 }
                 //4.    if not found pair, return Guid.Empty (aka no adjancent room next to startRoomID)
                 else
