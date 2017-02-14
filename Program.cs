@@ -71,29 +71,27 @@ namespace RiseOfStrongholds
             //    region1.linkTwoRoomsWithExit(rooms[i], ConstantClass.EXITS.SOUTH, rooms[i + 1], 1);
             //}
 
-            RoomClass[] rooms = new RoomClass[10];
-            for (int i = 0; i < 10; i++)
+            RoomClass[] rooms = new RoomClass[3];
+            for (int i = 0; i < 3; i++)
             {
-                rooms[i] = new RoomClass(2);
+                rooms[i] = new RoomClass(3);
                 rooms[i].initializeRoom(grassTerrain);
                 rooms[i].linkAllBlocksTogetherHorizontally();
                 rooms[i].linkAllBlocksTogetherVertically();
                 ConstantClass.LOGGER.writeToMapLog("room" + i + " ID = " + rooms[i].getUniqueRoomID() + "\n");
                 region1.addRoom(rooms[i].getUniqueRoomID());
             }
-
-            region1.linkTwoRoomsWithExit(rooms[5], ConstantClass.EXITS.NORTH, rooms[9], 1); //-> endless loop in backtracking            
-            region1.linkTwoRoomsWithExit(rooms[3], ConstantClass.EXITS.NORTH, rooms[5], 1); //-> endless loop in backtracking            
-            for (int i = 0; i < 8; i++)
+            
+            for (int i = 0; i < 2; i++)
             {
-                region1.linkTwoRoomsWithExit(rooms[i], ConstantClass.EXITS.SOUTH, rooms[i + 1], 1);
+                region1.linkTwoRoomsWithExit(rooms[i], ConstantClass.EXITS.SOUTH, rooms[i + 1], 3);
             }
 
 
             ConstantClass.LOGGER.writeToMapLog(region1.printRoomLinks());
 
             ///*SECOND GENERATE THE CHARACTERS IN THE WORLD*/
-            testcase.runRoomTestWithMultipleChars(rooms[0], region1, rooms[9]);
+            testcase.runRoomTestWithMultipleChars(rooms[0], region1, rooms[2]);
             //testcase.runRoomTestWithMultipleChars(room2, region1);            
 
 

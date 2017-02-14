@@ -17,7 +17,6 @@ namespace RiseOfStrongholds.Classes
         /*CONSTRUCTORS*/
         public InventoryClass(int maxCap)
         {
-
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
             m_InventoryList = new List<T>();
