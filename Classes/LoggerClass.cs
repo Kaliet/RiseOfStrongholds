@@ -31,7 +31,7 @@ namespace RiseOfStrongholds.Classes
             }            
         }
 
-        public void writeToDebugLog(string text)
+        public string getRealDateTime()
         {
             int year = DateTime.Now.Year;
             int month = DateTime.Now.Month;
@@ -56,6 +56,13 @@ namespace RiseOfStrongholds.Classes
             datetime += ":";
             datetime += milisec;
 
+            return datetime;
+        }
+
+        public void writeToDebugLog(string text)
+        {
+            string datetime = getRealDateTime();
+
             text = datetime + "\t\t - \t" + text + "\n";
             try
             {
@@ -69,7 +76,11 @@ namespace RiseOfStrongholds.Classes
 
         public void writeToGameLog(string text)
         {
-            text = ConstantClass.gameTime.ToString() + "\t\t - \t" + text + "\n";
+            string datetime = getRealDateTime();
+
+            //text = ConstantClass.gameTime.ToString() + "\t\t - \t" + text + "\n";
+            text = datetime + "\t\t - \t" + text + "\n";
+
             try
             {
                 System.IO.File.AppendAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.GAME_LOG_FILENAME, text);

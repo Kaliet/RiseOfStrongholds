@@ -69,6 +69,8 @@ namespace RiseOfStrongholds.Classes
                 {
                     m_Room[i, j] = new BlockClass(new PositionClass(i, j), terrainType.getUniqueTerrainID());
                     m_Room[i, j].setRoom(m_room_id); //links the block to the room id                   
+
+                    ConstantClass.gameTime.GameTicked += m_Room[i, j].OnGameTicked;
                 }
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH

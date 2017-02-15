@@ -70,11 +70,15 @@ namespace RiseOfStrongholds.Classes
         public static RandomClass RANDOMIZER = new RandomClass();
 
         /*TERRAIN TYPES*/
-        public enum TERRAIN_TYPE {GRASS, DESERT, HILL, DIRT};
+        public enum TERRAIN_TYPE {FOREST, GRASS, DESERT, HILL, DIRT};        
         public static int TERRAIN_FATIGUE_FOR_GRASS = 0;
         public static int TERRAIN_FATIGUE_FOR_DIRT = 0;
         public static int TERRAIN_FATIGUE_FOR_HILL = -5;
+        public static int TERRAIN_FATIGUE_FOR_FOREST = -5;
         public static int TERRAIN_FATIGUE_FOR_DESERT = -10;
+
+        /*RESOURCE TYPES*/
+        public enum RESOURCE_TYPE { WOOD, FOOD, NONE };        
 
         /*BLOCK EXITS*/
         public enum EXITS { NORTH, SOUTH, EAST, WEST};

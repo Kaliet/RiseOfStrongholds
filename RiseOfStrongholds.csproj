@@ -51,6 +51,7 @@
     <Compile Include="Classes\CharacterClass.cs" />
     <Compile Include="Classes\ConstantClass.cs" />
     <Compile Include="Classes\GameTimeClass.cs" />
+    <Compile Include="Classes\GenericObjectClass.cs" />
     <Compile Include="Classes\GenericStatsClass.cs" />
     <Compile Include="Classes\InventoryClass.cs" />
     <Compile Include="Classes\LoggerClass.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="Classes\PositionClass.cs" />
     <Compile Include="Classes\RegionClass.cs" />
     <Compile Include="Classes\GuidPairClass.cs" />
+    <Compile Include="Classes\ResourceObjectClass.cs" />
     <Compile Include="Classes\RoomClass.cs" />
     <Compile Include="Classes\TestingClass.cs" />
     <Compile Include="Classes\TerrainClass.cs" />
