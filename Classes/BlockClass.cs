@@ -110,6 +110,7 @@ namespace RiseOfStrongholds.Classes
             setAllExits(Guid.Empty, Guid.Empty, Guid.Empty, Guid.Empty);
             m_list_of_occupants = new List<Guid>();
             m_stats = new BlockStatsClass();
+            m_inventory_list = new InventoryClass<GenericObjectClass>(ConstantClass.INVENTORY_BLOCK_MAX_CAP);
 
             ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable().Add(m_unique_block_id, this); //maps to mapping table
 
@@ -186,9 +187,21 @@ namespace RiseOfStrongholds.Classes
         {            
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            //resources generated this turn are added to the block inventory
-            m_inventory_list.getInventoryList()
+            //resources generated this turn are added to the block inventory            
+            int rate = ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceGenerateRate();
+            ResourceObjectClass resource = new ResourceObjectClass(ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceType());
 
+            if (rate > 0) //if resource generate some value
+            {
+                if (m_inventory_list.addItemToInventory(resource, rate))
+                {
+                    //ConstantClass.LOGGER.writeToInventoryLog("Resource " + resource.ToString() + " added to inventory in block ID " + m_unique_block_id + "\n");
+                }
+                else
+                {
+                    ConstantClass.LOGGER.writeToInventoryLog("Failed to add resource " + resource.ToString() + " to inventory in block ID " + m_unique_block_id + "\n");
+                }
+            }            
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
@@ -199,6 +212,7 @@ namespace RiseOfStrongholds.Classes
 
             //update block
             updateBlockInventory();
+            ConstantClass.LOGGER.writeToInventoryLog("Block ID: " + m_unique_block_id + " " + m_inventory_list.printInventoryList());
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }

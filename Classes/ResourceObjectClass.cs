@@ -10,6 +10,7 @@ namespace RiseOfStrongholds.Classes
     {
         /*VARIABLES*/
         private ConstantClass.RESOURCE_TYPE m_resource_type;
+        
 
         /*CONSTRUCTORS*/
         public ResourceObjectClass(ConstantClass.RESOURCE_TYPE type)
@@ -35,5 +36,12 @@ namespace RiseOfStrongholds.Classes
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
+
+        /*OVERRIDE*/
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+
     }
 }

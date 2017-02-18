@@ -53,6 +53,7 @@ namespace RiseOfStrongholds.Classes
         public static string GAME_LOG_FILENAME = "gamelog.log";
         public static string QUEUE_LOG_FILENAME = "queuelog.log";
         public static string MAP_LOG_FILENAME = "maplog.log";
+        public static string INVENTORY_LOG_FILENAME = "invlog.log";
 
         /*DEBUG LEVEL (default off*/
         public static DEBUG_LEVELS DEBUG_LOG_LEVEL;
@@ -78,7 +79,13 @@ namespace RiseOfStrongholds.Classes
         public static int TERRAIN_FATIGUE_FOR_DESERT = -10;
 
         /*RESOURCE TYPES*/
-        public enum RESOURCE_TYPE { WOOD, FOOD, NONE };        
+        public enum RESOURCE_TYPE { WOOD, FOOD, NONE };
+        public static int RESOURCE_WOOD_GENERATE_RATE = 1; //number of wood generated per tick
+        public static int RESOURCE_FOOD_GENERATE_RATE = 1; //number of food generated per tick
+
+        /*INVENTORY*/
+        public static int INVENTORY_BLOCK_MAX_CAP = 100; //maximum number of unique items in the inventory
+        public static int INVENTORY_MAX_QUANTITY_PER_ITEM = 10; //maximum number of unique items in the inventory
 
         /*BLOCK EXITS*/
         public enum EXITS { NORTH, SOUTH, EAST, WEST};

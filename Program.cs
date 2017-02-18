@@ -51,6 +51,7 @@ namespace RiseOfStrongholds
             /*FIRST GENERATE THE WORLD - EXAMPLE*/  
 
             TerrainClass grassTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.GRASS);
+            TerrainClass forestTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.FOREST);
             TerrainClass hillTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.HILL);
             RegionClass region1 = new RegionClass();
 
@@ -70,28 +71,30 @@ namespace RiseOfStrongholds
             //{
             //    region1.linkTwoRoomsWithExit(rooms[i], ConstantClass.EXITS.SOUTH, rooms[i + 1], 1);
             //}
-
-            RoomClass[] rooms = new RoomClass[3];
-            for (int i = 0; i < 3; i++)
+            int numOfRooms = 2;
+            int sizeRoom = 1;
+            RoomClass[] rooms = new RoomClass[numOfRooms];
+            for (int i = 0; i < numOfRooms; i++)
             {
-                rooms[i] = new RoomClass(3);
-                rooms[i].initializeRoom(grassTerrain);
+                rooms[i] = new RoomClass(sizeRoom);
+                if ((i % 2) == 0) { rooms[i].initializeRoom(grassTerrain); }
+                else { rooms[i].initializeRoom(forestTerrain); }
                 rooms[i].linkAllBlocksTogetherHorizontally();
                 rooms[i].linkAllBlocksTogetherVertically();
                 ConstantClass.LOGGER.writeToMapLog("room" + i + " ID = " + rooms[i].getUniqueRoomID() + "\n");
                 region1.addRoom(rooms[i].getUniqueRoomID());
             }
             
-            for (int i = 0; i < 2; i++)
-            {
-                region1.linkTwoRoomsWithExit(rooms[i], ConstantClass.EXITS.SOUTH, rooms[i + 1], 3);
-            }
+            //for (int i = 0; i < 1; i++)
+            //{
+            //    region1.linkTwoRoomsWithExit(rooms[i], ConstantClass.EXITS.SOUTH, rooms[i + 1], 3);
+            //}
 
 
             ConstantClass.LOGGER.writeToMapLog(region1.printRoomLinks());
 
             ///*SECOND GENERATE THE CHARACTERS IN THE WORLD*/
-            testcase.runRoomTestWithMultipleChars(rooms[0], region1, rooms[2]);
+            testcase.runRoomTestWithMultipleChars(rooms[0], region1, rooms[sizeRoom - 1]);
             //testcase.runRoomTestWithMultipleChars(room2, region1);            
 
 

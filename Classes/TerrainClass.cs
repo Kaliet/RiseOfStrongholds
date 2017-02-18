@@ -17,7 +17,9 @@ namespace RiseOfStrongholds.Classes
 
         /*GET & SET*/
         public Guid getUniqueTerrainID() { return m_unique_terrain_id; }        
-        public int getFatigueCost() { return m_fatigueCost; }                
+        public int getFatigueCost() { return m_fatigueCost; }            
+        public int getResourceGenerateRate() { return m_resourceGenerateRate; }
+        public ConstantClass.RESOURCE_TYPE getResourceType() { return m_resourceType; }    
 
         /*CONSTRUCTORS*/
         public TerrainClass(ConstantClass.TERRAIN_TYPE terrainType)
@@ -31,7 +33,7 @@ namespace RiseOfStrongholds.Classes
                 case ConstantClass.TERRAIN_TYPE.GRASS:
                     m_fatigueCost = ConstantClass.TERRAIN_FATIGUE_FOR_GRASS;
                     m_resourceType = ConstantClass.RESOURCE_TYPE.FOOD;
-                    m_resourceGenerateRate = 1;
+                    m_resourceGenerateRate = ConstantClass.RESOURCE_FOOD_GENERATE_RATE;
                     break;
                 case ConstantClass.TERRAIN_TYPE.DESERT:
                     m_fatigueCost = ConstantClass.TERRAIN_FATIGUE_FOR_DESERT;
@@ -48,7 +50,7 @@ namespace RiseOfStrongholds.Classes
                 case ConstantClass.TERRAIN_TYPE.FOREST:
                     m_fatigueCost = ConstantClass.TERRAIN_FATIGUE_FOR_FOREST;
                     m_resourceType = ConstantClass.RESOURCE_TYPE.WOOD;
-                    m_resourceGenerateRate = 1; //different for each terrain, if jungle then rate = 2 for example
+                    m_resourceGenerateRate = ConstantClass.RESOURCE_WOOD_GENERATE_RATE; //different for each terrain, if jungle then rate = 2 for example
                     break;
             }
 
