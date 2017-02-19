@@ -10,11 +10,11 @@ namespace RiseOfStrongholds.Classes
     {
         /*VARIABLES*/
         private string m_object_name;
-        private int m_object_value; //in gold        
+        private int m_object_quantity;    
 
         /*GETS & SETS&*/
         public void setName (string name) { m_object_name = name.ToString(); }
-        public void setValue(int value) { m_object_value = value; }
+        public void setValue(int value) { m_object_quantity = value; }
 
         /*CONSTRUCTORS*/
         public GenericObjectClass()
@@ -29,13 +29,13 @@ namespace RiseOfStrongholds.Classes
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            if ((value + m_object_value) > ConstantClass.INVENTORY_MAX_QUANTITY_PER_ITEM ) //if adding more quantities than possible, quantity is limited to max cap
+            if ((value + m_object_quantity) > ConstantClass.INVENTORY_MAX_QUANTITY_PER_ITEM ) //if adding more quantities than possible, quantity is limited to max cap
             {
-                m_object_value = ConstantClass.INVENTORY_MAX_QUANTITY_PER_ITEM;
+                m_object_quantity = ConstantClass.INVENTORY_MAX_QUANTITY_PER_ITEM;
             }
             else
             {
-                m_object_value += value;
+                m_object_quantity += value;
             }
             
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
@@ -44,7 +44,7 @@ namespace RiseOfStrongholds.Classes
         /*OVERRIDE*/
         public override string ToString()
         {
-            return (m_object_name + "[" + m_object_value + "]");
+            return (m_object_name + "[" + m_object_quantity + "]");
         }
 
         public static bool operator == (GenericObjectClass a, GenericObjectClass b)

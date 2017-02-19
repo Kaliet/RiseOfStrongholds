@@ -322,7 +322,16 @@ namespace RiseOfStrongholds.Classes
                         m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
                         updateAction(); //take next action since character move action completed beginning of this round.
                     }
-                }                
+                }  
+                else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.GATHER) //action to gather resources
+                {
+                    //1. check if there are resources available in block inventory
+                    //2. check if character inventory is not full
+                    //3. if all okay, deduct block inventory to character based on character's gather skill rate
+                    //4. remove action from queue
+                }
+                //add new actions here              
+                //m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS
             }
             else 
             {

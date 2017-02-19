@@ -22,27 +22,33 @@ namespace RiseOfStrongholds.Classes
         public enum DEBUG_LEVELS { OFF, LOW, HIGH };
 
         /*character enums*/
-        public enum CHARACTER_ACTIONS { IDLE, EAT, SLEEP , WALK, FIND_BLOCK, FIND_CHAR};
+        public enum CHARACTER_ACTIONS { IDLE, EAT, SLEEP , WALK, FIND_BLOCK, FIND_CHAR, GATHER};
         public enum CHARACTER_SLEEP_STATUS { AWAKE, SLEEPY }; //awake = can perform actions, sleepy = must sleep otherwise energy decreases to 0
         public enum CHARACTER_HUNGER_STATUS { FULL, HUNGRY }; //hungry = top priority is to find food ; otherwise HP decreases
+
+        /*character skills*/
+        public static int CHAR_SKILLS_GATHER_RATE = 2; //# of resources gathered per round
 
         /*biological constants*/
         public static int MINIMUM_NUMBER_OF_SLEEP_HOURS = 2;
         public static int HOURS_BETWEEN_EATING = 8;
         public static int HOURS_BETWEEN_SLEEPING = 20;
 
-        /*energy costs + regeneration*/
-        public static int ENERGY_COST_FOR_EATING = -1;//how much energy is deducted for eating                
+        /*energy costs + regeneration*/             
         public static int ENERGY_COST_WHEN_HUNGRY = -2; //how much energy is deducted when hungry
         public static int ENERGY_COST_WHEN_SLEEPY = -5; //how much energy is deducted when sleepy
         public static int ENERGY_ADD_WHEN_SLEEP = 5; //how much energy is added for each tick
-        public static int ENERGY_COST_FOR_WALKING = -1; //how much energy is deducted for walking 1 block
 
-        /*action priorities*/
-        public static int ACTION_EAT_PRIORITY = 10;
+        public static int ENERGY_COST_FOR_EATING = -1;//how much energy is deducted for eating           
+        public static int ENERGY_COST_FOR_WALKING = -1; //how much energy is deducted for walking 1 block
+        public static int ENERGY_COST_FOR_GATHERING = -1; //how much energy is deducted for picking up
+
+        /*action priorities*/        
         public static int ACTION_SLEEP_PRIORITY = 1;
+        public static int ACTION_EAT_PRIORITY = 10;
+        public static int ACTION_GATHER_PRIORITY = 10;
         public static int ACTION_WALK_PRIORITY = 50;
-        public static int ACTION_SEARCH_PRIORITY = 50;
+        public static int ACTION_SEARCH_PRIORITY = 50;        
         public static int ACTION_NO_PRIORITY = 99999;
         public static int VARIABLE_FOR_ACTION_NONE = -1;
 
@@ -104,18 +110,6 @@ namespace RiseOfStrongholds.Classes
         }
     }
 }
-
-/*TEMPLATE FOR NEW CLASSES*/
-
-//public CharacterClass()
-//{
-/*DEBUG HIGH*/
-//    if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToLog("\t-><class_name>()"); };
-
-/*DEBUG HIGH*/
-//    if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToLog("\t<-<class_name>()"); };
-//}
-
 
 /*
 Type	    Represents	                                                    Range	                                                    Default Value
