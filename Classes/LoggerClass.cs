@@ -20,6 +20,7 @@ namespace RiseOfStrongholds.Classes
                 System.IO.File.WriteAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.QUEUE_LOG_FILENAME, "");
                 System.IO.File.WriteAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.MAP_LOG_FILENAME, "");
                 System.IO.File.WriteAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.INVENTORY_LOG_FILENAME, "");
+                System.IO.File.WriteAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.CRASH_LOG_FILENAME, "");
             }                  
             catch (DirectoryNotFoundException e)
             {
@@ -124,6 +125,22 @@ namespace RiseOfStrongholds.Classes
             try
             {
                 System.IO.File.AppendAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.INVENTORY_LOG_FILENAME, text);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        public void writeToCrashLog(string text)
+        {
+            string datetime = getRealDateTime();
+
+            text = datetime + "\t\t - \t" + text + "\n";
+
+            try
+            {
+                System.IO.File.AppendAllText(ConstantClass.DEBUG_LOG_DIRECTORY + ConstantClass.CRASH_LOG_FILENAME, text);
             }
             catch (Exception e)
             {

@@ -60,6 +60,7 @@ namespace RiseOfStrongholds.Classes
         public static string QUEUE_LOG_FILENAME = "queuelog.log";
         public static string MAP_LOG_FILENAME = "maplog.log";
         public static string INVENTORY_LOG_FILENAME = "invlog.log";
+        public static string CRASH_LOG_FILENAME = "crash.log";
 
         /*DEBUG LEVEL (default off*/
         public static DEBUG_LEVELS DEBUG_LOG_LEVEL;
