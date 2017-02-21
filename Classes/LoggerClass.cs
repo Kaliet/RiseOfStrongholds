@@ -147,5 +147,13 @@ namespace RiseOfStrongholds.Classes
                 Console.WriteLine(e.ToString());
             }
         }
+
+        public void writeToCrashLog (Exception e)
+        {
+            writeToCrashLog("EXCEPTION caught!\n");
+            writeToCrashLog("Source:\t\t\t" + e.TargetSite.ToString());
+            writeToCrashLog("Message:\t\t\t" + e.Message);
+            writeToCrashLog("StackTrace:\t\t" + e.StackTrace.ToString());
+        }
     }
 }

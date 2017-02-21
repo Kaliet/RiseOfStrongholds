@@ -169,15 +169,22 @@ namespace RiseOfStrongholds.Classes
         public void constructNewBuilding(ConstantClass.BUILDING type) //constructs building on this block
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-            
-            switch (type)
+
+            try
             {
-                case ConstantClass.BUILDING.WALL: //constructing new WALL on the block
-                    {
-                        BuildingClass newBuilding = new BuildingClass(type, m_unique_block_id);
-                        setAllExits(Guid.Empty, Guid.Empty, Guid.Empty, Guid.Empty); //blocks all exits
-                        break;
-                    }
+                switch (type)
+                {
+                    case ConstantClass.BUILDING.WALL: //constructing new WALL on the block
+                        {
+                            BuildingClass newBuilding = new BuildingClass(type, m_unique_block_id);
+                            setAllExits(Guid.Empty, Guid.Empty, Guid.Empty, Guid.Empty); //blocks all exits
+                            break;
+                        }
+                }
+            }
+            catch (Exception e)
+            {
+                ConstantClass.LOGGER.writeToCrashLog(e);
             }
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
@@ -186,34 +193,39 @@ namespace RiseOfStrongholds.Classes
         public bool existsResourceInInventory()
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            
             //if (m_inventory_list.isEmpty()) 
             return true;
-
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-
-            
         }
 
         private void updateBlockInventory() //update block inventory status 
         {            
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            //resources generated this turn are added to the block inventory            
-            int rate = ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceGenerateRate();
-            ResourceObjectClass resource = new ResourceObjectClass(ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceType());
-
-            if (rate > 0) //if resource generate some value
+            try
             {
-                if (m_inventory_list.addItemToInventory(resource, rate))
+                //resources generated this turn are added to the block inventory            
+                int rate = ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceGenerateRate();
+                ResourceObjectClass resource = new ResourceObjectClass(ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceType());
+
+                if (rate > 0) //if resource generate some value
                 {
-                    //ConstantClass.LOGGER.writeToInventoryLog("Resource " + resource.ToString() + " added to inventory in block ID " + m_unique_block_id + "\n");
+                    if (m_inventory_list.addItemToInventory(resource, rate))
+                    {
+                        //ConstantClass.LOGGER.writeToInventoryLog("Resource " + resource.ToString() + " added to inventory in block ID " + m_unique_block_id + "\n");
+                    }
+                    else
+                    {
+                        ConstantClass.LOGGER.writeToInventoryLog("Failed to add resource " + resource.ToString() + " to inventory in block ID " + m_unique_block_id + "\n");
+                    }
                 }
-                else
-                {
-                    ConstantClass.LOGGER.writeToInventoryLog("Failed to add resource " + resource.ToString() + " to inventory in block ID " + m_unique_block_id + "\n");
-                }
-            }            
+            }
+            catch (Exception e)
+            {
+                ConstantClass.LOGGER.writeToCrashLog(e);
+            }
+
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 

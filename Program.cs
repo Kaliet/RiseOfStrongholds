@@ -98,7 +98,7 @@ namespace RiseOfStrongholds
                 //rooms[1].getRoom()[0, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 rooms[1].getRoom()[1, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 rooms[1].getRoom()[2, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
-                rooms[1].getRoom()[3, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
+                //rooms[1].getRoom()[3, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 //rooms[1].getRoom()[3, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 //rooms[1].getRoom()[3, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 //rooms[1].getRoom()[3, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);
@@ -115,10 +115,7 @@ namespace RiseOfStrongholds
             }
             catch (Exception e)
             {
-                ConstantClass.LOGGER.writeToCrashLog("EXCEPTION caught!");
-                ConstantClass.LOGGER.writeToCrashLog("Source: " + e.TargetSite.ToString());
-                ConstantClass.LOGGER.writeToCrashLog("Message: " + e.Message);
-                ConstantClass.LOGGER.writeToCrashLog("StackTrace: " + e.StackTrace.ToString());
+                ConstantClass.LOGGER.writeToCrashLog(e);                
             }
             //---------------
             /*PROGRAM END*/

@@ -38,19 +38,25 @@ namespace RiseOfStrongholds.Classes
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            foreach (object obj in m_InventoryList)
+            try
             {
-                if (typeof(GenericObjectClass).IsAssignableFrom(typeof(T))) //check if T is of class generic object class
+                foreach (object obj in m_InventoryList)
                 {
-                    if (((GenericObjectClass)obj) == ((GenericObjectClass)item))
+                    if (typeof(GenericObjectClass).IsAssignableFrom(typeof(T))) //check if T is of class generic object class
                     {
-                        return true;
+                        if (((GenericObjectClass)obj) == ((GenericObjectClass)item))
+                        {
+                            return true;
+                        }
                     }
                 }
+
+                if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH                
             }
-
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-
+            catch (Exception e)
+            {
+                ConstantClass.LOGGER.writeToCrashLog(e);
+            }
             return false;
         }
 
@@ -58,38 +64,46 @@ namespace RiseOfStrongholds.Classes
         {
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-            
-            if (m_InventoryList.Count >= m_InventoryList.Capacity) return false; //returns false , unable to add another Item
 
-            if (item is T) //check if item type matches inventory type
+            try
             {
-                bool found = false;
-                //if item exists in inventory, then update item
-                //  genericObject.incrementValue(quantity);    
-                foreach (object obj in m_InventoryList)
+
+                if (m_InventoryList.Count >= m_InventoryList.Capacity) return false; //returns false , unable to add another Item
+
+                if (item is T) //check if item type matches inventory type
                 {
-                    if (typeof(GenericObjectClass).IsAssignableFrom(typeof(T))) //check if T is of class generic object class
+                    bool found = false;
+                    //if item exists in inventory, then update item
+                    //  genericObject.incrementValue(quantity);    
+                    foreach (object obj in m_InventoryList)
                     {
-                        if (((GenericObjectClass)obj) == ((GenericObjectClass)item)) //if item is inside the inventory
+                        if (typeof(GenericObjectClass).IsAssignableFrom(typeof(T))) //check if T is of class generic object class
                         {
-                            ((GenericObjectClass)obj).incrementValue(quantity);                        
-                            found = true;
-                        }
-                        else
-                        {
-                            //not supported other types yet
+                            if (((GenericObjectClass)obj) == ((GenericObjectClass)item)) //if item is inside the inventory
+                            {
+                                ((GenericObjectClass)obj).incrementValue(quantity);
+                                found = true;
+                            }
+                            else
+                            {
+                                //not supported other types yet
+                            }
                         }
                     }
+                    if (!found) { m_InventoryList.Add((T)item); }
                 }
-                if (!found) { m_InventoryList.Add((T)item); }
-            }
-            else //if item type is wrong type, then cannot insert to inventory
-            {
+                else //if item type is wrong type, then cannot insert to inventory
+                {
                     ConstantClass.LOGGER.writeToInventoryLog("Unable to insert item to inventory. Wrong type.");
+                }
+            }
+            catch (Exception e)
+            {
+                ConstantClass.LOGGER.writeToCrashLog(e);
             }
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-
+            
             return true;
         }
 
@@ -110,9 +124,8 @@ namespace RiseOfStrongholds.Classes
             }
 
             //output += "------------------------------------------------------";
-
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             return output;
-           if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
     }

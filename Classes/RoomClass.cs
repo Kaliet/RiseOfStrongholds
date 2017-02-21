@@ -64,14 +64,21 @@ namespace RiseOfStrongholds.Classes
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            for (int i = 0; i < m_size ; i++)
-                for (int j = 0; j < m_size ; j++)
-                {
-                    m_Room[i, j] = new BlockClass(new PositionClass(i, j), terrainType.getUniqueTerrainID());
-                    m_Room[i, j].setRoom(m_room_id); //links the block to the room id                   
+            try
+            {
+                for (int i = 0; i < m_size; i++)
+                    for (int j = 0; j < m_size; j++)
+                    {
+                        m_Room[i, j] = new BlockClass(new PositionClass(i, j), terrainType.getUniqueTerrainID());
+                        m_Room[i, j].setRoom(m_room_id); //links the block to the room id                   
 
-                    ConstantClass.gameTime.GameTicked += m_Room[i, j].OnGameTicked;
-                }
+                        ConstantClass.gameTime.GameTicked += m_Room[i, j].OnGameTicked;
+                    }
+            }
+            catch (Exception e)
+            {
+                ConstantClass.LOGGER.writeToCrashLog(e);
+            }
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
@@ -80,15 +87,22 @@ namespace RiseOfStrongholds.Classes
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            //links all blocks together horizontally
-            if (m_size == 1) { }//no need to link 1x1 room
-            else if (m_size >= 2) //at least 2 x 2
+            try
             {
-                for (int i = 0; i < m_size; i++) //for each row                    0,1,2
-                    for (int j = 0; j <= m_size - 2; j++) //for each column         0,1
-                    {
-                        if (j < m_size - 1) { linkTwoBlocksWithExit(m_Room[i, j], ConstantClass.EXITS.EAST, m_Room[i, j + 1]); }//last column cannot have east exit
-                    }
+                //links all blocks together horizontally
+                if (m_size == 1) { }//no need to link 1x1 room
+                else if (m_size >= 2) //at least 2 x 2
+                {
+                    for (int i = 0; i < m_size; i++) //for each row                    0,1,2
+                        for (int j = 0; j <= m_size - 2; j++) //for each column         0,1
+                        {
+                            if (j < m_size - 1) { linkTwoBlocksWithExit(m_Room[i, j], ConstantClass.EXITS.EAST, m_Room[i, j + 1]); }//last column cannot have east exit
+                        }
+                }
+            }
+            catch (Exception e)
+            {
+                ConstantClass.LOGGER.writeToCrashLog(e);
             }
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
@@ -98,15 +112,22 @@ namespace RiseOfStrongholds.Classes
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            //links all blocks together horizontally
-            if (m_size == 1) { }//no need to link 1x1 room
-            else if (m_size >= 2) //at least 2 x 2
+            try
             {
-                for (int i = 0; i < m_size; i++) //for each row                    0,1,2
-                    for (int j = 0; j <= m_size - 1; j++) //for each column         0,1
-                    {
-                        if (i > 0) { linkTwoBlocksWithExit(m_Room[i, j], ConstantClass.EXITS.NORTH, m_Room[i - 1, j]); } //first row cannot have north exit                        
-                    }
+                //links all blocks together horizontally
+                if (m_size == 1) { }//no need to link 1x1 room
+                else if (m_size >= 2) //at least 2 x 2
+                {
+                    for (int i = 0; i < m_size; i++) //for each row                    0,1,2
+                        for (int j = 0; j <= m_size - 1; j++) //for each column         0,1
+                        {
+                            if (i > 0) { linkTwoBlocksWithExit(m_Room[i, j], ConstantClass.EXITS.NORTH, m_Room[i - 1, j]); } //first row cannot have north exit                        
+                        }
+                }
+            }
+            catch (Exception e)
+            {
+                ConstantClass.LOGGER.writeToCrashLog(e);
             }
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
@@ -115,25 +136,32 @@ namespace RiseOfStrongholds.Classes
         public void linkTwoBlocksWithExit (BlockClass block1 , ConstantClass.EXITS exitFromBlock1,  BlockClass block2) //link two rooms based on exit from room1 perspective
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-           
-            switch (exitFromBlock1)
-            {                
-                case ConstantClass.EXITS.NORTH: //room2 is located north of room1
-                    block1.setExit(block2.getUniqueBlockID(), ConstantClass.EXITS.NORTH); //room1 north exit = room2 id
-                    block2.setExit(block1.getUniqueBlockID(), ConstantClass.EXITS.SOUTH); //room2 south exit = room1 id
-                    break;
-                case ConstantClass.EXITS.SOUTH: //room2 is located south of room1
-                    block1.setExit(block2.getUniqueBlockID(), ConstantClass.EXITS.SOUTH); //room1 south exit = room2 id
-                    block2.setExit(block1.getUniqueBlockID(), ConstantClass.EXITS.NORTH); //room2 norht exit = room1 id
-                    break;
-                case ConstantClass.EXITS.WEST: //room2 is located west of room1
-                    block1.setExit(block2.getUniqueBlockID(), ConstantClass.EXITS.WEST); //room1 west exit = room2 id
-                    block2.setExit(block1.getUniqueBlockID(), ConstantClass.EXITS.EAST); //room2 east exit = room1 id
-                    break;
-                case ConstantClass.EXITS.EAST: //room2 is located west of room1
-                    block1.setExit(block2.getUniqueBlockID(), ConstantClass.EXITS.EAST); //room1 east exit = room2 id
-                    block2.setExit(block1.getUniqueBlockID(), ConstantClass.EXITS.WEST); //room2 west exit = room1 id
-                    break;
+
+            try
+            {
+                switch (exitFromBlock1)
+                {
+                    case ConstantClass.EXITS.NORTH: //room2 is located north of room1
+                        block1.setExit(block2.getUniqueBlockID(), ConstantClass.EXITS.NORTH); //room1 north exit = room2 id
+                        block2.setExit(block1.getUniqueBlockID(), ConstantClass.EXITS.SOUTH); //room2 south exit = room1 id
+                        break;
+                    case ConstantClass.EXITS.SOUTH: //room2 is located south of room1
+                        block1.setExit(block2.getUniqueBlockID(), ConstantClass.EXITS.SOUTH); //room1 south exit = room2 id
+                        block2.setExit(block1.getUniqueBlockID(), ConstantClass.EXITS.NORTH); //room2 norht exit = room1 id
+                        break;
+                    case ConstantClass.EXITS.WEST: //room2 is located west of room1
+                        block1.setExit(block2.getUniqueBlockID(), ConstantClass.EXITS.WEST); //room1 west exit = room2 id
+                        block2.setExit(block1.getUniqueBlockID(), ConstantClass.EXITS.EAST); //room2 east exit = room1 id
+                        break;
+                    case ConstantClass.EXITS.EAST: //room2 is located west of room1
+                        block1.setExit(block2.getUniqueBlockID(), ConstantClass.EXITS.EAST); //room1 east exit = room2 id
+                        block2.setExit(block1.getUniqueBlockID(), ConstantClass.EXITS.WEST); //room2 west exit = room1 id
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                ConstantClass.LOGGER.writeToCrashLog(e);
             }
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH

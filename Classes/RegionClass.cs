@@ -50,180 +50,189 @@ namespace RiseOfStrongholds.Classes
 
             List<int> blocks = new List<int>();
 
-            for (int i = 0; i < Math.Min(room1.getSize(), room2.getSize()); i++)
+            try
             {
-                blocks.Add(i); //add all block indices from smallest room to list
+
+                for (int i = 0; i < Math.Min(room1.getSize(), room2.getSize()); i++)
+                {
+                    blocks.Add(i); //add all block indices from smallest room to list
+                }
+
+                //1. find common blocks between two rooms minus number of walls
+                room1Size = room1.getSize();
+                room2Size = room2.getSize();
+
+                //go over room1 and check if there are walls. if so, exclude it from shared blocks list
+                for (int i = 0; i < room1.getSize(); i++)
+                {
+                    if (exitFromRoom1 == ConstantClass.EXITS.NORTH) //room2 is north of room1 --> go over room1 [0,i] and room2[getSize-1,i]
+                    {
+                        if (room1.getRoom()[0, i].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room1.getRoom()[0, i].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
+                        {
+                            if (blocks.Contains(i)) { blocks.Remove(i); }
+                            room1Size--;
+                        }
+                    }
+                    else if (exitFromRoom1 == ConstantClass.EXITS.SOUTH) //room2 is south of room1 --> go over room1[getSize-1,i] and room2[0,i]
+                    {
+                        if (room1.getRoom()[room1.getSize() - 1, i].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room1.getRoom()[room1.getSize() - 1, i].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
+                        {
+                            if (blocks.Contains(i)) { blocks.Remove(i); }
+                            room1Size--;
+                        }
+                    }
+                    else if (exitFromRoom1 == ConstantClass.EXITS.WEST) //room2 is west of room1 --> go over room1[i,0] and room2[i,getSize-1]
+                    {
+                        if (room1.getRoom()[i, 0].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room1.getRoom()[i, 0].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
+                        {
+                            if (blocks.Contains(i)) { blocks.Remove(i); }
+                            room1Size--;
+                        }
+                    }
+                    else if (exitFromRoom1 == ConstantClass.EXITS.EAST) //room2 is east of room1 --> go over room1[i,getSize-1] and room2[i,0]
+                    {
+                        if (room1.getRoom()[i, room1.getSize() - 1].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room1.getRoom()[i, room1.getSize() - 1].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
+                        {
+                            if (blocks.Contains(i)) { blocks.Remove(i); }
+                            room1Size--;
+                        }
+                    }
+                }
+
+                for (int i = 0; i < room2.getSize(); i++) //go over room2 and check if there are walls. if so, exclude it from blocks list
+                {
+                    if (exitFromRoom1 == ConstantClass.EXITS.NORTH) //room2 is north of room1 --> go over room1 [0,i] and room2[getSize-1,i]
+                    {
+                        if (room2.getRoom()[room2.getSize() - 1, i].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room2.getRoom()[room2.getSize() - 1, i].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
+                        {
+                            if (blocks.Contains(i)) { blocks.Remove(i); }
+                            room2Size--;
+                        }
+                    }
+                    else if (exitFromRoom1 == ConstantClass.EXITS.SOUTH) //room2 is south of room1 --> go over room1[getSize-1,i] and room2[0,i]
+                    {
+                        if (room2.getRoom()[0, i].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room2.getRoom()[0, i].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
+                        {
+                            if (blocks.Contains(i)) { blocks.Remove(i); }
+                            room2Size--;
+                        }
+                    }
+                    else if (exitFromRoom1 == ConstantClass.EXITS.WEST) //room2 is west of room1 --> go over room1[i,0] and room2[i,getSize-1]
+                    {
+                        if (room2.getRoom()[i, room2.getSize() - 1].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room2.getRoom()[i, room2.getSize() - 1].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
+                        {
+                            if (blocks.Contains(i)) { blocks.Remove(i); }
+                            room2Size--;
+                        }
+                    }
+                    else if (exitFromRoom1 == ConstantClass.EXITS.EAST) //room2 is east of room1 --> go over room1[i,getSize-1] and room2[i,0]
+                    {
+                        if (room2.getRoom()[i, 0].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room2.getRoom()[i, 0].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
+                        {
+                            if (blocks.Contains(i)) { blocks.Remove(i); }
+                            room2Size--;
+                        }
+                    }
+                }
+
+                int totalCommonBlocks = Math.Min(room1Size, room2Size); //total # of common blocks is the smallest room size            
+
+                if (totalCommonBlocks == 0 || blocks.Count == 0) { return; } //if there are no common blocks or block list is empty, then return without doing anything
+                if (totalCommonBlocks < numberOfSharedExits) { numberOfSharedExits = totalCommonBlocks; } //cannot define more shared exits can what is possible
+
+                GuidPairClass blockPair = null;
+                List<GuidPairClass> listOfSharedBlocksRoom1ToRoom2 = new List<GuidPairClass>();
+                List<GuidPairClass> listOfSharedBlocksRoom2ToRoom1 = new List<GuidPairClass>();
+                GuidPairClass room1Room2Pairs = new GuidPairClass(room1.getUniqueRoomID(), room2.getUniqueRoomID());
+                GuidPairClass room2Room1Pairs = new GuidPairClass(room2.getUniqueRoomID(), room1.getUniqueRoomID());
+
+                if (numberOfSharedExits >= 1 && numberOfSharedExits <= totalCommonBlocks) //number of shared exits must be greater than 1 and less than equal to smallest room size
+                {
+                    //2. randomize and choose the blocks to become exit                
+                    for (int i = 0; i < numberOfSharedExits; i++)
+                    {
+                        randomBlock = blocks[ConstantClass.RANDOMIZER.produceInt(1, 100) % blocks.Count];//randomizing common blocks to pick up # exits    
+                        blocks.Remove(randomBlock); //removes index that was picked. blocks list will consists of indices not picked
+
+                        switch (exitFromRoom1)
+                        {
+                            case (ConstantClass.EXITS.NORTH): //room2 is north of room1
+                                {
+                                    room1.getRoom()[0, randomBlock].setExit(room2.getRoom()[room2.getSize() - 1, randomBlock].getUniqueBlockID(), ConstantClass.EXITS.NORTH); //room1 block's north exit = room2 block id
+                                    room2.getRoom()[room2.getSize() - 1, randomBlock].setExit(room1.getRoom()[0, randomBlock].getUniqueBlockID(), ConstantClass.EXITS.SOUTH); //room2 block's south exit = room1 block id
+
+                                    //room1 to room2
+                                    blockPair = new GuidPairClass(room1.getRoom()[0, randomBlock].getUniqueBlockID(), room2.getRoom()[room2.getSize() - 1, randomBlock].getUniqueBlockID());
+                                    listOfSharedBlocksRoom1ToRoom2.Add(blockPair);
+
+                                    //room2 to room1
+                                    blockPair = new GuidPairClass(room2.getRoom()[room2.getSize() - 1, randomBlock].getUniqueBlockID(), room1.getRoom()[0, randomBlock].getUniqueBlockID());
+                                    listOfSharedBlocksRoom2ToRoom1.Add(blockPair);
+
+                                    break;
+                                }
+                            case (ConstantClass.EXITS.SOUTH): //room2 is south of room1
+                                {
+                                    room1.getRoom()[room1.getSize() - 1, randomBlock].setExit(room2.getRoom()[0, randomBlock].getUniqueBlockID(), ConstantClass.EXITS.SOUTH); //room1 block's south exit = room2 block id
+                                    room2.getRoom()[0, randomBlock].setExit(room1.getRoom()[room1.getSize() - 1, randomBlock].getUniqueBlockID(), ConstantClass.EXITS.NORTH); //room2 block's north exit = room1 block id
+
+                                    //room1 to room2
+                                    blockPair = new GuidPairClass(room1.getRoom()[room1.getSize() - 1, randomBlock].getUniqueBlockID(), room2.getRoom()[0, randomBlock].getUniqueBlockID());
+                                    listOfSharedBlocksRoom1ToRoom2.Add(blockPair);
+
+                                    //room2 to room1
+                                    blockPair = new GuidPairClass(room2.getRoom()[0, randomBlock].getUniqueBlockID(), room1.getRoom()[room1.getSize() - 1, randomBlock].getUniqueBlockID());
+                                    listOfSharedBlocksRoom2ToRoom1.Add(blockPair);
+
+                                    break;
+                                }
+                            case (ConstantClass.EXITS.WEST): //room2 is west of room1
+                                {
+                                    room1.getRoom()[randomBlock, 0].setExit(room2.getRoom()[randomBlock, room2.getSize() - 1].getUniqueBlockID(), ConstantClass.EXITS.WEST); //room1 block's west exit = room2 block id
+                                    room2.getRoom()[randomBlock, room2.getSize() - 1].setExit(room1.getRoom()[randomBlock, 0].getUniqueBlockID(), ConstantClass.EXITS.EAST); //room2 block's east exit = room1 block id
+
+                                    //room1 to room2
+                                    blockPair = new GuidPairClass(room1.getRoom()[randomBlock, 0].getUniqueBlockID(), room2.getRoom()[randomBlock, room2.getSize() - 1].getUniqueBlockID());
+                                    listOfSharedBlocksRoom1ToRoom2.Add(blockPair);
+
+                                    //room2 to room1
+                                    blockPair = new GuidPairClass(room2.getRoom()[randomBlock, room2.getSize() - 1].getUniqueBlockID(), room1.getRoom()[randomBlock, 0].getUniqueBlockID());
+                                    listOfSharedBlocksRoom2ToRoom1.Add(blockPair);
+
+                                    break;
+                                }
+                            case (ConstantClass.EXITS.EAST): //room2 is east of room1
+                                {
+                                    room1.getRoom()[randomBlock, room1.getSize() - 1].setExit(room2.getRoom()[randomBlock, 0].getUniqueBlockID(), ConstantClass.EXITS.EAST); //room1 block's east exit = room2 block id
+                                    room2.getRoom()[randomBlock, 0].setExit(room1.getRoom()[randomBlock, room1.getSize() - 1].getUniqueBlockID(), ConstantClass.EXITS.WEST); //room2 block's west exit = room1 block id
+
+                                    //room1 to room2
+                                    blockPair = new GuidPairClass(room1.getRoom()[randomBlock, room1.getSize() - 1].getUniqueBlockID(), room2.getRoom()[randomBlock, 0].getUniqueBlockID());
+                                    listOfSharedBlocksRoom1ToRoom2.Add(blockPair);
+
+                                    //room2 to room1
+                                    blockPair = new GuidPairClass(room2.getRoom()[randomBlock, 0].getUniqueBlockID(), room1.getRoom()[randomBlock, room1.getSize() - 1].getUniqueBlockID());
+                                    listOfSharedBlocksRoom2ToRoom1.Add(blockPair);
+
+                                    break;
+                                }
+                        } //end switch                    
+
+                    }//for loop
+
+                    ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable().Add(room1Room2Pairs, listOfSharedBlocksRoom1ToRoom2);
+                    ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable().Add(room2Room1Pairs, listOfSharedBlocksRoom2ToRoom1);
+                }
+                else
+                {
+                    throw new Exception("Invalid numberOfsharedExits");
+                }
+            }
+            catch (Exception e)
+            {
+                ConstantClass.LOGGER.writeToCrashLog(e);
             }
 
-            //1. find common blocks between two rooms minus number of walls
-            room1Size = room1.getSize();
-            room2Size = room2.getSize();
-
-            //go over room1 and check if there are walls. if so, exclude it from shared blocks list
-            for (int i = 0; i < room1.getSize(); i++) 
-            {
-                if (exitFromRoom1 == ConstantClass.EXITS.NORTH) //room2 is north of room1 --> go over room1 [0,i] and room2[getSize-1,i]
-                {
-                    if (room1.getRoom()[0,i].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room1.getRoom()[0, i].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
-                    {
-                        if (blocks.Contains(i)) { blocks.Remove(i); }
-                        room1Size--;
-                    } 
-                }
-                else if (exitFromRoom1 == ConstantClass.EXITS.SOUTH) //room2 is south of room1 --> go over room1[getSize-1,i] and room2[0,i]
-                {
-                    if (room1.getRoom()[room1.getSize() - 1, i].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room1.getRoom()[room1.getSize() - 1, i].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
-                    {
-                        if (blocks.Contains(i)) { blocks.Remove(i); }
-                        room1Size--;
-                    } 
-                }
-                else if (exitFromRoom1 == ConstantClass.EXITS.WEST) //room2 is west of room1 --> go over room1[i,0] and room2[i,getSize-1]
-                {
-                    if (room1.getRoom()[i, 0].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room1.getRoom()[i, 0].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
-                    {
-                        if (blocks.Contains(i)) { blocks.Remove(i); }
-                        room1Size--;
-                    } 
-                }
-                else if (exitFromRoom1 == ConstantClass.EXITS.EAST) //room2 is east of room1 --> go over room1[i,getSize-1] and room2[i,0]
-                {
-                    if (room1.getRoom()[i, room1.getSize() - 1].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room1.getRoom()[i, room1.getSize() - 1].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
-                    {
-                        if (blocks.Contains(i)) { blocks.Remove(i); }
-                        room1Size--;
-                    } 
-                } 
-            }
-
-            for (int i = 0; i < room2.getSize(); i++) //go over room2 and check if there are walls. if so, exclude it from blocks list
-            {
-                if (exitFromRoom1 == ConstantClass.EXITS.NORTH) //room2 is north of room1 --> go over room1 [0,i] and room2[getSize-1,i]
-                {                    
-                    if (room2.getRoom()[room2.getSize() - 1, i].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room2.getRoom()[room2.getSize() - 1, i].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
-                    {
-                        if (blocks.Contains(i)) { blocks.Remove(i); }
-                        room2Size--;
-                    } 
-                }
-                else if (exitFromRoom1 == ConstantClass.EXITS.SOUTH) //room2 is south of room1 --> go over room1[getSize-1,i] and room2[0,i]
-                {                    
-                    if (room2.getRoom()[0, i].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room2.getRoom()[0, i].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
-                    {
-                        if (blocks.Contains(i)) { blocks.Remove(i); }
-                        room2Size--;
-                    } 
-                }
-                else if (exitFromRoom1 == ConstantClass.EXITS.WEST) //room2 is west of room1 --> go over room1[i,0] and room2[i,getSize-1]
-                {                    
-                    if (room2.getRoom()[i, room2.getSize() - 1].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room2.getRoom()[i, room2.getSize() - 1].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
-                    {
-                        if (blocks.Contains(i)) { blocks.Remove(i); }
-                        room2Size--;
-                    } 
-                }
-                else if (exitFromRoom1 == ConstantClass.EXITS.EAST) //room2 is east of room1 --> go over room1[i,getSize-1] and room2[i,0]
-                {                    
-                    if (room2.getRoom()[i, 0].getBuildingID() != Guid.Empty && ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[room2.getRoom()[i, 0].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //if block is a wall
-                    {
-                        if (blocks.Contains(i)) { blocks.Remove(i); }
-                        room2Size--;
-                    } 
-                }
-            }
-
-            int totalCommonBlocks = Math.Min(room1Size,room2Size); //total # of common blocks is the smallest room size            
-
-            if (totalCommonBlocks == 0 || blocks.Count == 0) { return; } //if there are no common blocks or block list is empty, then return without doing anything
-            if (totalCommonBlocks < numberOfSharedExits) { numberOfSharedExits = totalCommonBlocks; } //cannot define more shared exits can what is possible
-
-            GuidPairClass blockPair = null;
-            List<GuidPairClass> listOfSharedBlocksRoom1ToRoom2 = new List<GuidPairClass>();
-            List<GuidPairClass> listOfSharedBlocksRoom2ToRoom1 = new List<GuidPairClass>();
-            GuidPairClass room1Room2Pairs = new GuidPairClass(room1.getUniqueRoomID(), room2.getUniqueRoomID());
-            GuidPairClass room2Room1Pairs = new GuidPairClass(room2.getUniqueRoomID(), room1.getUniqueRoomID());
-
-            if (numberOfSharedExits >= 1 && numberOfSharedExits <= totalCommonBlocks) //number of shared exits must be greater than 1 and less than equal to smallest room size
-            {
-                //2. randomize and choose the blocks to become exit                
-                for (int i = 0; i < numberOfSharedExits; i++)
-                {
-                    randomBlock = blocks[ConstantClass.RANDOMIZER.produceInt(1, 100) % blocks.Count];//randomizing common blocks to pick up # exits    
-                    blocks.Remove(randomBlock); //removes index that was picked. blocks list will consists of indices not picked
-
-                    switch (exitFromRoom1)
-                    {
-                        case (ConstantClass.EXITS.NORTH): //room2 is north of room1
-                            {
-                                room1.getRoom()[0, randomBlock].setExit(room2.getRoom()[room2.getSize() - 1, randomBlock].getUniqueBlockID(), ConstantClass.EXITS.NORTH); //room1 block's north exit = room2 block id
-                                room2.getRoom()[room2.getSize() - 1, randomBlock].setExit(room1.getRoom()[0, randomBlock].getUniqueBlockID(), ConstantClass.EXITS.SOUTH); //room2 block's south exit = room1 block id
-
-                                //room1 to room2
-                                blockPair = new GuidPairClass(room1.getRoom()[0, randomBlock].getUniqueBlockID(), room2.getRoom()[room2.getSize() - 1, randomBlock].getUniqueBlockID());
-                                listOfSharedBlocksRoom1ToRoom2.Add(blockPair);                                
-
-                                //room2 to room1
-                                blockPair = new GuidPairClass(room2.getRoom()[room2.getSize() - 1, randomBlock].getUniqueBlockID(), room1.getRoom()[0, randomBlock].getUniqueBlockID());
-                                listOfSharedBlocksRoom2ToRoom1.Add(blockPair);                                
-
-                                break;
-                            }
-                        case (ConstantClass.EXITS.SOUTH): //room2 is south of room1
-                            {
-                                room1.getRoom()[room1.getSize() - 1, randomBlock].setExit(room2.getRoom()[0, randomBlock].getUniqueBlockID(), ConstantClass.EXITS.SOUTH); //room1 block's south exit = room2 block id
-                                room2.getRoom()[0, randomBlock].setExit(room1.getRoom()[room1.getSize() - 1, randomBlock].getUniqueBlockID(), ConstantClass.EXITS.NORTH); //room2 block's north exit = room1 block id
-
-                                //room1 to room2
-                                blockPair = new GuidPairClass(room1.getRoom()[room1.getSize() - 1, randomBlock].getUniqueBlockID(), room2.getRoom()[0, randomBlock].getUniqueBlockID());
-                                listOfSharedBlocksRoom1ToRoom2.Add(blockPair);                                
-
-                                //room2 to room1
-                                blockPair = new GuidPairClass(room2.getRoom()[0, randomBlock].getUniqueBlockID(), room1.getRoom()[room1.getSize() - 1, randomBlock].getUniqueBlockID());
-                                listOfSharedBlocksRoom2ToRoom1.Add(blockPair);                                
-
-                                break;
-                            }
-                        case (ConstantClass.EXITS.WEST): //room2 is west of room1
-                            {
-                                room1.getRoom()[randomBlock, 0].setExit(room2.getRoom()[randomBlock, room2.getSize() - 1].getUniqueBlockID(), ConstantClass.EXITS.WEST); //room1 block's west exit = room2 block id
-                                room2.getRoom()[randomBlock, room2.getSize() - 1].setExit(room1.getRoom()[randomBlock, 0].getUniqueBlockID(), ConstantClass.EXITS.EAST); //room2 block's east exit = room1 block id
-
-                                //room1 to room2
-                                blockPair = new GuidPairClass(room1.getRoom()[randomBlock, 0].getUniqueBlockID(), room2.getRoom()[randomBlock, room2.getSize() - 1].getUniqueBlockID());
-                                listOfSharedBlocksRoom1ToRoom2.Add(blockPair);                                
-
-                                //room2 to room1
-                                blockPair = new GuidPairClass(room2.getRoom()[randomBlock, room2.getSize() - 1].getUniqueBlockID(), room1.getRoom()[randomBlock, 0].getUniqueBlockID());
-                                listOfSharedBlocksRoom2ToRoom1.Add(blockPair);                                
-
-                                break;
-                            }
-                        case (ConstantClass.EXITS.EAST): //room2 is east of room1
-                            {
-                                room1.getRoom()[randomBlock, room1.getSize() - 1].setExit(room2.getRoom()[randomBlock, 0].getUniqueBlockID(), ConstantClass.EXITS.EAST); //room1 block's east exit = room2 block id
-                                room2.getRoom()[randomBlock, 0].setExit(room1.getRoom()[randomBlock, room1.getSize() - 1].getUniqueBlockID(), ConstantClass.EXITS.WEST); //room2 block's west exit = room1 block id
-
-                                //room1 to room2
-                                blockPair = new GuidPairClass(room1.getRoom()[randomBlock, room1.getSize() - 1].getUniqueBlockID(), room2.getRoom()[randomBlock, 0].getUniqueBlockID());
-                                listOfSharedBlocksRoom1ToRoom2.Add(blockPair);                                
-
-                                //room2 to room1
-                                blockPair = new GuidPairClass(room2.getRoom()[randomBlock, 0].getUniqueBlockID(), room1.getRoom()[randomBlock, room1.getSize() - 1].getUniqueBlockID());
-                                listOfSharedBlocksRoom2ToRoom1.Add(blockPair);                                
-
-                                break;
-                            }
-                    } //end switch                    
-
-                }//for loop
-
-                ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable().Add(room1Room2Pairs, listOfSharedBlocksRoom1ToRoom2);
-                ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable().Add(room2Room1Pairs, listOfSharedBlocksRoom2ToRoom1);
-            }
-            else
-            {
-                throw new Exception("Invalid numberOfsharedExits");
-            }
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
