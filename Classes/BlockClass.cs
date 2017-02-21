@@ -49,28 +49,51 @@ namespace RiseOfStrongholds.Classes
         public void setAllExits(Guid n, Guid s, Guid w, Guid e)
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            Guid room2 = Guid.Empty;
+            Guid block2;
+            GuidPairClass pair;
 
-            if (n == Guid.Empty) //if we are blocking off the north exit
+
+            try
             {
-                if (m_NorthExit != Guid.Empty) { ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_NorthExit].m_SouthExit = Guid.Empty; } //if there is a block in the North, then that block's south exit is blocked
-                m_NorthExit = n;
+                if (ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.isGuidAKey(m_room_id)) //checks if room has a shared exit
+                {
+                    room2 = ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.returnSecondGuidKey(m_room_id);
+                }
+                pair = new GuidPairClass(m_room_id, room2);
+
+
+                if (n == Guid.Empty) //if we are blocking off the north exit
+                {
+                    if (m_NorthExit != Guid.Empty) { ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_NorthExit].m_SouthExit = Guid.Empty; } //if there is a block in the North, then that block's south exit is blocked
+                    if (ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable().ContainsKey(pair))
+                    {
+                        if (ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable()[pair])
+                    }
+
+                    m_NorthExit = n;
+                }
+                if (s == Guid.Empty) //if we are blocking off the south exit
+                {
+                    if (m_SouthExit != Guid.Empty) { ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_SouthExit].m_NorthExit = Guid.Empty; } //if there is a block in the South, then that block's north exit is blocked
+                    m_SouthExit = s;
+                }
+                if (e == Guid.Empty) //if we are blocking off the east exit
+                {
+                    if (m_EastExit != Guid.Empty) { ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_EastExit].m_WestExit = Guid.Empty; } //if there is a block in the East, then that block's west exit is blocked
+                    m_EastExit = e;
+                }
+                if (w == Guid.Empty) //if we are blocking off the west exit
+                {
+                    if (m_WestExit != Guid.Empty) { ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_WestExit].m_EastExit = Guid.Empty; } //if there is a block in the West, then that block's east exit is blocked
+                    m_WestExit = w;
+                }
             }
-            if (s == Guid.Empty) //if we are blocking off the south exit
+            catch (Exception ex)
             {
-                if (m_SouthExit != Guid.Empty) { ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_SouthExit].m_NorthExit = Guid.Empty; } //if there is a block in the South, then that block's north exit is blocked
-                m_SouthExit = s;
+                ConstantClass.LOGGER.writeToCrashLog(ex);
             }
-            if (e == Guid.Empty) //if we are blocking off the east exit
-            {
-                if (m_EastExit != Guid.Empty) { ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_EastExit].m_WestExit = Guid.Empty; } //if there is a block in the East, then that block's west exit is blocked
-                m_EastExit = e;
-            }
-            if (w == Guid.Empty) //if we are blocking off the west exit
-            {
-                if (m_WestExit != Guid.Empty) { ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_WestExit].m_EastExit = Guid.Empty; } //if there is a block in the West, then that block's east exit is blocked
-                m_WestExit = w;
-            }
-            
+
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 

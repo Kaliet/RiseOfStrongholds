@@ -46,6 +46,27 @@ namespace RiseOfStrongholds.Classes
             return false;
         }
 
+        public Guid returnSecondGuidKey(Guid input)
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            try
+            {
+                foreach (KeyValuePair<GuidPairClass, T> pair in m_mappingTable)
+                {
+                    if (pair.Key.isGuidOneofthePairs(input)) return pair.Key.returnSecondGuidPair(input);
+                }
+            }
+            catch (Exception e)
+            {
+                ConstantClass.LOGGER.writeToCrashLog(e);
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            return Guid.Empty;
+        }
+
         public Guid returnNonVisitedGuidPair (Guid input, List<Guid> visitedGuids)
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH

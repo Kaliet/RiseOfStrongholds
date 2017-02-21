@@ -247,7 +247,9 @@ namespace RiseOfStrongholds.Classes
             {
                 foreach (GuidPairClass guidpair in pair.Value)
                 {
-                    output += "room id " + pair.Key.m_guid1 + " block " + guidpair.m_guid1 + "is linked to room id " + pair.Key.m_guid2 + " block " + guidpair.m_guid2 + "\n";                    
+                    //output += "room id " + pair.Key.m_guid1 + " block " + guidpair.m_guid1 + "is linked to \nroom id " + pair.Key.m_guid2 + " block " + guidpair.m_guid2 + "\n";
+                    output += "[" + ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[guidpair.m_guid1].getPosition().getPositionX() + "," + ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[guidpair.m_guid1].getPosition().getPositionY() + "]\t\t\t" + pair.Key.m_guid1 + "\t\t\t" + guidpair.m_guid1 + "\n";
+                    output += "[" + ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[guidpair.m_guid2].getPosition().getPositionX() + "," + ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[guidpair.m_guid2].getPosition().getPositionY() + "]\t\t\t" + pair.Key.m_guid2 + "\t\t\t" + guidpair.m_guid2 + "\n";
                 }                
             }
 

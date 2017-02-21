@@ -106,6 +106,7 @@ namespace RiseOfStrongholds
                 //rooms[1].getRoom()[1, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);
 
 
+
                 ConstantClass.LOGGER.writeToMapLog(region1.printRoomLinks());
 
                 ///*SECOND GENERATE THE CHARACTERS IN THE WORLD*/
