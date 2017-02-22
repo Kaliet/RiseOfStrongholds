@@ -49,10 +49,9 @@ namespace RiseOfStrongholds.Classes
         public void setAllExits(Guid n, Guid s, Guid w, Guid e)
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-            Guid room2 = Guid.Empty;
-            Guid block2 = Guid.Empty;
+            Guid room2 = Guid.Empty;            
             GuidPairClass pair;
-            List<GuidPairClass> listofSharedExits = new List<GuidPairClass>();
+            
 
             try
             {
@@ -68,43 +67,26 @@ namespace RiseOfStrongholds.Classes
                     if (m_NorthExit != Guid.Empty)//if there is a block in the North, then that block's south exit is blocked
                     {
                         ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_NorthExit].m_SouthExit = Guid.Empty;
-                    } 
-
-                    //if block is part of shared exits between room, then need remove it from the table of shared exits.
-                    if (ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable().ContainsKey(pair))
-                    {
-                        listofSharedExits = ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable()[pair]; //list of shared exits
-
-                        //1. foreach shared exit, check if block is shared exit , if so then remove it from table
-                        for (int i = 0; i < listofSharedExits.Count; i++)
-                        {
-                            if (listofSharedExits[i].isGuidOneofthePairs(m_unique_block_id))
-                            {
-                                block2 = listofSharedExits[i].returnSecondGuidPair(m_unique_block_id);
-                                ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable()[pair].Remove(new GuidPairClass(m_unique_block_id, block2));
-                            }
-                        }
-
-                        //remove from mirrored entry in mapping table
-                        pair.swapGuidInsidePair();
-                        ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable()[pair].Remove(new GuidPairClass(block2, m_unique_block_id));
                     }
-
+                    removeBlockFromSharedList(pair);
                     m_NorthExit = n;
                 }
                 if (s == Guid.Empty) //if we are blocking off the south exit
                 {
                     if (m_SouthExit != Guid.Empty) { ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_SouthExit].m_NorthExit = Guid.Empty; } //if there is a block in the South, then that block's north exit is blocked
+                    removeBlockFromSharedList(pair);
                     m_SouthExit = s;
                 }
                 if (e == Guid.Empty) //if we are blocking off the east exit
                 {
                     if (m_EastExit != Guid.Empty) { ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_EastExit].m_WestExit = Guid.Empty; } //if there is a block in the East, then that block's west exit is blocked
+                    removeBlockFromSharedList(pair);
                     m_EastExit = e;
                 }
                 if (w == Guid.Empty) //if we are blocking off the west exit
                 {
                     if (m_WestExit != Guid.Empty) { ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_WestExit].m_EastExit = Guid.Empty; } //if there is a block in the West, then that block's east exit is blocked
+                    removeBlockFromSharedList(pair);
                     m_WestExit = w;
                 }
             }
@@ -232,18 +214,78 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
-        public void removeBlockFromSharedList()
+        public void removeBlockFromSharedList(GuidPairClass roomPair) //removes this block from shared list of mapping table
         {
 
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            try
+            {
+
+                List<GuidPairClass> listofSharedExits = new List<GuidPairClass>();
+                Guid block2 = Guid.Empty;
+
+                //if block is part of shared exits between room, then need remove it from the table of shared exits.
+                if (ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable().ContainsKey(roomPair))
+                {
+                    listofSharedExits = ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable()[roomPair]; //list of shared exits
+
+                    //1. foreach shared exit, check if block is shared exit , if so then remove it from table
+                    for (int i = 0; i < listofSharedExits.Count; i++)
+                    {
+                        if (listofSharedExits[i].isGuidOneofthePairs(this.m_unique_block_id))
+                        {
+                            block2 = listofSharedExits[i].returnSecondGuidPair(this.m_unique_block_id);
+                            ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable()[roomPair].Remove(new GuidPairClass(this.m_unique_block_id, block2));
+                        }
+                    }
+
+                    //remove from mirrored entry in mapping table
+                    roomPair.swapGuidInsidePair();
+                    ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable()[roomPair].Remove(new GuidPairClass(block2, m_unique_block_id));
+                }
+            }
+            catch (Exception e)
+            {
+                ConstantClass.LOGGER.writeToCrashLog(e);
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
         public bool existsResourceInInventory()
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-            
-            //if (m_inventory_list.isEmpty()) 
-            return true;
+
+            if (m_inventory_list.getSize() > 0) return true;
+            else return false;
+        }
+
+        public ResourceObjectClass reduceBlockInventory(int rate) //rate = reduction rate
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            ResourceObjectClass resource = null;
+
+            try
+            {
+                if (m_inventory_list.getSize() <= 0) return null;
+                else if (m_inventory_list.getSize() <= rate) rate = m_inventory_list.getSize(); //if rate is higher than number of items in inventory, then retrieve all the inventory            
+
+                resource = new ResourceObjectClass(ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceType(), rate);
+
+                //reduce from block inventory
+                m_inventory_list.removeItemFromInventory
+            }
+            catch(Exception e)
+            {
+                ConstantClass.LOGGER.writeToCrashLog(e);
+            }
+
+            return resource;
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
         private void updateBlockInventory() //update block inventory status 
@@ -283,7 +325,7 @@ namespace RiseOfStrongholds.Classes
 
             //update block
             updateBlockInventory();
-            ConstantClass.LOGGER.writeToInventoryLog("Block ID: " + m_unique_block_id + " " + m_inventory_list.printInventoryList());
+            if (m_inventory_list.getSize() > 0) { ConstantClass.LOGGER.writeToInventoryLog("Block ID: " + m_unique_block_id + " " + m_inventory_list.printInventoryList()); }
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }

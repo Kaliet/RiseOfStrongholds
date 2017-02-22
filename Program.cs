@@ -52,6 +52,7 @@ namespace RiseOfStrongholds
 
                 /*FIRST GENERATE THE WORLD - EXAMPLE*/
 
+                TerrainClass dirtTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.DIRT);
                 TerrainClass grassTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.GRASS);
                 TerrainClass forestTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.FOREST);
                 TerrainClass hillTerrain = new TerrainClass(ConstantClass.TERRAIN_TYPE.HILL);
@@ -79,13 +80,15 @@ namespace RiseOfStrongholds
                 for (int i = 0; i < numOfRooms; i++)
                 {
                     rooms[i] = new RoomClass(sizeRoom);
-                    if ((i % 2) == 0) { rooms[i].initializeRoom(grassTerrain); }
-                    else { rooms[i].initializeRoom(forestTerrain); }
+                    if ((i % 2) == 0) { rooms[i].initializeRoom(dirtTerrain); }
+                    else { rooms[i].initializeRoom(dirtTerrain); }
                     rooms[i].linkAllBlocksTogetherHorizontally();
                     rooms[i].linkAllBlocksTogetherVertically();
                     ConstantClass.LOGGER.writeToMapLog("room" + i + " ID = " + rooms[i].getUniqueRoomID() + "\n");
                     region1.addRoom(rooms[i].getUniqueRoomID());
                 }
+
+                rooms[numOfRooms - 1].getRoom()[sizeRoom - 1, sizeRoom - 1].setTerrainType(forestTerrain.getUniqueTerrainID());
 
                 for (int i = 0; i < 1; i++)
                 {
@@ -93,11 +96,13 @@ namespace RiseOfStrongholds
                 }
 
                 rooms[1].getRoom()[0, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
-                rooms[1].getRoom()[0, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
-                //rooms[1].getRoom()[0, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
+                //rooms[1].getRoom()[0, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
+                rooms[1].getRoom()[0, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 //rooms[1].getRoom()[0, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);
-                rooms[1].getRoom()[1, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
+                //rooms[1].getRoom()[1, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 rooms[1].getRoom()[2, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
+                rooms[1].getRoom()[2, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
+                //rooms[1].getRoom()[2, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);                
                 //rooms[1].getRoom()[3, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 //rooms[1].getRoom()[3, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 //rooms[1].getRoom()[3, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);

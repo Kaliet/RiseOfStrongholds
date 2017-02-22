@@ -15,6 +15,7 @@ namespace RiseOfStrongholds.Classes
         private Guid m_unique_character_id; //character's unique id
         private QueueClass<ActionClass> m_action_queue; //queue of actions the character is doing
         private Guid m_block_id; //in which block the character resides in        
+        private InventoryClass<GenericObjectClass> m_inventory;
         
         /*GET & SET*/
         public string getName() { return m_character_name; }
@@ -44,6 +45,7 @@ namespace RiseOfStrongholds.Classes
             m_birthDate = new GameTimeClass(ConstantClass.gameTime);
             m_unique_character_id = Guid.NewGuid(); //unique id for character            
             m_action_queue = new QueueClass<ActionClass>();
+            m_inventory = new InventoryClass<GenericObjectClass>(ConstantClass.INVENTORY_MAX_CHAR_CAP);
 
             m_block_id = blockID;
 
@@ -328,9 +330,24 @@ namespace RiseOfStrongholds.Classes
                     else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.GATHER) //action to gather resources
                     {
                         //1. check if there are resources available in block inventory
+                        if (!ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].existsResourceInInventory())
+                        {
+                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot gather resources since block has no resources.");
+                        }
                         //2. check if character inventory is not full
+                        else if (m_inventory.getSize() == ConstantClass.INVENTORY_MAX_CHAR_CAP)
+                        {
+                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot gather resources since character inventory is full.");
+                        }
                         //3. if all okay, deduct block inventory to character based on character's gather skill rate
-                        //4. remove action from queue
+                        else
+                        {
+
+                        }
+                        //4. deduct energy
+                        m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);
+                        //5. remove action from queue
+                        m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
                     }
                     //add new actions here              
                     //m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS

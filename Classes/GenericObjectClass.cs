@@ -29,7 +29,7 @@ namespace RiseOfStrongholds.Classes
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            if ((value + m_object_quantity) > ConstantClass.INVENTORY_MAX_QUANTITY_PER_ITEM ) //if adding more quantities than possible, quantity is limited to max cap
+            if ((value + m_object_quantity) >= ConstantClass.INVENTORY_MAX_QUANTITY_PER_ITEM ) //if adding more quantities than possible, quantity is limited to max cap
             {
                 m_object_quantity = ConstantClass.INVENTORY_MAX_QUANTITY_PER_ITEM;
             }

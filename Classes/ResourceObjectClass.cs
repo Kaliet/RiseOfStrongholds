@@ -10,9 +10,39 @@ namespace RiseOfStrongholds.Classes
     {
         /*VARIABLES*/
         private ConstantClass.RESOURCE_TYPE m_resource_type;
-        
+
 
         /*CONSTRUCTORS*/
+        public ResourceObjectClass()
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+
+        public ResourceObjectClass(ConstantClass.RESOURCE_TYPE type, int value)
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            m_resource_type = type;
+            switch (type)
+            {
+                case ConstantClass.RESOURCE_TYPE.WOOD:
+                    base.setName("WOOD");
+                    base.setValue(value);
+                    break;
+                case ConstantClass.RESOURCE_TYPE.FOOD:
+                    base.setName("FOOD");
+                    base.setValue(value);
+                    break;
+                case ConstantClass.RESOURCE_TYPE.NONE:
+                    base.setName("");
+                    base.setValue(0);
+                    break;
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+
         public ResourceObjectClass(ConstantClass.RESOURCE_TYPE type)
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH

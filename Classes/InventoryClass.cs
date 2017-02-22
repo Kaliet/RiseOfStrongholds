@@ -12,7 +12,7 @@ namespace RiseOfStrongholds.Classes
         private List<T> m_InventoryList;        
 
         /*GET & SET*/
-        
+        public int getSize() { return m_InventoryList.Count; }
 
         /*CONSTRUCTORS*/
         public InventoryClass(int maxCap)
