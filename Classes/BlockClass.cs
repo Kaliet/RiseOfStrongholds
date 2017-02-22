@@ -50,9 +50,9 @@ namespace RiseOfStrongholds.Classes
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             Guid room2 = Guid.Empty;
-            Guid block2;
+            Guid block2 = Guid.Empty;
             GuidPairClass pair;
-
+            List<GuidPairClass> listofSharedExits = new List<GuidPairClass>();
 
             try
             {
@@ -65,10 +65,29 @@ namespace RiseOfStrongholds.Classes
 
                 if (n == Guid.Empty) //if we are blocking off the north exit
                 {
-                    if (m_NorthExit != Guid.Empty) { ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_NorthExit].m_SouthExit = Guid.Empty; } //if there is a block in the North, then that block's south exit is blocked
+                    if (m_NorthExit != Guid.Empty)//if there is a block in the North, then that block's south exit is blocked
+                    {
+                        ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_NorthExit].m_SouthExit = Guid.Empty;
+                    } 
+
+                    //if block is part of shared exits between room, then need remove it from the table of shared exits.
                     if (ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable().ContainsKey(pair))
                     {
-                        if (ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable()[pair])
+                        listofSharedExits = ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable()[pair]; //list of shared exits
+
+                        //1. foreach shared exit, check if block is shared exit , if so then remove it from table
+                        for (int i = 0; i < listofSharedExits.Count; i++)
+                        {
+                            if (listofSharedExits[i].isGuidOneofthePairs(m_unique_block_id))
+                            {
+                                block2 = listofSharedExits[i].returnSecondGuidPair(m_unique_block_id);
+                                ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable()[pair].Remove(new GuidPairClass(m_unique_block_id, block2));
+                            }
+                        }
+
+                        //remove from mirrored entry in mapping table
+                        pair.swapGuidInsidePair();
+                        ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable()[pair].Remove(new GuidPairClass(block2, m_unique_block_id));
                     }
 
                     m_NorthExit = n;
@@ -211,6 +230,11 @@ namespace RiseOfStrongholds.Classes
             }
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+
+        public void removeBlockFromSharedList()
+        {
+
         }
 
         public bool existsResourceInInventory()

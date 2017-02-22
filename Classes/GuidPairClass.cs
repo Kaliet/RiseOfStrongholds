@@ -75,5 +75,17 @@ namespace RiseOfStrongholds.Classes
             if (m_guid1 == value || m_guid2 == value) { return true; }
             return false;
         }
+
+        public void swapGuidInsidePair()
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            Guid tmp = m_guid1;
+
+            m_guid1 = m_guid2;
+            m_guid2 = tmp;
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
     }
 }
