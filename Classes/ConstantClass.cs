@@ -27,7 +27,7 @@ namespace RiseOfStrongholds.Classes
         public enum CHARACTER_HUNGER_STATUS { FULL, HUNGRY }; //hungry = top priority is to find food ; otherwise HP decreases
 
         /*character skills*/
-        public static int CHAR_SKILLS_GATHER_RATE = 2; //# of resources gathered per round
+        public static int CHAR_SKILLS_GATHER_RATE = 5; //# of resources gathered per round
 
         /*biological constants*/
         public static int MINIMUM_NUMBER_OF_SLEEP_HOURS = 2;
@@ -61,6 +61,7 @@ namespace RiseOfStrongholds.Classes
         public static string MAP_LOG_FILENAME = "maplog.log";
         public static string INVENTORY_LOG_FILENAME = "invlog.log";
         public static string CRASH_LOG_FILENAME = "crash.log";
+        public static string CHAR_LOG_FILENAME = "char.log";
 
         /*DEBUG LEVEL (default off*/
         public static DEBUG_LEVELS DEBUG_LOG_LEVEL;

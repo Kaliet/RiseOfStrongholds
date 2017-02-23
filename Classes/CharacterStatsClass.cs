@@ -33,7 +33,7 @@ namespace RiseOfStrongholds.Classes
         public void initializeSleepRate(int current, int max) { m_sleep_rate = new statStruct(current, max); }
         public void initializeEnergy(int value) { m_Energy = new statStruct(value); }        
 
-        public void fillEnergytoMax() { m_Energy.modifyCurrentValue(m_Energy.getMaxValue()); }        
+        public void fillEnergytoMax() { m_Energy.modifyCurrentValue(m_Energy.getMaxValue()); }                
 
         /* METHODS */
 
@@ -81,6 +81,33 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
             return output;
+        }
+
+        public string printStats()
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            string output = "";
+
+            /*
+             * Stats:
+             *      - Hunger status:    [status]
+             *      - Hunger rate:      [rate]
+             *      - Sleep status:     [status]
+             *      - Sleep rate:       [rate]
+             *      - Energy:           [energy]
+             */
+
+            output += "Stats:\n" +
+                      "\t\t\t- Hunger status:\t\t" + printHungerStatus() + "\n" +
+                      "\t\t\t- Hunger rate:\t\t" + m_hunger_rate.printStat() + "\n" +
+                      "\t\t\t- Sleep status:\t\t" + printSleepStatus() + "\n" +
+                      "\t\t\t- Sleep rate:\t\t" + m_sleep_rate.printStat() + "\n" +
+                      "\t\t\t- Energy:\t\t\t" + m_Energy.printStat() + "\n";
+
+            return output;
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
     }
 }

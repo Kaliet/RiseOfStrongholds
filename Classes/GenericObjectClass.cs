@@ -14,7 +14,8 @@ namespace RiseOfStrongholds.Classes
 
         /*GETS & SETS&*/
         public void setName (string name) { m_object_name = name.ToString(); }
-        public void setValue(int value) { m_object_quantity = value; }
+        public void setQuantity(int value) { m_object_quantity = value; }
+        public int getQuantity() { return m_object_quantity; }
 
         /*CONSTRUCTORS*/
         public GenericObjectClass()
@@ -38,6 +39,22 @@ namespace RiseOfStrongholds.Classes
                 m_object_quantity += value;
             }
             
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+
+        public void decrementValue(int value) //decreases value of object
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            if ((m_object_quantity - value) <= 0) //if subtracting more quantities than possible, quantity is limited to 0
+            {
+                m_object_quantity = 0;
+            }
+            else
+            {
+                m_object_quantity -= value;
+            }
+
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 

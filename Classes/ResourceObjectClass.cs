@@ -28,15 +28,15 @@ namespace RiseOfStrongholds.Classes
             {
                 case ConstantClass.RESOURCE_TYPE.WOOD:
                     base.setName("WOOD");
-                    base.setValue(value);
+                    base.setQuantity(value);
                     break;
                 case ConstantClass.RESOURCE_TYPE.FOOD:
                     base.setName("FOOD");
-                    base.setValue(value);
+                    base.setQuantity(value);
                     break;
                 case ConstantClass.RESOURCE_TYPE.NONE:
                     base.setName("");
-                    base.setValue(0);
+                    base.setQuantity(0);
                     break;
             }
 
@@ -52,15 +52,15 @@ namespace RiseOfStrongholds.Classes
             {
                 case ConstantClass.RESOURCE_TYPE.WOOD:
                     base.setName("WOOD");
-                    base.setValue(1);
+                    base.setQuantity(1);
                     break;
                 case ConstantClass.RESOURCE_TYPE.FOOD:
                     base.setName("FOOD");
-                    base.setValue(1);
+                    base.setQuantity(1);
                     break;
                 case ConstantClass.RESOURCE_TYPE.NONE:
                     base.setName("");
-                    base.setValue(0);
+                    base.setQuantity(0);
                     break;
             }
 

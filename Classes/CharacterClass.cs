@@ -158,6 +158,9 @@ namespace RiseOfStrongholds.Classes
                     //perform highest priority action in action list                
                     index = returnIndexOfActionWithHighestIndex();
                     if (index < 0) throw new Exception("Queue empty.");
+
+                                        //-------------------ACTION: EAT ---------------------//
+
                     if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.EAT) // EAT
                     {
                         //TODO: character eats something or goes to find something to eat
@@ -169,6 +172,9 @@ namespace RiseOfStrongholds.Classes
                         ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is FULL");
                         m_action_queue.getQueue().RemoveAt(index); //EAT action completed - removed from queue
                     }
+
+                                        //-------------------ACTION: SLEEP ---------------------//
+
                     else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.SLEEP) // SLEEP
                     {
                         //TODO: character goes to sleep until he replenishes his energy                    
@@ -187,6 +193,9 @@ namespace RiseOfStrongholds.Classes
                             m_action_queue.getQueue().RemoveAt(index); //SLEEP action completed - removed from queue
                         }
                     }
+
+                                            //-------------------ACTION: WALK ---------------------//
+
                     else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.WALK) // WALKS
                     {
                         //TODO: character wants to walk to a random exit (before AI introduction)
@@ -212,6 +221,9 @@ namespace RiseOfStrongholds.Classes
                         }
                         m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
                     }
+
+                                            //-------------------ACTION: FIND_BLOCK / FIND_CHAR ---------------------//
+
                     else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK ||
                              m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_CHAR) //SEARCHES FOR SPECIFIC BLOCK or CHAR
                     {
@@ -327,28 +339,50 @@ namespace RiseOfStrongholds.Classes
                             updateAction(); //take next action since character move action completed beginning of this round.
                         }
                     }
+
+                                            //-------------------ACTION: GATHER ---------------------//
+
                     else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.GATHER) //action to gather resources
                     {
+                        Guid targetBlockWithResource = m_action_queue.getQueue()[index].getGuidForAction();
+                        int currentPriority = m_action_queue.getQueue()[index].getPriority();
+
                         //1. check if there are resources available in block inventory
-                        if (!ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].existsResourceInInventory())
+                        if (!ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockWithResource].existsResourceInInventory())
                         {
-                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot gather resources since block has no resources.");
+                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot gather resources since block " + m_block_id + " has no resources.");
+                            m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);
+                            m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
                         }
                         //2. check if character inventory is not full
-                        else if (m_inventory.getSize() == ConstantClass.INVENTORY_MAX_CHAR_CAP)
+                        else if (m_inventory.getInventorySize() == ConstantClass.INVENTORY_MAX_CHAR_CAP)
                         {
                             ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot gather resources since character inventory is full.");
+                            m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);
+                            m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
                         }
-                        //3. if all okay, deduct block inventory to character based on character's gather skill rate
+                        //3. check if character is on target block, if not then go find block
+                        else if (m_block_id != targetBlockWithResource)
+                        {
+                            m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, targetBlockWithResource));
+                        }
+                        //4. if all okay, deduct block inventory to character based on character's gather skill rate
+                        //5. deduct energy
+                        //6. remove action from queue
                         else
                         {
+                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is gathering " + ConstantClass.CHAR_SKILLS_GATHER_RATE + " resources from block " + m_block_id + ".");
 
-                        }
-                        //4. deduct energy
-                        m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);
-                        //5. remove action from queue
-                        m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
+                            ResourceObjectClass resourceGathered = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].reduceBlockInventory(ConstantClass.CHAR_SKILLS_GATHER_RATE);
+                            m_inventory.addItemToInventory(resourceGathered, resourceGathered.getQuantity());
+
+                            m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);                            
+                            m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
+                        }                        
                     }
+
+                                            //-------------------ACTION: XXXXX ---------------------//
+
                     //add new actions here              
                     //m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS
                 }
@@ -470,6 +504,44 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
+        private string printCharacter()
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            string output = "";
+
+            /* Character    [Guid]
+             * Birth Date   [date]
+             * Block ID     [Guid]
+             * Room ID      [Guid]
+             * Action:
+             *      - action1
+             *      - action2
+             * Stats:
+             *      - Hunger status:    [status]
+             *      - Hunger rate:      [rate]
+             *      - Sleep status:     [status]
+             *      - Sleep rate:       [rate]
+             *      - Energy:           [energy]
+             * Inventory:
+             *      - item1 x quantity1
+             *      - item2 x quantity2
+             */
+
+            output += "\nCharacter ID:\t" + m_unique_character_id + "\n" +
+                      "Birth date:\t\t" + m_birthDate + "\n" +
+                      "Block ID:\t\t" + m_block_id + "\n" +
+                      "Room ID:\t\t" + ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id) + "\n" +
+                      "Action:\n" + m_action_queue.printQueue() + "\n" +
+                      m_stats.printStats() + "\n" +
+                      m_inventory.printInventoryList() + "\n";
+            output += "----------------------------------------------------------------------------\n";
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH 
+
+            return output;
+        }
+
         /*EVENTS HANDLER*/
         public event EventHandler ActionUpdated;
 
@@ -490,6 +562,7 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
             updateAction(); //update action for every game tick 
+            ConstantClass.LOGGER.writeToCharLog(printCharacter());
             ConstantClass.LOGGER.writeToGameLog("----------------------------------------------------------------------------");
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH

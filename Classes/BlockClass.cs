@@ -258,7 +258,7 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            if (m_inventory_list.getSize() > 0) return true;
+            if (m_inventory_list.getInventorySize() > 0) return true;
             else return false;
         }
 
@@ -270,13 +270,14 @@ namespace RiseOfStrongholds.Classes
 
             try
             {
-                if (m_inventory_list.getSize() <= 0) return null;
-                else if (m_inventory_list.getSize() <= rate) rate = m_inventory_list.getSize(); //if rate is higher than number of items in inventory, then retrieve all the inventory            
+                if (m_inventory_list.getInventorySize() <= 0) return null;
+                
+                //else if (m_inventory_list.getInventorySize() <= rate) rate = m_inventory_list.getInventorySize(); //if rate is higher than number of items in inventory, then retrieve all the inventory            
 
                 resource = new ResourceObjectClass(ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceType(), rate);
 
                 //reduce from block inventory
-                m_inventory_list.removeItemFromInventory
+                m_inventory_list.removeItemFromInventory(resource,rate);
             }
             catch(Exception e)
             {
@@ -325,7 +326,7 @@ namespace RiseOfStrongholds.Classes
 
             //update block
             updateBlockInventory();
-            if (m_inventory_list.getSize() > 0) { ConstantClass.LOGGER.writeToInventoryLog("Block ID: " + m_unique_block_id + " " + m_inventory_list.printInventoryList()); }
+            if (m_inventory_list.getInventorySize() > 0) { ConstantClass.LOGGER.writeToInventoryLog("\nBlock ID: " + m_unique_block_id + " " + m_inventory_list.printInventoryList()); }
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
