@@ -15,7 +15,7 @@ namespace RiseOfStrongholds.Classes
         private Guid m_unique_character_id; //character's unique id
         private QueueClass<ActionClass> m_action_queue; //queue of actions the character is doing
         private Guid m_block_id; //in which block the character resides in        
-        private InventoryClass<GenericObjectClass> m_inventory;
+        private InventoryClass m_inventory;
         
         /*GET & SET*/
         public string getName() { return m_character_name; }
@@ -45,7 +45,7 @@ namespace RiseOfStrongholds.Classes
             m_birthDate = new GameTimeClass(ConstantClass.gameTime);
             m_unique_character_id = Guid.NewGuid(); //unique id for character            
             m_action_queue = new QueueClass<ActionClass>();
-            m_inventory = new InventoryClass<GenericObjectClass>(ConstantClass.INVENTORY_MAX_CHAR_CAP);
+            m_inventory = new InventoryClass(ConstantClass.INVENTORY_MAX_CHAR_CAP);
 
             m_block_id = blockID;
 
@@ -82,8 +82,6 @@ namespace RiseOfStrongholds.Classes
                 }
                 return index;
             }
-
-            
         }
 
         public string outputPersonGUID()

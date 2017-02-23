@@ -21,7 +21,7 @@ namespace RiseOfStrongholds.Classes
         private Guid m_room_id;
         private Guid m_building_id;
         private List<Guid> m_list_of_occupants;
-        private InventoryClass<GenericObjectClass> m_inventory_list;
+        private InventoryClass m_inventory_list;
 
         /*GET & SET*/
         public Guid getUniqueBlockID() { return m_unique_block_id; }        
@@ -134,7 +134,7 @@ namespace RiseOfStrongholds.Classes
             setAllExits(Guid.Empty, Guid.Empty, Guid.Empty, Guid.Empty);
             m_list_of_occupants = new List<Guid>();
             m_stats = new BlockStatsClass();
-            m_inventory_list = new InventoryClass<GenericObjectClass>(ConstantClass.INVENTORY_BLOCK_MAX_CAP);
+            m_inventory_list = new InventoryClass(ConstantClass.INVENTORY_BLOCK_MAX_CAP);
 
             ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable().Add(m_unique_block_id, this); //maps to mapping table
 
@@ -272,21 +272,20 @@ namespace RiseOfStrongholds.Classes
             {
                 if (m_inventory_list.getInventorySize() <= 0) return null;
                 
-                //else if (m_inventory_list.getInventorySize() <= rate) rate = m_inventory_list.getInventorySize(); //if rate is higher than number of items in inventory, then retrieve all the inventory            
+                else if (m_inventory_list.returnQuantityOfItemBasedOnIndex(0) <= rate) { rate = m_inventory_list.returnQuantityOfItemBasedOnIndex(0); }//if rate is higher than number of items in inventory, then retrieve all the inventory                            
 
-                resource = new ResourceObjectClass(ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceType(), rate);
-
-                //reduce from block inventory
-                m_inventory_list.removeItemFromInventory(resource,rate);
+                resource = new ResourceObjectClass(ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceType(), rate); 
+                
+                m_inventory_list.removeItemFromInventory(resource,rate); //resource deducted from block inventory
             }
             catch(Exception e)
             {
                 ConstantClass.LOGGER.writeToCrashLog(e);
             }
 
-            return resource;
-
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            return resource;
         }
 
         private void updateBlockInventory() //update block inventory status 
