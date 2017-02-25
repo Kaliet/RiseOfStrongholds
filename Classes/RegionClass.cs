@@ -257,6 +257,23 @@ namespace RiseOfStrongholds.Classes
 
             return output;
         }
+        
+        public string printAllRoomsInRegion()
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            string output = "";
+
+            foreach (Guid room in m_list_of_rooms)
+            {
+                output += "Room ID:\t\t" + room + "\n";
+                output += ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[room].printRoom(true) + "\n";
+            }
+
+            return output;
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }        
 
         /*EVENT HANLDER*/
         public void OnActionUpdated(object source, EventArgs args)
@@ -267,7 +284,7 @@ namespace RiseOfStrongholds.Classes
 
             foreach (Guid id in m_list_of_rooms)
             {
-                Console.WriteLine(ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[id].printRoom());
+                Console.WriteLine(ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[id].printRoom(false));
             }
 
             Console.WriteLine(ConstantClass.gameTime.ToString());

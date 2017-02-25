@@ -167,7 +167,7 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
-        public string printRoom()
+        public string printRoom(bool withExits)
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
@@ -178,7 +178,7 @@ namespace RiseOfStrongholds.Classes
             {
                 for (int j = 0; j < m_size; j++)
                 {
-                    output += "|\t\t";
+                    output += "|\t";
 
                     if (m_Room[i, j].getBuildingID() != Guid.Empty) //there is a building here.
                     {
@@ -189,10 +189,13 @@ namespace RiseOfStrongholds.Classes
                                 break;
                         }
                     }
-                    //if (m_Room[i, j].existsNorthExit()) { output += "N"; }
-                    //if (m_Room[i, j].existsSouthExit()) { output += "S"; }
-                    //if (m_Room[i, j].existsWestExit()) { output += "W"; }
-                    //if (m_Room[i, j].existsEastExit()) { output += "E"; }
+                    if (withExits)
+                    {
+                        if (m_Room[i, j].existsNorthExit()) { output += "N"; }
+                        if (m_Room[i, j].existsSouthExit()) { output += "S"; }
+                        if (m_Room[i, j].existsWestExit()) { output += "W"; }
+                        if (m_Room[i, j].existsEastExit()) { output += "E"; }
+                    }
                     if (m_Room[i,j].getListOfOccupants().Count > 0) //block is not empty, has occupants
                     {
                         foreach (Guid id in m_Room[i, j].getListOfOccupants())// go through list and print the occupants
@@ -200,7 +203,7 @@ namespace RiseOfStrongholds.Classes
                             output += id.ToString().Substring(0, 1); 
                         }
                     }           
-                    output += "\t\t|";
+                    output += "\t|";
                 }
                 output += "\n";
             }

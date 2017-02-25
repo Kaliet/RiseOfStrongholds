@@ -74,7 +74,7 @@ namespace RiseOfStrongholds
                 //{
                 //    region1.linkTwoRoomsWithExit(rooms[i], ConstantClass.EXITS.SOUTH, rooms[i + 1], 1);
                 //}
-                int numOfRooms = 2;
+                int numOfRooms = 3;
                 int sizeRoom = 3;
                 RoomClass[] rooms = new RoomClass[numOfRooms];
                 for (int i = 0; i < numOfRooms; i++)
@@ -83,25 +83,25 @@ namespace RiseOfStrongholds
                     if ((i % 2) == 0) { rooms[i].initializeRoom(dirtTerrain); }
                     else { rooms[i].initializeRoom(dirtTerrain); }
                     rooms[i].linkAllBlocksTogetherHorizontally();
-                    rooms[i].linkAllBlocksTogetherVertically();
-                    ConstantClass.LOGGER.writeToMapLog("room" + i + " ID = " + rooms[i].getUniqueRoomID() + "\n");
+                    rooms[i].linkAllBlocksTogetherVertically();                   
                     region1.addRoom(rooms[i].getUniqueRoomID());
                 }
 
+                rooms[numOfRooms - 1].getRoom()[1,0].setTerrainType(forestTerrain.getUniqueTerrainID());
                 rooms[numOfRooms - 1].getRoom()[sizeRoom - 1, sizeRoom - 1].setTerrainType(forestTerrain.getUniqueTerrainID());
 
-                for (int i = 0; i < 1; i++)
-                {
-                    region1.linkTwoRoomsWithExit(rooms[i], ConstantClass.EXITS.SOUTH, rooms[i + 1], 4);
-                }
-
                 rooms[1].getRoom()[0, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
+                rooms[1].getRoom()[0, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
+                rooms[1].getRoom()[1, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
+                rooms[1].getRoom()[1, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
+
+                rooms[numOfRooms -1].getRoom()[0, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 //rooms[1].getRoom()[0, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
-                rooms[1].getRoom()[0, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
+                rooms[numOfRooms -1].getRoom()[0, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 //rooms[1].getRoom()[0, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 //rooms[1].getRoom()[1, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
-                rooms[1].getRoom()[2, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
-                rooms[1].getRoom()[2, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
+                rooms[numOfRooms -1].getRoom()[2, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
+                rooms[numOfRooms -1].getRoom()[2, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 //rooms[1].getRoom()[2, 2].constructNewBuilding(ConstantClass.BUILDING.WALL);                
                 //rooms[1].getRoom()[3, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 //rooms[1].getRoom()[3, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
@@ -110,12 +110,17 @@ namespace RiseOfStrongholds
                 //rooms[1].getRoom()[2, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 //rooms[1].getRoom()[1, 3].constructNewBuilding(ConstantClass.BUILDING.WALL);
 
+                for (int i = 0; i < numOfRooms - 1; i++)
+                {
+                    region1.linkTwoRoomsWithExit(rooms[i], ConstantClass.EXITS.SOUTH, rooms[i + 1], 1);
+                }
 
+                //ConstantClass.LOGGER.writeToMapLog(region1.printRoomLinks());
+                ConstantClass.LOGGER.writeToMapLog(region1.printAllRoomsInRegion());
 
-                ConstantClass.LOGGER.writeToMapLog(region1.printRoomLinks());
 
                 ///*SECOND GENERATE THE CHARACTERS IN THE WORLD*/
-                testcase.runRoomTestWithMultipleChars(rooms[0], region1, rooms[1]);
+                testcase.runRoomTestWithMultipleChars(rooms[0], region1, rooms[numOfRooms - 1]);
                 //testcase.runRoomTestWithMultipleChars(room2, region1);            
 
             }

@@ -325,7 +325,10 @@ namespace RiseOfStrongholds.Classes
 
             //update block
             updateBlockInventory();
-            if (m_inventory_list.getInventorySize() > 0) { ConstantClass.LOGGER.writeToInventoryLog("\nBlock ID: " + m_unique_block_id + " " + m_inventory_list.printInventoryList()); }
+            if (m_inventory_list.getInventorySize() > 0)
+            {
+                ConstantClass.LOGGER.writeToInventoryLog("\nBlock ID: " + m_unique_block_id + "\n" + m_inventory_list.printInventoryList());                
+            }            
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }

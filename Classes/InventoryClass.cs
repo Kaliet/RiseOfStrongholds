@@ -153,7 +153,7 @@ namespace RiseOfStrongholds.Classes
                 output += "\t\t\t\t\t *" + (obj.ToString() + "\n");                
             }
 
-            //output += "------------------------------------------------------";
+            //output += "------------------------------------------------------\n";
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             return output;
         }

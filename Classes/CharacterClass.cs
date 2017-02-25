@@ -369,10 +369,11 @@ namespace RiseOfStrongholds.Classes
                         //6. remove action from queue
                         else
                         {
-                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is gathering " + ConstantClass.CHAR_SKILLS_GATHER_RATE + " resources from block " + m_block_id + ".");
-
                             ResourceObjectClass resourceGathered = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].reduceBlockInventory(ConstantClass.CHAR_SKILLS_GATHER_RATE);
+
+                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is gathering " + resourceGathered.getQuantity() + " resource(s) from block " + m_block_id + ".");
                             m_inventory.addItemToInventory(resourceGathered, resourceGathered.getQuantity());
+
 
                             m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);                            
                             m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
@@ -526,6 +527,7 @@ namespace RiseOfStrongholds.Classes
              *      - item2 x quantity2
              */
 
+            output += "\n" + ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id)].printRoom(false);
             output += "\nCharacter ID:\t" + m_unique_character_id + "\n" +
                       "Birth date:\t\t" + m_birthDate + "\n" +
                       "Block ID:\t\t" + m_block_id + "\n" +

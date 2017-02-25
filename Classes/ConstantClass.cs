@@ -93,7 +93,7 @@ namespace RiseOfStrongholds.Classes
 
         /*INVENTORY*/
         public static int INVENTORY_BLOCK_MAX_CAP = 100; //maximum number of unique items in the inventory
-        public static int INVENTORY_MAX_QUANTITY_PER_ITEM = 10; //maximum number of unique items in the inventory
+        public static int INVENTORY_MAX_QUANTITY_PER_ITEM = 999; //maximum number per unique items in the inventory
         public static int INVENTORY_MAX_CHAR_CAP = 1000; //maximum number of unique items character can have
 
         /*BLOCK EXITS*/

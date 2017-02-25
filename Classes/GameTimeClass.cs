@@ -224,6 +224,10 @@ namespace RiseOfStrongholds.Classes
 
                     /*EVENT HANDLING*/
                     OnGameTicked();
+                    ConstantClass.LOGGER.writeToCharLog("\n=======================tick================================\n");
+                    ConstantClass.LOGGER.writeToGameLog("\n\t\t\t\t\t\t\t\t\t\t=======================tick================================\n");
+                    ConstantClass.LOGGER.writeToInventoryLog("\n=======================tick================================\n");
+                    ConstantClass.LOGGER.writeToQueueLog("\n=======================tick================================\n");                    
                 }                
             }
             

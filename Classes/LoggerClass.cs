@@ -64,7 +64,7 @@ namespace RiseOfStrongholds.Classes
 
         public void writeToDebugLog(string text)
         {
-            string datetime = getRealDateTime();
+            string datetime = getRealDateTime() + "\t|\t" + ConstantClass.gameTime.ToString();
 
             text = datetime + "\t\t - \t" + text + "\n";
             try
@@ -79,10 +79,10 @@ namespace RiseOfStrongholds.Classes
 
         public void writeToGameLog(string text)
         {
-            string datetime = getRealDateTime();
-
             //text = ConstantClass.gameTime.ToString() + "\t\t - \t" + text + "\n";
-            text = datetime + "\t\t - \t" + text + "\n";
+            string datetime = getRealDateTime() + "\t|\t" + ConstantClass.gameTime.ToString();
+
+            text = datetime + "\t\t - \t" + text + "\n"; ;
 
             try
             {
@@ -97,7 +97,7 @@ namespace RiseOfStrongholds.Classes
         public void writeToQueueLog(string text)
         {
             //text = ConstantClass.gameTime.ToString() + "\t\t - \t" + text + "\n";
-            string datetime = getRealDateTime();
+            string datetime = getRealDateTime() + "\t|\t" + ConstantClass.gameTime.ToString();
 
             text = datetime + "\t\t - \t" + text + "\n";
 
@@ -126,7 +126,7 @@ namespace RiseOfStrongholds.Classes
         public void writeToInventoryLog(string text)
         {
             //text = ConstantClass.gameTime.ToString() + "\t\t - \t" + text + "\n";
-            string datetime = getRealDateTime();
+            string datetime = getRealDateTime() + "\t|\t" + ConstantClass.gameTime.ToString();
 
             text = datetime + "\t\t - \t" + text + "\n";
 
@@ -142,7 +142,7 @@ namespace RiseOfStrongholds.Classes
 
         public void writeToCrashLog(string text)
         {
-            string datetime = getRealDateTime();
+            string datetime = getRealDateTime() + "\t|\t" + ConstantClass.gameTime.ToString();
 
             text = datetime + "\t\t - \t" + text + "\n";
 
@@ -166,7 +166,7 @@ namespace RiseOfStrongholds.Classes
 
         public void writeToCharLog(string text)
         {
-            string datetime = getRealDateTime();
+            string datetime = getRealDateTime() + "\t|\t" + ConstantClass.gameTime.ToString();
 
             text = datetime + "\t\t - \t" + text + "\n";
 

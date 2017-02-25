@@ -100,7 +100,7 @@ namespace RiseOfStrongholds.Classes
 
             try
             {
-                for (int i = 0; i < 1; i++)
+                for (int i = 0; i < 2; i++)
                 {
                     people.Add(new CharacterClass(room.getRoom()[0, 0].getUniqueBlockID()));
                     ConstantClass.gameTime.GameTicked += people[i].OnGameTicked;
@@ -117,8 +117,12 @@ namespace RiseOfStrongholds.Classes
                 //people.Add(person2);
 
                 //people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_SEARCH_PRIORITY, 0, room.getRoom()[4,4].getUniqueBlockID()));
-                //people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_SEARCH_PRIORITY, 0, room2.getRoom()[2, 2].getUniqueBlockID()));
+                //people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_SEARCH_PRIORITY, 0, room.getRoom()[0, 1].getUniqueBlockID()));
                 people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.ACTION_GATHER_PRIORITY, 0, room2.getRoom()[2, 2].getUniqueBlockID()));
+                people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.ACTION_GATHER_PRIORITY, 0, room2.getRoom()[2, 2].getUniqueBlockID()));
+                people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.ACTION_GATHER_PRIORITY, 0, room2.getRoom()[2, 2].getUniqueBlockID()));
+                people[1].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.ACTION_GATHER_PRIORITY, 0, room2.getRoom()[1, 0].getUniqueBlockID()));
+                people[1].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.ACTION_GATHER_PRIORITY, 0, room2.getRoom()[1, 0].getUniqueBlockID()));
             }
             catch (Exception e)
             {
