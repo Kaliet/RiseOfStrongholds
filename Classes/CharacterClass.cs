@@ -50,7 +50,17 @@ namespace RiseOfStrongholds.Classes
             m_block_id = blockID;
 
             ConstantClass.MAPPING_TABLE_FOR_ALL_CHARS.getMappingTable().Add(m_unique_character_id, this);
-            ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Add(m_unique_character_id); //adds character id as part of block list of occupants
+            try
+            {
+                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].addCharacterToBlockOccupants(m_unique_character_id);//adds character id as part of block list of occupants
+            }
+            catch (BlockOccupiedException ex)
+            {
+                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot be placed in block " + m_block_id + " since it is occupied. Exiting character creation.");
+                throw new CharacterNotCreatedException();
+            }
+
+            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " was created and currently standing on block " + m_block_id);
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
@@ -209,13 +219,22 @@ namespace RiseOfStrongholds.Classes
                         else //character walks out of one of the exits
                         {
                             int exitNumber = ConstantClass.RANDOMIZER.produceInt(1, 100); //randomizing which exit to take                        
+                            Guid nextStep = possibleExitsToWalk[exitNumber % possibleExitsToWalk.Count]; //character possible next step 
 
-                            ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Remove(m_unique_character_id);//remove character id from previuos block list of occupants
-                            m_block_id = possibleExitsToWalk[exitNumber % possibleExitsToWalk.Count]; //character moves to a different block - new id defined
-                            ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Add(m_unique_character_id); //adds character id as part of block list of occupants
-                            deductEnergyBasedOnTerrain();
+                            if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].isOccupantListEmpty()) //checks if next step is occupied
+                            {
 
-                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is going to walk " + printDirection(allExits, m_block_id) + " into block " + m_block_id.ToString().Substring(0, 2) + ".");
+                                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].removeCharacterFromBlockOccupants(m_unique_character_id);//remove character id from previuos block list of occupants                            
+                                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].addCharacterToBlockOccupants(m_unique_character_id);//adds character id as part of block list of occupants                            
+                                m_block_id = nextStep;
+                                deductEnergyBasedOnTerrain();
+
+                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is going to walk " + printDirection(allExits, m_block_id) + " into block " + m_block_id.ToString().Substring(0, 2) + ".");
+                            }
+                            else
+                            {
+                                //character waits one turn
+                            }
                         }
                         m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
                     }
@@ -230,8 +249,20 @@ namespace RiseOfStrongholds.Classes
 
                         if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_CHAR) //if find char, then get targetBlockID of the char
                         {
-                            targetCharID = m_action_queue.getQueue()[index].getGuidForAction(); //ID of target char to be searched (by this.character)
-                            targetBlockID = ConstantClass.MAPPING_TABLE_FOR_ALL_CHARS.getMappingTable()[targetCharID].getBlockID(); //ID of block where target char is residing
+                            targetCharID = m_action_queue.getQueue()[index].getGuidForAction(); //ID of target char to be searched (by this.character)    
+                            Guid targetCharBlockID = ConstantClass.MAPPING_TABLE_FOR_ALL_CHARS.getMappingTable()[targetCharID].getBlockID();
+                            
+                            //need to find unoccupid targetBlockID next to targetCharID                                                        
+                            List<Guid> unoccupiedBlocksNextToChar = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetCharBlockID].returnListOfUnoccupiedAdjBlocks(targetCharBlockID);
+
+                            if (unoccupiedBlocksNextToChar.Count == 0) //if no avaiable adjacent blocks next to char, then wait one turn
+                            {
+                                //wait one turn
+                            }
+                            else //choose first block from list??
+                            {                            
+                                targetBlockID = unoccupiedBlocksNextToChar.First();//ID of block where target char is residing
+                            }
                         }
                         else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK)
                         {
@@ -278,21 +309,30 @@ namespace RiseOfStrongholds.Classes
                                     {
                                         if (pair.isGuidOneofthePairs(m_block_id)) //character is standing on a shared block between the rooms
                                         {
-                                            //next action is to move to next room
-                                            ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Remove(m_unique_character_id);//remove character id from previuos block list of occupants
-                                            m_block_id = pair.returnSecondGuidPair(m_block_id); //character moves to a different block - new id defined                                    
-                                            ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Add(m_unique_character_id); //adds character id as part of block list of occupants
-                                            deductEnergyBasedOnTerrain();
-                                            crossedRoom = true;
+                                            Guid nextStep = pair.returnSecondGuidPair(m_block_id); //character possible next step 
 
-                                            //if character newly arrived block is still not target block id and last action item in queue is to reach target block id, then we do not remove it.
-                                            //needed for scenario where character starts at shared block and has only 1 action item in queue to reach to target block id in different room. without below, the last action will be removed and character will not move.
-                                            if (m_block_id != targetBlockID && m_action_queue.getQueue().Count == 1 && m_action_queue.getQueue()[0].getGuidForAction() == targetBlockID) { }
-                                            else { m_action_queue.getQueue().RemoveAt(index); }//action completed, remove from index
+                                            if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].isOccupantListEmpty())
+                                            {
+                                                //next action is to move to next room
+                                                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].removeCharacterFromBlockOccupants(m_unique_character_id);//remove character id from previuos block list of occupants                                                                                                                                    
+                                                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].addCharacterToBlockOccupants(m_unique_character_id);//adds character id as part of block list of occupants                                            
+                                                m_block_id = nextStep;
+                                                deductEnergyBasedOnTerrain();
+                                                crossedRoom = true;
 
-                                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " crossed room to block " + m_block_id + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id));
+                                                //if character newly arrived block is still not target block id and last action item in queue is to reach target block id, then we do not remove it.
+                                                //needed for scenario where character starts at shared block and has only 1 action item in queue to reach to target block id in different room. without below, the last action will be removed and character will not move.
+                                                if (m_block_id != targetBlockID && m_action_queue.getQueue().Count == 1 && m_action_queue.getQueue()[0].getGuidForAction() == targetBlockID) { }
+                                                else { m_action_queue.getQueue().RemoveAt(index); }//action completed, remove from index
 
-                                            break;
+                                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " crossed room to block " + m_block_id + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id));
+
+                                                break;
+                                            }
+                                            else
+                                            {
+                                                //character waits for one turn
+                                            }
                                         }
                                     }
                                     if (!crossedRoom) //character is not standing on a shared block between the rooms
@@ -321,13 +361,22 @@ namespace RiseOfStrongholds.Classes
                             else //block is in the same room as character
                             {
                                 PathFindingClass searchPath = new PathFindingClass(m_block_id, targetBlockID);
+                                Guid nextStep = searchPath.returnNextBlockGuidToMove();
 
-                                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Remove(m_unique_character_id);//remove character id from previuos block list of occupants
-                                m_block_id = searchPath.returnNextBlockGuidToMove();
-                                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getListOfOccupants().Add(m_unique_character_id); //adds character id as part of block list of occupants
-                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " moves to block " + m_block_id);
-                                deductEnergyBasedOnTerrain();
-                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is finding " + targetBlockID + " with priority " + (m_action_queue.getQueue()[index].getPriority() - 1));
+                                //check if nextstep is occupied, if so char waits one turn . if not, char moves.
+                                if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].isOccupantListEmpty())
+                                {
+                                    ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].removeCharacterFromBlockOccupants(m_unique_character_id);//remove character id from previuos block list of occupants                                                                                                                        
+                                    ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].addCharacterToBlockOccupants(m_unique_character_id);//adds character id as part of block list of occupants                                            
+                                    m_block_id = nextStep;
+                                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " moves to block " + m_block_id);
+                                    deductEnergyBasedOnTerrain();
+                                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is finding " + targetBlockID + " with priority " + (m_action_queue.getQueue()[index].getPriority() - 1));
+                                }        
+                                else
+                                {
+                                    //character waits one turn
+                                }                        
                             }
                         }
                         else

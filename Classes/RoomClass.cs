@@ -196,12 +196,9 @@ namespace RiseOfStrongholds.Classes
                         if (m_Room[i, j].existsWestExit()) { output += "W"; }
                         if (m_Room[i, j].existsEastExit()) { output += "E"; }
                     }
-                    if (m_Room[i,j].getListOfOccupants().Count > 0) //block is not empty, has occupants
+                    if (!m_Room[i,j].isOccupantListEmpty()) //block is not empty, has occupants
                     {
-                        foreach (Guid id in m_Room[i, j].getListOfOccupants())// go through list and print the occupants
-                        {                            
-                            output += id.ToString().Substring(0, 1); 
-                        }
+                        output += m_Room[i, j].printOccupantList();
                     }           
                     output += "\t|";
                 }

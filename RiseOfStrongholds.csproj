@@ -46,9 +46,11 @@
     <Compile Include="Classes\ActionClass.cs" />
     <Compile Include="Classes\AttributeClass.cs" />
     <Compile Include="Classes\BlockClass.cs" />
+    <Compile Include="Classes\BlockExceptionClass.cs" />
     <Compile Include="Classes\BlockStatsClass.cs" />
     <Compile Include="Classes\BuildingClass.cs" />
     <Compile Include="Classes\CharacterClass.cs" />
+    <Compile Include="Classes\CharacterExceptionClass.cs" />
     <Compile Include="Classes\ConstantClass.cs" />
     <Compile Include="Classes\GameTimeClass.cs" />
     <Compile Include="Classes\GenericObjectClass.cs" />

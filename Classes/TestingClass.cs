@@ -100,13 +100,20 @@ namespace RiseOfStrongholds.Classes
 
             try
             {
-                for (int i = 0; i < 2; i++)
+                for (int i = 0; i < 3; i++)
                 {
-                    people.Add(new CharacterClass(room.getRoom()[0, 0].getUniqueBlockID()));
+                    try
+                    {
+                        people.Add(new CharacterClass(room.getRoom()[i, 0].getUniqueBlockID()));
+                    }
+                    catch (CharacterNotCreatedException ex)
+                    {
+                        continue;
+                    }
                     ConstantClass.gameTime.GameTicked += people[i].OnGameTicked;
                     people[i].ActionUpdated += room.OnActionUpdated;
                     people[i].ActionUpdated += region.OnActionUpdated;
-                }
+                }                
                 //CharacterClass person2 = new CharacterClass(room.getRoom()[0, 2].getUniqueBlockID());
                 //ConstantClass.gameTime.GameTicked += person2.OnGameTicked;
                 //person2.ActionUpdated += room.OnActionUpdated;
@@ -122,7 +129,18 @@ namespace RiseOfStrongholds.Classes
                 people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.ACTION_GATHER_PRIORITY, 0, room2.getRoom()[2, 2].getUniqueBlockID()));
                 people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.ACTION_GATHER_PRIORITY, 0, room2.getRoom()[2, 2].getUniqueBlockID()));
                 people[1].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.ACTION_GATHER_PRIORITY, 0, room2.getRoom()[1, 0].getUniqueBlockID()));
-                people[1].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.ACTION_GATHER_PRIORITY, 0, room2.getRoom()[1, 0].getUniqueBlockID()));
+                people[1].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_CHAR, ConstantClass.ACTION_SEARCH_PRIORITY, 0, people[2].getUniqueCharacterID()));
+                people[1].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_CHAR, ConstantClass.ACTION_SEARCH_PRIORITY, 0, people[0].getUniqueCharacterID()));
+                people[2].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, 0, Guid.Empty));
+                people[2].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, 0, Guid.Empty));
+                people[2].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, 0, Guid.Empty));
+                people[2].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, 0, Guid.Empty));
+                people[2].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, 0, Guid.Empty));
+                people[2].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, 0, Guid.Empty));
+                people[2].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, 0, Guid.Empty));
+                people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, 0, Guid.Empty));
+                people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, 0, Guid.Empty));
+                people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, 0, Guid.Empty));
             }
             catch (Exception e)
             {

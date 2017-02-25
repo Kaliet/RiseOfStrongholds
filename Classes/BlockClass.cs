@@ -30,8 +30,7 @@ namespace RiseOfStrongholds.Classes
         public Guid getRoomID() { return m_room_id; }
         public Guid getBuildingID () { return m_building_id; } //returns id of building that is built on it.
         public PositionClass getPosition() { return m_position; }
-        public BlockStatsClass getStats() { return m_stats; }
-        public List<Guid> getListOfOccupants() { return m_list_of_occupants; }
+        public BlockStatsClass getStats() { return m_stats; }        
         public Guid[] getAllExits() //return array of all exits
         {
             Guid[] exits = new Guid[4];
@@ -49,9 +48,9 @@ namespace RiseOfStrongholds.Classes
         public void setAllExits(Guid n, Guid s, Guid w, Guid e)
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-            Guid room2 = Guid.Empty;            
+            Guid room2 = Guid.Empty;
             GuidPairClass pair;
-            
+
 
             try
             {
@@ -97,7 +96,6 @@ namespace RiseOfStrongholds.Classes
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
-
         public void setExit(Guid neighborBlockID, ConstantClass.EXITS exit)//add exit without changing the exits of others.
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
@@ -142,54 +140,102 @@ namespace RiseOfStrongholds.Classes
         }
 
         /*METHODS*/
-        public string printAllAvailableExits()
-        {
-
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-            string output = "";
-
-            if (m_NorthExit == Guid.Empty && m_SouthExit == Guid.Empty && m_WestExit == Guid.Empty && m_EastExit == Guid.Empty) output += "None";
-            else
-            {
-                if (m_NorthExit != Guid.Empty) { output += "North,"; }
-                if (m_SouthExit != Guid.Empty) { output += "South,"; }
-                if (m_WestExit != Guid.Empty) { output += "West,"; }
-                if (m_EastExit != Guid.Empty) { output += "East"; }
-            }
-
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-
-            return output;
-        }
-
+        
+            /*exists*/
         public bool existsNorthExit() //return true if there is exit to north, return false if no exit
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             return !(m_NorthExit == Guid.Empty);                        
         }
-
         public bool existsSouthExit() //return true if there is exit to south, return false if no exit
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             return !(m_SouthExit == Guid.Empty);            
         }
-
         public bool existsWestExit() //return true if there is exit to west, return false if no exit
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             return !(m_WestExit == Guid.Empty);            
         }
-
         public bool existsEastExit() //return true if there is exit to east, return false if no exit
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             return !(m_EastExit == Guid.Empty);            
         }
+        public bool existsResourceInInventory()
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
+            if (m_inventory_list.getInventorySize() > 0) return true;
+            else return false;
+        }
+        public bool isOccupantListEmpty()
+        {
+            return (m_list_of_occupants.Count == 0);
+        }
+
+            /*inventory related*/
+        public ResourceObjectClass reduceBlockInventory(int rate) //rate = reduction rate
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            ResourceObjectClass resource = null;
+
+            try
+            {
+                if (m_inventory_list.getInventorySize() <= 0) return null;
+
+                else if (m_inventory_list.returnQuantityOfItemBasedOnIndex(0) <= rate) { rate = m_inventory_list.returnQuantityOfItemBasedOnIndex(0); }//if rate is higher than number of items in inventory, then retrieve all the inventory                            
+
+                resource = new ResourceObjectClass(ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceType(), rate);
+
+                m_inventory_list.removeItemFromInventory(resource, rate); //resource deducted from block inventory
+            }
+            catch (Exception e)
+            {
+                ConstantClass.LOGGER.writeToCrashLog(e);
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            return resource;
+        }
+        private void updateBlockInventory() //update block inventory status 
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            try
+            {
+                //resources generated this turn are added to the block inventory            
+                int rate = ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceGenerateRate();
+                ResourceObjectClass resource = new ResourceObjectClass(ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceType());
+
+                if (rate > 0) //if resource generate some value
+                {
+                    if (m_inventory_list.addItemToInventory(resource, rate))
+                    {
+                        //ConstantClass.LOGGER.writeToInventoryLog("Resource " + resource.ToString() + " added to inventory in block ID " + m_unique_block_id + "\n");
+                    }
+                    else
+                    {
+                        ConstantClass.LOGGER.writeToInventoryLog("Failed to add resource " + resource.ToString() + " to inventory in block ID " + m_unique_block_id + "\n");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                ConstantClass.LOGGER.writeToCrashLog(e);
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+
+            /*constructions*/
         public void constructNewBuilding(ConstantClass.BUILDING type) //constructs building on this block
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
@@ -214,6 +260,7 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
+            /*updating occupants in block*/
         public void removeBlockFromSharedList(GuidPairClass roomPair) //removes this block from shared list of mapping table
         {
 
@@ -252,70 +299,121 @@ namespace RiseOfStrongholds.Classes
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
-
-        public bool existsResourceInInventory()
-        {
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-
-            if (m_inventory_list.getInventorySize() > 0) return true;
-            else return false;
-        }
-
-        public ResourceObjectClass reduceBlockInventory(int rate) //rate = reduction rate
+        public void addCharacterToBlockOccupants(Guid character)
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            ResourceObjectClass resource = null;
-
-            try
+            if (m_list_of_occupants.Count > 0) throw new BlockOccupiedException(); //check if block is occupied
+            else
             {
-                if (m_inventory_list.getInventorySize() <= 0) return null;
-                
-                else if (m_inventory_list.returnQuantityOfItemBasedOnIndex(0) <= rate) { rate = m_inventory_list.returnQuantityOfItemBasedOnIndex(0); }//if rate is higher than number of items in inventory, then retrieve all the inventory                            
-
-                resource = new ResourceObjectClass(ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceType(), rate); 
-                
-                m_inventory_list.removeItemFromInventory(resource,rate); //resource deducted from block inventory
-            }
-            catch(Exception e)
-            {
-                ConstantClass.LOGGER.writeToCrashLog(e);
-            }
-
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-
-            return resource;
-        }
-
-        private void updateBlockInventory() //update block inventory status 
-        {            
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-
-            try
-            {
-                //resources generated this turn are added to the block inventory            
-                int rate = ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceGenerateRate();
-                ResourceObjectClass resource = new ResourceObjectClass(ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceType());
-
-                if (rate > 0) //if resource generate some value
+                try
                 {
-                    if (m_inventory_list.addItemToInventory(resource, rate))
-                    {
-                        //ConstantClass.LOGGER.writeToInventoryLog("Resource " + resource.ToString() + " added to inventory in block ID " + m_unique_block_id + "\n");
-                    }
-                    else
-                    {
-                        ConstantClass.LOGGER.writeToInventoryLog("Failed to add resource " + resource.ToString() + " to inventory in block ID " + m_unique_block_id + "\n");
-                    }
+                    m_list_of_occupants.Add(character);
                 }
+                catch (Exception ex)
+                {
+                    ConstantClass.LOGGER.writeToCrashLog(ex);
+                }
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+        public void removeCharacterFromBlockOccupants(Guid character)
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            try
+            {
+                m_list_of_occupants.Remove(character);
+            }
+            catch (Exception ex)
+            {
+                ConstantClass.LOGGER.writeToCrashLog(ex);
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+        public List<Guid> returnListOfUnoccupiedAdjBlocks(Guid charBlockID) //returns list of adjacent block IDs that are unoccupied, if none then return null
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            List<Guid> list = new List<Guid>();
+
+            try
+            {
+                int roomSize = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[m_room_id].getSize();
+                BlockClass[,] room = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[m_room_id].getRoom();
+                int x, y;
+                bool top, right, left, down;
+
+                x = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[charBlockID].getPosition().getPositionX();
+                y = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[charBlockID].getPosition().getPositionY();
+                top = true;
+                right = true;
+                left = true;
+                down = true;
+
+                //checks boundaries
+                if (x==0) { top = false; }
+                if (x == roomSize - 1) { down = false; }
+                if (y==0) { left = false; }
+                if (y==roomSize-1) { right = false; }
+
+                //check buildings
+                if (x > 0 && room[x - 1,y].getBuildingID() != Guid.Empty) { top = false; }
+                if (y < roomSize - 1 && room[x, y + 1].getBuildingID() != Guid.Empty) { right = false; }
+                if (y > 0 && room[x, y - 1].getBuildingID() != Guid.Empty) { left = false; }
+                if (x < roomSize - 1 && room[x + 1, y].getBuildingID() != Guid.Empty) { down = false; }
+
+                if (top) { list.Add(room[x - 1, y].getUniqueBlockID()); }
+                if (right) { list.Add(room[x, y + 1].getUniqueBlockID()); }
+                if (left) { list.Add(room[x, y - 1].getUniqueBlockID()); }
+                if (down) { list.Add(room[x + 1, y].getUniqueBlockID()); }
+                
             }
             catch (Exception e)
             {
                 ConstantClass.LOGGER.writeToCrashLog(e);
             }
 
+            return list;
+
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }        
+
+            /*printing*/
+        public string printAllAvailableExits()
+        {
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            string output = "";
+
+            if (m_NorthExit == Guid.Empty && m_SouthExit == Guid.Empty && m_WestExit == Guid.Empty && m_EastExit == Guid.Empty) output += "None";
+            else
+            {
+                if (m_NorthExit != Guid.Empty) { output += "North,"; }
+                if (m_SouthExit != Guid.Empty) { output += "South,"; }
+                if (m_WestExit != Guid.Empty) { output += "West,"; }
+                if (m_EastExit != Guid.Empty) { output += "East"; }
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            return output;
+        }
+        public string printOccupantList()
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            string output = "";
+
+            foreach (Guid id in m_list_of_occupants)// go through list and print the occupants
+            {
+                output += id.ToString().Substring(0, 1);
+            }
+
+            return output;
+
         }
 
         /*EVENT HANDLER*/
