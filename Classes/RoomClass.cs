@@ -167,7 +167,7 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
-        public string printRoom(bool withExits)
+        public string printRoom(bool withExits, string charID)
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
@@ -178,6 +178,7 @@ namespace RiseOfStrongholds.Classes
             {
                 for (int j = 0; j < m_size; j++)
                 {
+                    output += charID + "|";
                     output += "|\t";
 
                     if (m_Room[i, j].getBuildingID() != Guid.Empty) //there is a building here.

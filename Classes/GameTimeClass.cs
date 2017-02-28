@@ -129,7 +129,7 @@ namespace RiseOfStrongholds.Classes
             year = game_year.ToString();
 
             //TODO: Pad and format the dates and time
-            return day  + "/" + month + "/" + year + "\t" + hour + ":" + min ;
+            return day  + "/" + month + "/" + year + " " + hour + ":" + min ;
         }
 
         public static bool operator == (GameTimeClass a, GameTimeClass b)
@@ -224,7 +224,7 @@ namespace RiseOfStrongholds.Classes
 
                     /*EVENT HANDLING*/
                     OnGameTicked();
-                    ConstantClass.LOGGER.writeToCharLog("\n=======================tick================================\n");
+                    ConstantClass.LOGGER.writeToCharLog("=======================tick================================\n",null);
                     ConstantClass.LOGGER.writeToGameLog("\n\t\t\t\t\t\t\t\t\t\t=======================tick================================\n");
                     ConstantClass.LOGGER.writeToInventoryLog("\n=======================tick================================\n");
                     ConstantClass.LOGGER.writeToQueueLog("\n=======================tick================================\n");                    

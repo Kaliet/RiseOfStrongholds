@@ -64,7 +64,7 @@ namespace RiseOfStrongholds.Classes
         /*OVERRIDES*/
         public override string ToString()
         {
-            return "A: " + m_action.ToString() + "\tP: " + m_priority + "\tV: " + m_var_for_action + "\tG: " + m_guid_for_action;
+            return "A|" + m_action.ToString() + "|P|" + m_priority + "|V|" + m_var_for_action + "|G|" + m_guid_for_action;
         }
     }
 }

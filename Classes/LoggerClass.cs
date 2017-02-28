@@ -164,11 +164,11 @@ namespace RiseOfStrongholds.Classes
             writeToCrashLog("StackTrace:\t\t" + e.StackTrace.ToString());
         }
 
-        public void writeToCharLog(string text)
+        public void writeToCharLog(string text, string charID)
         {
-            string datetime = getRealDateTime() + "\t|\t" + ConstantClass.gameTime.ToString();
+            string datetime = getRealDateTime() + "|" + ConstantClass.gameTime.ToString();
 
-            text = datetime + "\t\t - \t" + text + "\n";
+            if (charID != null) { text = charID + "|" + datetime + "|" + text + "\n"; }            
 
             try
             {

@@ -140,20 +140,29 @@ namespace RiseOfStrongholds.Classes
             return true;
         }
 
+        public void printInventoryList(string charID)
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            foreach (GenericObjectClass obj in m_InventoryList)
+            {
+                ConstantClass.LOGGER.writeToCharLog("Inventory|" + obj.ToString(), charID);
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+
         public string printInventoryList()
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
             string output = "";
 
-            output += "Inventory Status:\n";
-
             foreach (GenericObjectClass obj in m_InventoryList)
             {
-                output += "\t\t\t\t\t *" + (obj.ToString() + "\n");                
+                output += ("\t\t\t*" + obj.ToString());
             }
 
-            //output += "------------------------------------------------------\n";
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             return output;
         }

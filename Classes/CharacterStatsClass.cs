@@ -83,11 +83,9 @@ namespace RiseOfStrongholds.Classes
             return output;
         }
 
-        public string printStats()
+        public void printStats(string charID)
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-
-            string output = "";
 
             /*
              * Stats:
@@ -98,14 +96,11 @@ namespace RiseOfStrongholds.Classes
              *      - Energy:           [energy]
              */
 
-            output += "Stats:\n" +
-                      "\t\t\t- Hunger status:\t\t" + printHungerStatus() + "\n" +
-                      "\t\t\t- Hunger rate:\t\t" + m_hunger_rate.printStat() + "\n" +
-                      "\t\t\t- Sleep status:\t\t" + printSleepStatus() + "\n" +
-                      "\t\t\t- Sleep rate:\t\t" + m_sleep_rate.printStat() + "\n" +
-                      "\t\t\t- Energy:\t\t\t" + m_Energy.printStat() + "\n";
-
-            return output;
+            ConstantClass.LOGGER.writeToCharLog("|Hunger status|" + printHungerStatus(),charID);
+            ConstantClass.LOGGER.writeToCharLog("|Hunger rate|" + m_hunger_rate.printStat(), charID);
+            ConstantClass.LOGGER.writeToCharLog("|Sleep status|" + printSleepStatus(), charID);
+            ConstantClass.LOGGER.writeToCharLog("|Sleep rate|" + m_sleep_rate.printStat(), charID);
+            ConstantClass.LOGGER.writeToCharLog("|Energy|" + m_Energy.printStat(), charID);
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }

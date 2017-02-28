@@ -576,15 +576,21 @@ namespace RiseOfStrongholds.Classes
              *      - item2 x quantity2
              */
 
-            output += "\n" + ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id)].printRoom(false);
-            output += "\nCharacter ID:\t" + m_unique_character_id + "\n" +
-                      "Birth date:\t\t" + m_birthDate + "\n" +
-                      "Block ID:\t\t" + m_block_id + "\n" +
-                      "Room ID:\t\t" + ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id) + "\n" +
-                      "Action:\n" + m_action_queue.printQueue() + "\n" +
-                      m_stats.printStats() + "\n" +
-                      m_inventory.printInventoryList() + "\n";
-            output += "----------------------------------------------------------------------------\n";
+            //output += ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id)].printRoom(false,m_unique_character_id.ToString());
+            /*output += m_unique_character_id+"|"+"Character ID|" + m_unique_character_id + "\n" +
+                      m_unique_character_id + "|" + "Birth date|" + m_birthDate + "\n" +
+                      m_unique_character_id + "|" + "Block ID:|" + m_block_id + "\n" +
+                      m_unique_character_id + "|" + "Room ID:|" + ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id) + "\n" +
+                      m_unique_character_id + "|" + "Action:\n" + m_action_queue.printQueue(m_unique_character_id.ToString()) + "\n" +
+                      m_stats.printStats(m_unique_character_id.ToString()) + "\n" +
+                      m_inventory.printInventoryList() + "\n";*/
+            ConstantClass.LOGGER.writeToCharLog("Character ID| " + m_unique_character_id, m_unique_character_id.ToString());
+            ConstantClass.LOGGER.writeToCharLog("Birth date|" + m_birthDate, m_unique_character_id.ToString());
+            ConstantClass.LOGGER.writeToCharLog("Block ID| " + m_block_id, m_unique_character_id.ToString());
+            ConstantClass.LOGGER.writeToCharLog("Room ID|" + ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id), m_unique_character_id.ToString());
+            m_action_queue.printQueue(m_unique_character_id.ToString());
+            m_stats.printStats(m_unique_character_id.ToString());
+            m_inventory.printInventoryList(m_unique_character_id.ToString());
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH 
 
@@ -611,7 +617,7 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
             updateAction(); //update action for every game tick 
-            ConstantClass.LOGGER.writeToCharLog(printCharacter());
+            ConstantClass.LOGGER.writeToCharLog(printCharacter(), m_unique_character_id.ToString());
             ConstantClass.LOGGER.writeToGameLog("----------------------------------------------------------------------------");
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH

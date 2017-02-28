@@ -26,23 +26,20 @@ namespace RiseOfStrongholds.Classes
         }
 
         /*METHODS*/
-        public string printQueue() //prints everything in queue
+        public void printQueue(string charID) //prints everything in queue
         {
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-            //return string should be [0] - info, [1] - info, etc.            
-            string output = "";
+            //return string should be [0] - info, [1] - info, etc.                        
             int index = 0;            
 
             foreach (T element in m_queue)
             {
-                output += "[" + (index + 1) + "/" + m_queue.Count + "] - " + element.ToString() + "\n";
+                ConstantClass.LOGGER.writeToCharLog("Action|[" + (index + 1) + "/" + m_queue.Count + "]|" + element.ToString(), charID);
                 index++;
             }
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-
-            return output;
         }
 
         public string printQueue(QueueClass<ActionClass> actionQueue) //prints everything in queue
