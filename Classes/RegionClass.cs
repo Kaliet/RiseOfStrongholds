@@ -267,7 +267,7 @@ namespace RiseOfStrongholds.Classes
             foreach (Guid room in m_list_of_rooms)
             {
                 output += "Room ID:\t\t" + room + "\n";
-                output += ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[room].printRoom(true,"") + "\n";
+                output += ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[room].printRoom(true,null) + "\n";
             }
 
             return output;

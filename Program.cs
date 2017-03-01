@@ -30,9 +30,6 @@ namespace RiseOfStrongholds
                 Thread startGameTimeThread = new Thread(new ThreadStart(ConstantClass.gameTime.startGameTime));
                 startGameTimeThread.Start();
 
-
-
-
                 /*PROGRAM START*/
                 ConstantClass.LOGGER.writeToDebugLog("Starting program...");
                 //---------------

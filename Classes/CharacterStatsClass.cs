@@ -34,6 +34,7 @@ namespace RiseOfStrongholds.Classes
         public void initializeEnergy(int value) { m_Energy = new statStruct(value); }        
 
         public void fillEnergytoMax() { m_Energy.modifyCurrentValue(m_Energy.getMaxValue()); }                
+        public bool isEnergyAtMax() { return (m_Energy.getCurrentValue() == m_Energy.getMaxValue()); }
 
         /* METHODS */
 
@@ -74,6 +75,7 @@ namespace RiseOfStrongholds.Classes
 
             if (m_sleep_status == ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE) output += "AWAKE";
             else if (m_sleep_status == ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY) output += "SLEEPY";
+            else if (m_sleep_status == ConstantClass.CHARACTER_SLEEP_STATUS.TIRED) output += "TIRED";
             else output += "ERROR";
 
             output += "(" + m_sleep_rate.getCurrentValue() + "/" + m_sleep_rate.getMaxValue() + ")";
@@ -96,11 +98,11 @@ namespace RiseOfStrongholds.Classes
              *      - Energy:           [energy]
              */
 
-            ConstantClass.LOGGER.writeToCharLog("|Hunger status|" + printHungerStatus(),charID);
-            ConstantClass.LOGGER.writeToCharLog("|Hunger rate|" + m_hunger_rate.printStat(), charID);
-            ConstantClass.LOGGER.writeToCharLog("|Sleep status|" + printSleepStatus(), charID);
-            ConstantClass.LOGGER.writeToCharLog("|Sleep rate|" + m_sleep_rate.printStat(), charID);
-            ConstantClass.LOGGER.writeToCharLog("|Energy|" + m_Energy.printStat(), charID);
+            ConstantClass.LOGGER.writeToCharLog("Stats|Hunger status|" + printHungerStatus(),charID);
+            ConstantClass.LOGGER.writeToCharLog("Stats|Hunger rate|" + m_hunger_rate.printStat(), charID);
+            ConstantClass.LOGGER.writeToCharLog("Stats|Sleep status|" + printSleepStatus(), charID);
+            ConstantClass.LOGGER.writeToCharLog("Stats|Sleep rate|" + m_sleep_rate.printStat(), charID);
+            ConstantClass.LOGGER.writeToCharLog("Stats|Energy|" + m_Energy.printStat(), charID);
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }

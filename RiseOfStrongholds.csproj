@@ -60,7 +60,7 @@
     <Compile Include="Classes\MappingClass.cs" />
     <Compile Include="Classes\MappingPairClass.cs" />
     <Compile Include="Classes\PathFindingClass.cs" />
-    <Compile Include="Classes\QueueClass.cs" />
+    <Compile Include="Classes\QueueActionClass.cs" />
     <Compile Include="Classes\RandomClass.cs" />
     <Compile Include="Classes\CharacterStatsClass.cs" />
     <Compile Include="Classes\PositionClass.cs" />

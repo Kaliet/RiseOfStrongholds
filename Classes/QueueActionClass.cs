@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 
 namespace RiseOfStrongholds.Classes
 {
-    public class QueueClass<T>
+    public class QueueActionClass
     {
         /*VARIABLES*/
-        private List<T> m_queue;
+        private List<ActionClass> m_queue;
 
         /*GET & SET*/
-        public List<T> getQueue()  { return m_queue; }
+        public List<ActionClass> getQueue()  { return m_queue; }
 
         /*CONSTRUCTOR*/
-        public QueueClass()
+        public QueueActionClass()
         {
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            m_queue = new List<T>();
+            m_queue = new List<ActionClass>();
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
@@ -33,7 +33,7 @@ namespace RiseOfStrongholds.Classes
             //return string should be [0] - info, [1] - info, etc.                        
             int index = 0;            
 
-            foreach (T element in m_queue)
+            foreach (ActionClass element in m_queue)
             {
                 ConstantClass.LOGGER.writeToCharLog("Action|[" + (index + 1) + "/" + m_queue.Count + "]|" + element.ToString(), charID);
                 index++;
@@ -42,7 +42,7 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
-        public string printQueue(QueueClass<ActionClass> actionQueue) //prints everything in queue
+        public string printQueue() //prints everything in queue
         {
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
@@ -50,11 +50,11 @@ namespace RiseOfStrongholds.Classes
             string output = "";
             int index = 0;
 
-            actionQueue.m_queue =  actionQueue.getQueue().OrderBy(obj => obj.getPriority()).ToList();
+            this.m_queue = this.getQueue().OrderBy(obj => obj.getPriority()).ToList();
 
-            foreach (ActionClass element in actionQueue.getQueue())
+            foreach (ActionClass element in this.getQueue())
             {
-                output += "\n\t\t\t\t\t[" + (index + 1) + "/" + actionQueue.getQueue().Count + "] - " + element.ToString();
+                output += "\n\t\t\t\t\t[" + (index + 1) + "/" + this.getQueue().Count + "] - " + element.ToString();
                 index++;
             }
 
@@ -62,5 +62,35 @@ namespace RiseOfStrongholds.Classes
 
             return output;
         }
+        
+        public void addAction(ActionClass item) //adds a new action in queue
+        {            
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            
+            //checks if item exists already in queue - no duplicates allowed
+            if (!m_queue.Contains(item)) 
+            {
+                m_queue.Add(item);
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+
+        public void removeAction(int index) //removes an action in index
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            try
+            {
+                m_queue.RemoveAt(index);
+            }
+            catch (Exception e)
+            {
+                ConstantClass.LOGGER.writeToCrashLog(e);
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+
     }
 }

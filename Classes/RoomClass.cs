@@ -172,24 +172,26 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
             string output = "";
-            
-            
+            string building = "";
+
             for (int i = 0; i < m_size; i++) 
-            {
+            {                
+                if (charID != "" && charID != null) { output = ""; }
+
                 for (int j = 0; j < m_size; j++)
                 {
-                    output += charID + "|";
-                    output += "|\t";
+                    output += "[\t";
 
                     if (m_Room[i, j].getBuildingID() != Guid.Empty) //there is a building here.
                     {
                         switch (ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[m_Room[i, j].getBuildingID()].getType())
                         {
                             case ConstantClass.BUILDING.WALL: //if building is a WALL
-                                output += "WALL";
+                                building = "W";
                                 break;
                         }
                     }
+                    output += building.ToString();                   
                     if (withExits)
                     {
                         if (m_Room[i, j].existsNorthExit()) { output += "N"; }
@@ -201,9 +203,15 @@ namespace RiseOfStrongholds.Classes
                     {
                         output += m_Room[i, j].printOccupantList();
                     }           
-                    output += "\t|";
+                    else if (building == "") { output += " "; } //no occupants and no buildings
+                    output += "\t]";
+                    building = "";
                 }
-                output += "\n";
+                if (charID == "") { output += "\n"; }
+                else if (charID != null)
+                {
+                    ConstantClass.LOGGER.writeToCharLog("MAP|" + output, charID);
+                }                
             }
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             return output;            

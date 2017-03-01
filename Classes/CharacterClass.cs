@@ -13,7 +13,7 @@ namespace RiseOfStrongholds.Classes
         private CharacterStatsClass m_stats; //stats
         private GameTimeClass m_birthDate; //date of birth
         private Guid m_unique_character_id; //character's unique id
-        private QueueClass<ActionClass> m_action_queue; //queue of actions the character is doing
+        private QueueActionClass m_action_queue; //queue of actions the character is doing
         private Guid m_block_id; //in which block the character resides in        
         private InventoryClass m_inventory;
         
@@ -33,7 +33,7 @@ namespace RiseOfStrongholds.Classes
             m_character_name = "";
 
             m_stats = new CharacterStatsClass();
-            m_stats.initializeHP(10);
+            m_stats.initializeHP(100);
             m_stats.initializeEnergy(20);
             //m_stats.initializeHungerRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.HOURS_IN_ONE_DAY));
             //m_stats.initializeSleepRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.HOURS_IN_ONE_DAY));
@@ -44,7 +44,7 @@ namespace RiseOfStrongholds.Classes
 
             m_birthDate = new GameTimeClass(ConstantClass.gameTime);
             m_unique_character_id = Guid.NewGuid(); //unique id for character            
-            m_action_queue = new QueueClass<ActionClass>();
+            m_action_queue = new QueueActionClass();
             m_inventory = new InventoryClass(ConstantClass.INVENTORY_MAX_CHAR_CAP);
 
             m_block_id = blockID;
@@ -152,7 +152,7 @@ namespace RiseOfStrongholds.Classes
             try
             {
                 /*DEBUG PRINTING*/
-                ConstantClass.LOGGER.writeToQueueLog(outputPersonGUID() + " = " + m_action_queue.printQueue(this.m_action_queue));//print queue
+                ConstantClass.LOGGER.writeToQueueLog(outputPersonGUID() + " = " + m_action_queue.printQueue());//print queue
                                                                                                                                   //ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is in block " + m_block_id.ToString().Substring(0, 2) + " position(" + 
                                                                                                                                   //            ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionX() + "," +
                                                                                                                                   //            ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionY() + "). Exits: " + ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].printAllAvailableExits());
@@ -178,7 +178,7 @@ namespace RiseOfStrongholds.Classes
                         m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.FULL);
                         //TODO: add HP from eating.
                         ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is FULL");
-                        m_action_queue.getQueue().RemoveAt(index); //EAT action completed - removed from queue
+                        m_action_queue.removeAction(index); //EAT action completed - removed from queue
                     }
 
                                         //-------------------ACTION: SLEEP ---------------------//
@@ -198,11 +198,32 @@ namespace RiseOfStrongholds.Classes
                             m_stats.initializeSleepRate(0, m_stats.getSleepRate().getMaxValue());
                             m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
                             ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is AWAKE");
-                            m_action_queue.getQueue().RemoveAt(index); //SLEEP action completed - removed from queue
+                            m_action_queue.removeAction(index); //SLEEP action completed - removed from queue
                         }
                     }
 
-                                            //-------------------ACTION: WALK ---------------------//
+                                        //-------------------ACTION: REST ---------------------//
+
+                    else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.REST) // TIRED
+                    {
+                        //TODO: character rests until he replenishes his energy                    
+                        if (m_action_queue.getQueue()[index].getVarForAction() > 0 && !m_stats.isEnergyAtMax())//wait until rest period is over or energy reaches max
+                        {
+                            //wait - character is resting                            
+                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is RESTING");
+                            m_stats.modifyEnergy(ConstantClass.ENERGY_ADD_WHEN_SLEEP);
+                            m_action_queue.getQueue()[index].modifyVarForAction(-1 * ConstantClass.GAME_SPEED);
+                            
+                        }
+                        else //rest is over, set status to AWAKE
+                        {                            
+                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is RESTED");
+                            m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
+                            m_action_queue.removeAction(index); //REST action completed - removed from queue
+                        }
+                    }
+
+                                        //-------------------ACTION: WALK ---------------------//
 
                     else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.WALK) // WALKS
                     {
@@ -236,7 +257,7 @@ namespace RiseOfStrongholds.Classes
                                 //character waits one turn
                             }
                         }
-                        m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
+                        m_action_queue.removeAction(index); //action completed, remove from index
                     }
 
                                             //-------------------ACTION: FIND_BLOCK / FIND_CHAR ---------------------//
@@ -276,14 +297,14 @@ namespace RiseOfStrongholds.Classes
                         {
                             if (targetBlockID == m_block_id) //arrived
                             {
-                                m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index                            
+                                m_action_queue.removeAction(index); //action completed, remove from index                            
                                 ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " has found " + targetBlockID);
                                 updateAction(); //take next action since character move action completed beginning of this round.
                             }
                             else if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID() != Guid.Empty &&
                                      ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //wall
                             {
-                                m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
+                                m_action_queue.removeAction(index); //action completed, remove from index
                                 ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot walk to  " + targetBlockID + " due to building.");
                                 updateAction(); //take next action since character move action completed beginning of this round.
                             }
@@ -323,7 +344,7 @@ namespace RiseOfStrongholds.Classes
                                                 //if character newly arrived block is still not target block id and last action item in queue is to reach target block id, then we do not remove it.
                                                 //needed for scenario where character starts at shared block and has only 1 action item in queue to reach to target block id in different room. without below, the last action will be removed and character will not move.
                                                 if (m_block_id != targetBlockID && m_action_queue.getQueue().Count == 1 && m_action_queue.getQueue()[0].getGuidForAction() == targetBlockID) { }
-                                                else { m_action_queue.getQueue().RemoveAt(index); }//action completed, remove from index
+                                                else { m_action_queue.removeAction(index); }//action completed, remove from index
 
                                                 ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " crossed room to block " + m_block_id + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id));
 
@@ -348,8 +369,8 @@ namespace RiseOfStrongholds.Classes
                                         //3. add to queue new action character to find shared exit block id with higher priority than current action
                                         int currentPriority = this.m_action_queue.getQueue()[index].getPriority();
 
-                                        m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 2, ConstantClass.VARIABLE_FOR_ACTION_NONE, chosenBlockOnCharRoom));
-                                        m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, chosenBlockOnAdjRoom));
+                                        m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 2, ConstantClass.VARIABLE_FOR_ACTION_NONE, chosenBlockOnCharRoom));
+                                        m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, chosenBlockOnAdjRoom));
                                         ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is looking for block " + targetBlockID + " in room ID " + targetBlockRoomID + "(" + (m_action_queue.getQueue()[index].getPriority()) + ")");
                                         ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " needs to find " + chosenBlockOnCharRoom + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(chosenBlockOnCharRoom) + "(" + (currentPriority - 2) + ")");
                                         ConstantClass.LOGGER.writeToGameLog("and cross to block " + chosenBlockOnAdjRoom + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(chosenBlockOnAdjRoom) + "(" + (currentPriority - 1) + ")");
@@ -382,7 +403,7 @@ namespace RiseOfStrongholds.Classes
                         else
                         {
                             ConstantClass.LOGGER.writeToGameLog(targetBlockID + " is not a blockID. Removing action.");
-                            m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
+                            m_action_queue.removeAction(index); //action completed, remove from index
                             updateAction(); //take next action since character move action completed beginning of this round.
                         }
                     }
@@ -399,19 +420,19 @@ namespace RiseOfStrongholds.Classes
                         {
                             ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot gather resources since block " + m_block_id + " has no resources.");
                             m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);
-                            m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
+                            m_action_queue.removeAction(index); //action completed, remove from index
                         }
                         //2. check if character inventory is not full
                         else if (m_inventory.getInventorySize() == ConstantClass.INVENTORY_MAX_CHAR_CAP)
                         {
                             ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot gather resources since character inventory is full.");
                             m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);
-                            m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
+                            m_action_queue.removeAction(index); //action completed, remove from index
                         }
                         //3. check if character is on target block, if not then go find block
                         else if (m_block_id != targetBlockWithResource)
                         {
-                            m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, targetBlockWithResource));
+                            m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, targetBlockWithResource));
                         }
                         //4. if all okay, deduct block inventory to character based on character's gather skill rate
                         //5. deduct energy
@@ -425,7 +446,7 @@ namespace RiseOfStrongholds.Classes
 
 
                             m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);                            
-                            m_action_queue.getQueue().RemoveAt(index); //action completed, remove from index
+                            m_action_queue.removeAction(index); //action completed, remove from index
                         }                        
                     }
 
@@ -436,40 +457,29 @@ namespace RiseOfStrongholds.Classes
                 }
                 else
                 {
-                    /*UPDATE BIOLOGICAL DETERIORATION*/
-                    if (m_stats.getHungerRate().getCurrentValue() == m_stats.getHungerRate().getMaxValue()) //current = max --> hunger state
-                    {
-                        ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is HUNGRY");
-                        m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY);
-                    }
-                    if (m_stats.getSleepRate().getCurrentValue() == m_stats.getSleepRate().getMaxValue() || (m_stats.getEnergy().getCurrentValue() == 0))
-                    {
-                        ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is TIRED and SLEEPY");
-                        m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY);
-                    }
+                    ///*UPDATE BIOLOGICAL DETERIORATION*/
+                    //if (m_stats.getHungerRate().getCurrentValue() == m_stats.getHungerRate().getMaxValue()) //current = max --> hunger state
+                    //{
+                    //    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is HUNGRY");
+                    //    m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY);
+                    //}
+                    //if (m_stats.getSleepRate().getCurrentValue() == m_stats.getSleepRate().getMaxValue() || (m_stats.getEnergy().getCurrentValue() == 0))
+                    //{
+                    //    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is TIRED and SLEEPY");
+                    //    m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY);
+                    //}
 
-                    /*DECISIONS BASED ON BIOLOGICAL NEEDS*/
-                    if (m_stats.getHungerStatus() == ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY)
-                    {
-                        m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT, ConstantClass.ACTION_EAT_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE, Guid.Empty));
-                        m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_HUNGRY); //if hungry , start deducting energy
-                    }
-                    if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY)
-                    {
-                        m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SLEEP, ConstantClass.ACTION_SLEEP_PRIORITY, ConstantClass.MINIMUM_NUMBER_OF_SLEEP_HOURS * ConstantClass.MINUTES_IN_ONE_HOUR, Guid.Empty));
-                        m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_SLEEPY); //if sleepy , start deducting energy
-                    }
-
-                    /*TEST BLOCK FOR WALK ACTION*/
-                    //m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE,m_block_id)); //walks
-                    /*-*/
-
-                    /*TEST BLOCK FOR SEARCH ACTION*/
-                    //Guid roomID = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getRoomID();
-                    //int roomSize = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[roomID].getSize();
-                    //Guid targetBlockID = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[roomID].getRoom()[1, 0].getUniqueBlockID();                
-                    //m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SEARCH, ConstantClass.ACTION_SEARCH_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE, targetBlockID)); //searches
-                    /*-*/
+                    ///*DECISIONS BASED ON BIOLOGICAL NEEDS*/
+                    //if (m_stats.getHungerStatus() == ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY)
+                    //{
+                    //    m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT, ConstantClass.ACTION_EAT_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE, Guid.Empty));
+                    //    m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_HUNGRY); //if hungry , start deducting energy
+                    //}
+                    //if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY)
+                    //{
+                    //    m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SLEEP, ConstantClass.ACTION_SLEEP_PRIORITY, ConstantClass.MINIMUM_NUMBER_OF_SLEEP_HOURS * ConstantClass.MINUTES_IN_ONE_HOUR, Guid.Empty));
+                    //    m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_SLEEPY); //if sleepy , start deducting energy
+                    //}
 
                     deductEnergyBasedOnTerrain();
 
@@ -484,7 +494,56 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
-        private Guid backTrackToAdjacentRoom (Guid endRoomID, Guid startRoomID, List<Guid> backtrackedRooms) //recursively backtracks from startRoomID to targetRoomID. Return adjacent room ID of targetRoomID, else return Guid.Empty
+        private void updateCharacterStats() //update charater stats
+        {
+            //xx
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            /*UPDATE BIOLOGICAL DETERIORATION*/
+            if (m_stats.getHungerRate().getCurrentValue() == m_stats.getHungerRate().getMaxValue()) //current = max --> hunger state
+            {
+                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is HUNGRY");
+                m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY);
+            }
+            if (m_stats.getSleepRate().getCurrentValue() == m_stats.getSleepRate().getMaxValue())
+            {
+                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is SLEEPY");
+                m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY);
+            }
+            if (m_stats.getEnergy().getCurrentValue() == 0)
+            {
+                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is TIRED.");
+                m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.TIRED);
+            }
+            if (m_stats.isEnergyAtMax())
+            {
+                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is AWAKE.");
+                m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
+            }
+
+
+            /*DECISIONS BASED ON BIOLOGICAL NEEDS*/
+            if (m_stats.getHungerStatus() == ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY)
+            {
+                m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT, ConstantClass.ACTION_EAT_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE, Guid.Empty));
+                m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_HUNGRY); //if hungry , start deducting energy
+            }
+            if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY)
+            {
+                m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SLEEP, ConstantClass.ACTION_SLEEP_PRIORITY, ConstantClass.MINIMUM_NUMBER_OF_SLEEP_HOURS * ConstantClass.MINUTES_IN_ONE_HOUR, Guid.Empty));
+                m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_SLEEPY); //if sleepy , start deducting energy
+            }
+            if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.TIRED)
+            {
+                m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.REST, ConstantClass.ACTION_REST_PRIORITY, ConstantClass.ENERGY_ADD_WHEN_REST * ConstantClass.MINUTES_IN_ONE_HOUR, Guid.Empty));
+                m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_TIRED); //if tired , start deducting energy
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+
+        private Guid backTrackToAdjacentRoom (Guid endRoomID, Guid startRoomID, List<Guid> backtrackedRooms) //recursively backtracks from startRoomID to targetRoomID. Return adjacent room ID of targetRoomID, else return Guid.Emptyo
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
@@ -537,7 +596,7 @@ namespace RiseOfStrongholds.Classes
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             
-            m_action_queue.getQueue().Add(action); //searches
+            m_action_queue.addAction(action); //searches
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
@@ -585,6 +644,7 @@ namespace RiseOfStrongholds.Classes
                       m_stats.printStats(m_unique_character_id.ToString()) + "\n" +
                       m_inventory.printInventoryList() + "\n";*/
             ConstantClass.LOGGER.writeToCharLog("Character ID| " + m_unique_character_id, m_unique_character_id.ToString());
+            ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id)].printRoom(false, m_unique_character_id.ToString());
             ConstantClass.LOGGER.writeToCharLog("Birth date|" + m_birthDate, m_unique_character_id.ToString());
             ConstantClass.LOGGER.writeToCharLog("Block ID| " + m_block_id, m_unique_character_id.ToString());
             ConstantClass.LOGGER.writeToCharLog("Room ID|" + ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id), m_unique_character_id.ToString());
@@ -616,6 +676,7 @@ namespace RiseOfStrongholds.Classes
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
+            updateCharacterStats();
             updateAction(); //update action for every game tick 
             ConstantClass.LOGGER.writeToCharLog(printCharacter(), m_unique_character_id.ToString());
             ConstantClass.LOGGER.writeToGameLog("----------------------------------------------------------------------------");

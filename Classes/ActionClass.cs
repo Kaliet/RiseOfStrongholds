@@ -66,5 +66,11 @@ namespace RiseOfStrongholds.Classes
         {
             return "A|" + m_action.ToString() + "|P|" + m_priority + "|V|" + m_var_for_action + "|G|" + m_guid_for_action;
         }
+
+        public override bool Equals(object action)
+        {
+            return (m_action == ((ActionClass)action).m_action &&
+                    m_guid_for_action == ((ActionClass)action).m_guid_for_action);
+        }
     }
 }

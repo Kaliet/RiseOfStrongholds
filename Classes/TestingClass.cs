@@ -100,7 +100,7 @@ namespace RiseOfStrongholds.Classes
 
             try
             {
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 1; i++)
                 {
                     try
                     {
