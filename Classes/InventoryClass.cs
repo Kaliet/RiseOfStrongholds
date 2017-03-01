@@ -108,7 +108,7 @@ namespace RiseOfStrongholds.Classes
             return (m_InventoryList[index].getQuantity());            
         }
 
-        public bool removeItemFromInventory(GenericObjectClass item, int quantity)
+        public bool deductQuantityOfItem(GenericObjectClass item)
         {
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
@@ -122,9 +122,9 @@ namespace RiseOfStrongholds.Classes
                 //  genericObject.incrementValue(quantity);    
                 foreach (GenericObjectClass obj in m_InventoryList)
                 {                    
-                    if (obj == item) //if item is inside the inventory
+                    if (obj == item) //if item name is in inventory . DOES NOT CHECK QUANTITIES!!
                     {                        
-                        obj.decrementValue(quantity);
+                        obj.decrementValue(item.getQuantity());
                         found = true;
                     }                        
                 }

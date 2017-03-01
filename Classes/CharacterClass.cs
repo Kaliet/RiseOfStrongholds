@@ -37,8 +37,8 @@ namespace RiseOfStrongholds.Classes
             m_stats.initializeEnergy(20);
             //m_stats.initializeHungerRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.HOURS_IN_ONE_DAY));
             //m_stats.initializeSleepRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.HOURS_IN_ONE_DAY));
-            m_stats.initializeHungerRate(0, 2000);
-            m_stats.initializeSleepRate(0, 2000);
+            m_stats.initializeHungerRate(0, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.GAME_SPEED);
+            m_stats.initializeSleepRate(0, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.GAME_SPEED);
             m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.FULL);
             m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
 
@@ -171,14 +171,32 @@ namespace RiseOfStrongholds.Classes
 
                     if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.EAT) // EAT
                     {
-                        //TODO: character eats something or goes to find something to eat
-                        ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is EATING");
-                        m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_EATING);
-                        m_stats.initializeHungerRate(0, m_stats.getHungerRate().getMaxValue());
-                        m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.FULL);
-                        //TODO: add HP from eating.
-                        ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is FULL");
-                        m_action_queue.removeAction(index); //EAT action completed - removed from queue
+                        if (m_action_queue.getQueue()[index].getVarForAction() > 0)
+                        {
+                            //TODO: character eats something or goes to find something to eat
+                            ResourceObjectClass foodItem = new ResourceObjectClass(ConstantClass.RESOURCE_TYPE.FOOD,ConstantClass.QUANTITY_TO_DEDUCT_PER_MEAL);
+
+                            if (m_inventory.existsInInventory(foodItem)) //if there is food in inventory, then proceed to eat
+                            {
+                                m_inventory.deductQuantityOfItem(foodItem);
+                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is EATING ");
+                                m_action_queue.getQueue()[index].modifyVarForAction(-1 * ConstantClass.GAME_SPEED);
+                                m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_EATING);
+                            }
+                            else //need to find food
+                            {
+                                //TODO
+                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " has no food!");
+                            }
+                        }
+                        else
+                        {
+                            m_stats.initializeHungerRate(0, m_stats.getHungerRate().getMaxValue());
+                            m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.FULL);
+                            //TODO: add HP from eating.
+                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is FULL");
+                            m_action_queue.removeAction(index); //EAT action completed - removed from queue
+                        }
                     }
 
                                         //-------------------ACTION: SLEEP ---------------------//
@@ -450,39 +468,20 @@ namespace RiseOfStrongholds.Classes
                         }                        
                     }
 
-                                            //-------------------ACTION: XXXXX ---------------------//
+                                                //-------------------ACTION: IDLE ---------------------//
+
+                    else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.IDLE) //action to gather resources
+                    {
+                        m_action_queue.removeAction(index); //action completed, remove from index
+                    }
+                    //-------------------ACTION: XXXXX ---------------------//
 
                     //add new actions here              
                     //m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS
                 }
                 else
                 {
-                    ///*UPDATE BIOLOGICAL DETERIORATION*/
-                    //if (m_stats.getHungerRate().getCurrentValue() == m_stats.getHungerRate().getMaxValue()) //current = max --> hunger state
-                    //{
-                    //    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is HUNGRY");
-                    //    m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY);
-                    //}
-                    //if (m_stats.getSleepRate().getCurrentValue() == m_stats.getSleepRate().getMaxValue() || (m_stats.getEnergy().getCurrentValue() == 0))
-                    //{
-                    //    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is TIRED and SLEEPY");
-                    //    m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY);
-                    //}
-
-                    ///*DECISIONS BASED ON BIOLOGICAL NEEDS*/
-                    //if (m_stats.getHungerStatus() == ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY)
-                    //{
-                    //    m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT, ConstantClass.ACTION_EAT_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE, Guid.Empty));
-                    //    m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_HUNGRY); //if hungry , start deducting energy
-                    //}
-                    //if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY)
-                    //{
-                    //    m_action_queue.getQueue().Add(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SLEEP, ConstantClass.ACTION_SLEEP_PRIORITY, ConstantClass.MINIMUM_NUMBER_OF_SLEEP_HOURS * ConstantClass.MINUTES_IN_ONE_HOUR, Guid.Empty));
-                    //    m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_SLEEPY); //if sleepy , start deducting energy
-                    //}
-
                     deductEnergyBasedOnTerrain();
-
                 }
                 OnActionUpdated(); //raise event
             }
@@ -496,38 +495,37 @@ namespace RiseOfStrongholds.Classes
 
         private void updateCharacterStats() //update charater stats
         {
-            //xx
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            /*UPDATE BIOLOGICAL DETERIORATION*/
+            /*UPDATE BIOLOGICAL DETERIORATION*/            
             if (m_stats.getHungerRate().getCurrentValue() == m_stats.getHungerRate().getMaxValue()) //current = max --> hunger state
             {
                 ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is HUNGRY");
                 m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY);
             }
+
             if (m_stats.getSleepRate().getCurrentValue() == m_stats.getSleepRate().getMaxValue())
             {
                 ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is SLEEPY");
                 m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY);
+            }
+            else if (m_stats.isEnergyAtMax())
+            {
+                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is AWAKE.");
+                m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
             }
             if (m_stats.getEnergy().getCurrentValue() == 0)
             {
                 ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is TIRED.");
                 m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.TIRED);
             }
-            if (m_stats.isEnergyAtMax())
-            {
-                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is AWAKE.");
-                m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
-            }
-
 
             /*DECISIONS BASED ON BIOLOGICAL NEEDS*/
             if (m_stats.getHungerStatus() == ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY)
-            {
-                m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT, ConstantClass.ACTION_EAT_PRIORITY, ConstantClass.VARIABLE_FOR_ACTION_NONE, Guid.Empty));
-                m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_HUNGRY); //if hungry , start deducting energy
+            {                
+                m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT, ConstantClass.ACTION_EAT_PRIORITY, ConstantClass.HOURS_FOR_EATING * ConstantClass.GAME_SPEED, Guid.Empty));
+                //m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_HUNGRY); //if hungry , start deducting energy
             }
             if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY)
             {
@@ -675,9 +673,9 @@ namespace RiseOfStrongholds.Classes
         public void OnGameTicked (object source, EventArgs args)
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-
-            updateCharacterStats();
+            
             updateAction(); //update action for every game tick 
+            updateCharacterStats(); //update character stats (hunger, sleep, etc) per tick
             ConstantClass.LOGGER.writeToCharLog(printCharacter(), m_unique_character_id.ToString());
             ConstantClass.LOGGER.writeToGameLog("----------------------------------------------------------------------------");
 

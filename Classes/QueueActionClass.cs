@@ -31,11 +31,13 @@ namespace RiseOfStrongholds.Classes
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             //return string should be [0] - info, [1] - info, etc.                        
-            int index = 0;            
+            int index = 0;
 
-            foreach (ActionClass element in m_queue)
+            this.m_queue = this.getQueue().OrderBy(obj => obj.getPriority()).ToList();
+
+            foreach (ActionClass element in this.getQueue())
             {
-                ConstantClass.LOGGER.writeToCharLog("Action|[" + (index + 1) + "/" + m_queue.Count + "]|" + element.ToString(), charID);
+                ConstantClass.LOGGER.writeToCharLog("Action|[" + (index + 1) + "/" + this.getQueue().Count + "]|" + element.ToString(), charID);
                 index++;
             }
 
@@ -88,6 +90,20 @@ namespace RiseOfStrongholds.Classes
             {
                 ConstantClass.LOGGER.writeToCrashLog(e);
             }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+
+        public ActionClass getFirstIndex()
+        {
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            if (m_queue.Count > 0)
+            {
+                return (m_queue[0]);
+            }
+            else return null;
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }

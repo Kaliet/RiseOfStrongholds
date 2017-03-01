@@ -27,12 +27,14 @@ namespace RiseOfStrongholds.Classes
         public enum CHARACTER_HUNGER_STATUS { FULL, HUNGRY }; //hungry = top priority is to find food ; otherwise HP decreases
 
         /*character skills*/
-        public static int CHAR_SKILLS_GATHER_RATE = 5; //# of resources gathered per round
+        public static int CHAR_SKILLS_GATHER_RATE = 50; //# of resources gathered per round
 
         /*biological constants*/
         public static int MINIMUM_NUMBER_OF_SLEEP_HOURS = 8; //minimum hour of hours to sleep
         public static int HOURS_BETWEEN_EATING = 8; //how many hours in between until character gets hungry
         public static int HOURS_BETWEEN_SLEEPING = 20; //how many hours in between character gets sleepy
+        public static int HOURS_FOR_EATING = 1; //need two hours to eat
+        public static int QUANTITY_TO_DEDUCT_PER_MEAL = 1; //number of quantity of FOOD to deduct from inventory per ACTION.EAT
 
         /*energy costs + regeneration*/             
         public static int ENERGY_COST_WHEN_HUNGRY = -2; //how much energy is deducted when hungry
@@ -91,8 +93,8 @@ namespace RiseOfStrongholds.Classes
 
         /*RESOURCE TYPES*/
         public enum RESOURCE_TYPE { WOOD, FOOD, NONE };
-        public static int RESOURCE_WOOD_GENERATE_RATE = 1; //number of wood generated per tick
-        public static int RESOURCE_FOOD_GENERATE_RATE = 1; //number of food generated per tick
+        public static int RESOURCE_WOOD_GENERATE_RATE = 10; //number of wood generated per tick
+        public static int RESOURCE_FOOD_GENERATE_RATE = 100; //number of food generated per tick
 
         /*INVENTORY*/
         public static int INVENTORY_BLOCK_MAX_CAP = 100; //maximum number of unique items in the inventory

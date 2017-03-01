@@ -194,7 +194,7 @@ namespace RiseOfStrongholds.Classes
 
                 resource = new ResourceObjectClass(ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceType(), rate);
 
-                m_inventory_list.removeItemFromInventory(resource, rate); //resource deducted from block inventory
+                m_inventory_list.deductQuantityOfItem(resource); //resource deducted from block inventory
             }
             catch (Exception e)
             {
@@ -213,7 +213,7 @@ namespace RiseOfStrongholds.Classes
             {
                 //resources generated this turn are added to the block inventory            
                 int rate = ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceGenerateRate();
-                ResourceObjectClass resource = new ResourceObjectClass(ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceType());
+                ResourceObjectClass resource = new ResourceObjectClass(ConstantClass.MAPPING_TABLE_FOR_ALL_TERRAINS.getMappingTable()[m_terrain_id].getResourceType(), rate);
 
                 if (rate > 0) //if resource generate some value
                 {

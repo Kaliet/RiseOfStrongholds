@@ -84,8 +84,8 @@ namespace RiseOfStrongholds
                     region1.addRoom(rooms[i].getUniqueRoomID());
                 }
 
-                rooms[numOfRooms - 1].getRoom()[1,0].setTerrainType(forestTerrain.getUniqueTerrainID());
-                rooms[numOfRooms - 1].getRoom()[sizeRoom - 1, sizeRoom - 1].setTerrainType(forestTerrain.getUniqueTerrainID());
+                //rooms[numOfRooms - 1].getRoom()[1,0].setTerrainType(grassTerrain.getUniqueTerrainID());
+                rooms[0].getRoom()[0,0].setTerrainType(grassTerrain.getUniqueTerrainID());                
 
                 rooms[1].getRoom()[0, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 rooms[1].getRoom()[0, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
