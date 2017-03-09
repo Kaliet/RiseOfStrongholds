@@ -9,7 +9,7 @@ namespace RiseOfStrongholds.Classes
     public class CharacterStatsClass:GenericStatsClass //inherits from GenericStatClass
     {
         /* VARIABLES */
-        private ConstantClass.CHARACTER_HUNGER_STATUS m_hunger_status;
+        private ConstantClass.CHARACTER_SATIETY_STATUS m_hunger_status;
         private ConstantClass.CHARACTER_SLEEP_STATUS m_sleep_status;
 
         private statStruct m_hunger_rate; // max = how many hours character can last without eating, when current = max then hungry
@@ -20,10 +20,10 @@ namespace RiseOfStrongholds.Classes
         public statStruct getEnergy() { return m_Energy; }
         public statStruct getHungerRate() { return m_hunger_rate; }
         public statStruct getSleepRate() { return m_sleep_rate; }
-        public ConstantClass.CHARACTER_HUNGER_STATUS getHungerStatus() { return m_hunger_status; }
+        public ConstantClass.CHARACTER_SATIETY_STATUS getHungerStatus() { return m_hunger_status; }
         public ConstantClass.CHARACTER_SLEEP_STATUS getSleepStatus() { return m_sleep_status; }
                
-        public void setHungerStatus (ConstantClass.CHARACTER_HUNGER_STATUS newStatus) { m_hunger_status = newStatus; }
+        public void setHungerStatus (ConstantClass.CHARACTER_SATIETY_STATUS newStatus) { m_hunger_status = newStatus; }
         public void setSleepStatus (ConstantClass.CHARACTER_SLEEP_STATUS newStatus) { m_sleep_status = newStatus; }
         public void modifyHungerRate(int value) { m_hunger_rate.modifyCurrentValue(value); }
         public void modifySleepRate(int value) { m_sleep_rate.modifyCurrentValue(value); }
@@ -55,11 +55,13 @@ namespace RiseOfStrongholds.Classes
 
 
             string output = "";
-            if (m_hunger_status == ConstantClass.CHARACTER_HUNGER_STATUS.FULL) output += "FULL";
-            else if (m_hunger_status == ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY) output += "HUNGRY";
-            else output += "ERROR";
+            if (m_hunger_status == ConstantClass.CHARACTER_SATIETY_STATUS.FULL) output += "FULL";
+            else if (m_hunger_status == ConstantClass.CHARACTER_SATIETY_STATUS.HUNGRY) output += "HUNGRY";
+            else if (m_hunger_status == ConstantClass.CHARACTER_SATIETY_STATUS.STARVING) output += "STARVING";
+            else if (m_hunger_status == ConstantClass.CHARACTER_SATIETY_STATUS.FAMISHED) output += "FAMISHED";
+            else output += "Missing Hunger status definition!";
 
-            output += "(" + m_hunger_rate.getCurrentValue() + "/" + m_hunger_rate.getMaxValue() + ")";
+            //output += "(" + m_hunger_rate.getCurrentValue() + "/" + m_hunger_rate.getMaxValue() + ")";
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 

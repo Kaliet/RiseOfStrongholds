@@ -24,7 +24,10 @@ namespace RiseOfStrongholds.Classes
         /*character enums*/
         public enum CHARACTER_ACTIONS { IDLE, EAT, SLEEP , WALK, FIND_BLOCK, FIND_CHAR, GATHER, REST};
         public enum CHARACTER_SLEEP_STATUS { AWAKE, SLEEPY, TIRED}; //awake = can perform actions, sleepy = must sleep since char passed HOURS_BETWEEN_SLEEPING, tired = energy decreases to 0
-        public enum CHARACTER_HUNGER_STATUS { FULL, HUNGRY }; //hungry = top priority is to find food ; otherwise HP decreases
+        public enum CHARACTER_SATIETY_STATUS { FULL, HUNGRY , STARVING, FAMISHED}; //different levels of appetite level
+        public static int[] CHARACTER_SATIETY_THRESHOLDS = { 0, 75, 90, 100 }; //thresholds for different satiety levels of max hunger rate (in percentile) - i.e: 100% of max hunger rate = FAMISHED, 
+        public static int[] CHARACTER_SATIETY_PENALITIES = {0,1,3,5}; //number of HP deducted per tick for each different satiety status
+
 
         /*character skills*/
         public static int CHAR_SKILLS_GATHER_RATE = 50; //# of resources gathered per round

@@ -37,9 +37,9 @@ namespace RiseOfStrongholds.Classes
             m_stats.initializeEnergy(20);
             //m_stats.initializeHungerRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.HOURS_IN_ONE_DAY));
             //m_stats.initializeSleepRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.HOURS_IN_ONE_DAY));
-            m_stats.initializeHungerRate(0, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.GAME_SPEED);
+            m_stats.initializeHungerRate(0, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.GAME_SPEED); check why GAMESPEEd=1 the hunger rate is werid
             m_stats.initializeSleepRate(0, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.GAME_SPEED);
-            m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.FULL);
+            m_stats.setHungerStatus(ConstantClass.CHARACTER_SATIETY_STATUS.FULL);
             m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
 
             m_birthDate = new GameTimeClass(ConstantClass.gameTime);
@@ -192,7 +192,7 @@ namespace RiseOfStrongholds.Classes
                         else
                         {
                             m_stats.initializeHungerRate(0, m_stats.getHungerRate().getMaxValue());
-                            m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.FULL);
+                            m_stats.setHungerStatus(ConstantClass.CHARACTER_SATIETY_STATUS.FULL);
                             //TODO: add HP from eating.
                             ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is FULL");
                             m_action_queue.removeAction(index); //EAT action completed - removed from queue
@@ -495,15 +495,40 @@ namespace RiseOfStrongholds.Classes
 
         private void updateCharacterStats() //update charater stats
         {
+            double famishThres = (ConstantClass.CHARACTER_SATIETY_THRESHOLDS[(int)ConstantClass.CHARACTER_SATIETY_STATUS.FAMISHED] / 100.0) * m_stats.getHungerRate().getMaxValue();
+            double starvingThres = (ConstantClass.CHARACTER_SATIETY_THRESHOLDS[(int)ConstantClass.CHARACTER_SATIETY_STATUS.STARVING] / 100.0) *m_stats.getHungerRate().getMaxValue();
+            double hungryThres = (ConstantClass.CHARACTER_SATIETY_THRESHOLDS[(int)ConstantClass.CHARACTER_SATIETY_STATUS.HUNGRY] / 100.0) *m_stats.getHungerRate().getMaxValue();
+            double fullThres = (ConstantClass.CHARACTER_SATIETY_THRESHOLDS[(int)ConstantClass.CHARACTER_SATIETY_STATUS.FULL] / 100.0) *m_stats.getHungerRate().getMaxValue();
+
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            /*UPDATE BIOLOGICAL DETERIORATION*/            
-            if (m_stats.getHungerRate().getCurrentValue() == m_stats.getHungerRate().getMaxValue()) //current = max --> hunger state
+            /*UPDATE BIOLOGICAL DETERIORATION*/
+            if (m_stats.getHungerRate().getCurrentValue() >= famishThres) //current = max --> hunger state
+            {
+                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is FAMISHED");
+                m_stats.setHungerStatus(ConstantClass.CHARACTER_SATIETY_STATUS.FAMISHED);
+            }
+            else if (m_stats.getHungerRate().getCurrentValue() >= starvingThres)
+            {
+                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is STARVING");
+                m_stats.setHungerStatus(ConstantClass.CHARACTER_SATIETY_STATUS.STARVING);
+            }
+            else if (m_stats.getHungerRate().getCurrentValue() >= hungryThres)
             {
                 ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is HUNGRY");
-                m_stats.setHungerStatus(ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY);
+                m_stats.setHungerStatus(ConstantClass.CHARACTER_SATIETY_STATUS.HUNGRY);
             }
+            else if (m_stats.getHungerRate().getCurrentValue() >= fullThres)
+            {
+                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is FULL");
+                m_stats.setHungerStatus(ConstantClass.CHARACTER_SATIETY_STATUS.FULL);
+            }
+            
+                        
+
+       
+
 
             if (m_stats.getSleepRate().getCurrentValue() == m_stats.getSleepRate().getMaxValue())
             {
@@ -522,7 +547,7 @@ namespace RiseOfStrongholds.Classes
             }
 
             /*DECISIONS BASED ON BIOLOGICAL NEEDS*/
-            if (m_stats.getHungerStatus() == ConstantClass.CHARACTER_HUNGER_STATUS.HUNGRY)
+            if (m_stats.getHungerStatus() == ConstantClass.CHARACTER_SATIETY_STATUS.HUNGRY)
             {                
                 m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT, ConstantClass.ACTION_EAT_PRIORITY, ConstantClass.HOURS_FOR_EATING * ConstantClass.GAME_SPEED, Guid.Empty));
                 //m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_HUNGRY); //if hungry , start deducting energy
