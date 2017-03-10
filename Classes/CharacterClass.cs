@@ -10,8 +10,8 @@ namespace RiseOfStrongholds.Classes
     {
         /* VARIABLES */
         private string m_character_name; //name
-        private CharacterStatsClass m_stats; //stats
-        private GameTimeClass m_birthDate; //date of birth
+        private CharacterStatsClass m_stats; //stats     
+        private GameTimeClass m_birthDate; //date of birth           
         private Guid m_unique_character_id; //character's unique id
         private QueueActionClass m_action_queue; //queue of actions the character is doing
         private Guid m_block_id; //in which block the character resides in        
@@ -26,23 +26,23 @@ namespace RiseOfStrongholds.Classes
 
         /*CONSTRUCTORS*/
         public CharacterClass(Guid blockID)
-        {
-
+        {            
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
             m_character_name = "";
 
             m_stats = new CharacterStatsClass();
-            m_stats.initializeHP(100);
+            m_stats.initializeHP(50);
             m_stats.initializeEnergy(20);
+            
             //m_stats.initializeHungerRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.HOURS_IN_ONE_DAY));
             //m_stats.initializeSleepRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.HOURS_IN_ONE_DAY));
-            m_stats.initializeHungerRate(0, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.GAME_SPEED); check why GAMESPEEd=1 the hunger rate is werid
-            m_stats.initializeSleepRate(0, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.GAME_SPEED);
+            m_stats.initializeHungerRate(0, (int)(ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.MINUTES_IN_ONE_HOUR * (ConstantClass.SECONDS_IN_ONE_MINUTE / ConstantClass.GAME_SPEED*1.0))); //total number of game minutes worth of HOURS_BETWEEn_EATING. 
+            m_stats.initializeSleepRate(0, (int)(ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.MINUTES_IN_ONE_HOUR * (ConstantClass.SECONDS_IN_ONE_MINUTE / ConstantClass.GAME_SPEED * 1.0)));
             m_stats.setHungerStatus(ConstantClass.CHARACTER_SATIETY_STATUS.FULL);
             m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
 
-            m_birthDate = new GameTimeClass(ConstantClass.gameTime);
+            m_birthDate = new GameTimeClass(ConstantClass.gameTime);            
             m_unique_character_id = Guid.NewGuid(); //unique id for character            
             m_action_queue = new QueueActionClass();
             m_inventory = new InventoryClass(ConstantClass.INVENTORY_MAX_CHAR_CAP);
@@ -158,332 +158,344 @@ namespace RiseOfStrongholds.Classes
                                                                                                                                   //            ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getPosition().getPositionY() + "). Exits: " + ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].printAllAvailableExits());
                 ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is on block " + this.m_block_id + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id));
 
-                m_stats.modifyHungerRate(ConstantClass.GAME_SPEED); //hunger increases based on game speed (1 sec = how many game time mins)
-                m_stats.modifySleepRate(ConstantClass.GAME_SPEED); //sleepiness increases based on game speed (1 sec = how many game time mins)
-
-                if (m_action_queue.getQueue().Count > 0) //there are still actions left in the queue
+                //checks if character is alive
+                if (m_stats.getLifeStatus() == ConstantClass.CHARACTER_LIFE_STATUS.ALIVE)
                 {
-                    //perform highest priority action in action list                
-                    index = returnIndexOfActionWithHighestIndex();
-                    if (index < 0) throw new Exception("Queue empty.");
+                    m_stats.modifyHungerRate(ConstantClass.GAME_SPEED); //hunger increases based on game speed (1 sec = how many game time mins)
+                    m_stats.modifySleepRate(ConstantClass.GAME_SPEED); //sleepiness increases based on game speed (1 sec = how many game time mins)
 
-                                        //-------------------ACTION: EAT ---------------------//
-
-                    if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.EAT) // EAT
+                    if (m_action_queue.getQueue().Count > 0) //there are still actions left in the queue
                     {
-                        if (m_action_queue.getQueue()[index].getVarForAction() > 0)
+                        //perform highest priority action in action list                
+                        index = returnIndexOfActionWithHighestIndex();
+                        if (index < 0) throw new Exception("Queue empty.");
+
+                        //-------------------ACTION: EAT ---------------------//
+
+                        if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.EAT) // EAT
                         {
-                            //TODO: character eats something or goes to find something to eat
-                            ResourceObjectClass foodItem = new ResourceObjectClass(ConstantClass.RESOURCE_TYPE.FOOD,ConstantClass.QUANTITY_TO_DEDUCT_PER_MEAL);
+                            if (m_action_queue.getQueue()[index].getVarForAction() > 0)
+                            {                                
+                                ResourceObjectClass foodItem = new ResourceObjectClass(ConstantClass.RESOURCE_TYPE.FOOD, ConstantClass.QUANTITY_TO_DEDUCT_PER_MEAL);
 
-                            if (m_inventory.existsInInventory(foodItem)) //if there is food in inventory, then proceed to eat
-                            {
-                                m_inventory.deductQuantityOfItem(foodItem);
-                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is EATING ");
-                                m_action_queue.getQueue()[index].modifyVarForAction(-1 * ConstantClass.GAME_SPEED);
-                                m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_EATING);
-                            }
-                            else //need to find food
-                            {
-                                //TODO
-                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " has no food!");
-                            }
-                        }
-                        else
-                        {
-                            m_stats.initializeHungerRate(0, m_stats.getHungerRate().getMaxValue());
-                            m_stats.setHungerStatus(ConstantClass.CHARACTER_SATIETY_STATUS.FULL);
-                            //TODO: add HP from eating.
-                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is FULL");
-                            m_action_queue.removeAction(index); //EAT action completed - removed from queue
-                        }
-                    }
-
-                                        //-------------------ACTION: SLEEP ---------------------//
-
-                    else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.SLEEP) // SLEEP
-                    {
-                        //TODO: character goes to sleep until he replenishes his energy                    
-                        if (m_action_queue.getQueue()[index].getVarForAction() > 0)//wait until MINIMUM_NUMBER_OF_SLEEP_HOURS 
-                        {
-                            //wait - character is sleeping
-                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is SLEEPING");
-                            m_action_queue.getQueue()[index].modifyVarForAction(-1 * ConstantClass.GAME_SPEED);
-                            m_stats.modifyEnergy(ConstantClass.ENERGY_ADD_WHEN_SLEEP);
-                        }
-                        else //sleeping is over, reinitialize sleep rate and set status to AWAKE
-                        {
-                            m_stats.initializeSleepRate(0, m_stats.getSleepRate().getMaxValue());
-                            m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
-                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is AWAKE");
-                            m_action_queue.removeAction(index); //SLEEP action completed - removed from queue
-                        }
-                    }
-
-                                        //-------------------ACTION: REST ---------------------//
-
-                    else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.REST) // TIRED
-                    {
-                        //TODO: character rests until he replenishes his energy                    
-                        if (m_action_queue.getQueue()[index].getVarForAction() > 0 && !m_stats.isEnergyAtMax())//wait until rest period is over or energy reaches max
-                        {
-                            //wait - character is resting                            
-                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is RESTING");
-                            m_stats.modifyEnergy(ConstantClass.ENERGY_ADD_WHEN_SLEEP);
-                            m_action_queue.getQueue()[index].modifyVarForAction(-1 * ConstantClass.GAME_SPEED);
-                            
-                        }
-                        else //rest is over, set status to AWAKE
-                        {                            
-                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is RESTED");
-                            m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
-                            m_action_queue.removeAction(index); //REST action completed - removed from queue
-                        }
-                    }
-
-                                        //-------------------ACTION: WALK ---------------------//
-
-                    else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.WALK) // WALKS
-                    {
-                        //TODO: character wants to walk to a random exit (before AI introduction)
-                        Guid[] allExits = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getAllExits(); //get all exits from character's residing block
-                        List<Guid> possibleExitsToWalk = new List<Guid>();
-
-                        foreach (Guid id in allExits) //go through all exits and check which ones are exitable
-                        {
-                            if (id != Guid.Empty) { possibleExitsToWalk.Add(id); }
-                        }
-
-                        if (possibleExitsToWalk.Count == 0) { ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot walk out of the current block."); }
-                        else //character walks out of one of the exits
-                        {
-                            int exitNumber = ConstantClass.RANDOMIZER.produceInt(1, 100); //randomizing which exit to take                        
-                            Guid nextStep = possibleExitsToWalk[exitNumber % possibleExitsToWalk.Count]; //character possible next step 
-
-                            if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].isOccupantListEmpty()) //checks if next step is occupied
-                            {
-
-                                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].removeCharacterFromBlockOccupants(m_unique_character_id);//remove character id from previuos block list of occupants                            
-                                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].addCharacterToBlockOccupants(m_unique_character_id);//adds character id as part of block list of occupants                            
-                                m_block_id = nextStep;
-                                deductEnergyBasedOnTerrain();
-
-                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is going to walk " + printDirection(allExits, m_block_id) + " into block " + m_block_id.ToString().Substring(0, 2) + ".");
+                                if (m_inventory.existsInInventory(foodItem)) //if there is food in inventory, then proceed to eat
+                                {
+                                    m_inventory.deductQuantityOfItem(foodItem);
+                                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is EATING ");
+                                    m_action_queue.getQueue()[index].modifyVarForAction(-1 * ConstantClass.GAME_SPEED);
+                                    m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_EATING);
+                                }
+                                else //need to find food
+                                {
+                                    //gathers food at same block
+                                    Guid targetBlockIDToGather = m_block_id; //TODO: Searches in vicinity ACTION.SCAN
+                                    m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.GATHER, m_action_queue.getQueue()[index].getPriority() - 1, 0, targetBlockIDToGather));
+                                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " has no food! Gathering food from " + targetBlockIDToGather);
+                                }
                             }
                             else
                             {
-                                //character waits one turn
+                                m_stats.initializeHungerRate(0, m_stats.getHungerRate().getMaxValue());
+                                m_stats.setHungerStatus(ConstantClass.CHARACTER_SATIETY_STATUS.FULL);
+                                m_stats.modifyHP(ConstantClass.CHARACTER_HP_REGEN_EATING);
+                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is finished EATING.");
+                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " has regenerated HP (" + ConstantClass.CHARACTER_HP_REGEN_EATING + ") from eating.");
+                                m_action_queue.removeAction(index); //EAT action completed - removed from queue
                             }
                         }
-                        m_action_queue.removeAction(index); //action completed, remove from index
-                    }
 
-                                            //-------------------ACTION: FIND_BLOCK / FIND_CHAR ---------------------//
+                        //-------------------ACTION: SLEEP ---------------------//
 
-                    else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK ||
-                             m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_CHAR) //SEARCHES FOR SPECIFIC BLOCK or CHAR
-                    {
-                        Guid targetBlockID = Guid.Empty;
-                        Guid targetCharID = Guid.Empty;
-
-                        if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_CHAR) //if find char, then get targetBlockID of the char
+                        else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.SLEEP) // SLEEP
                         {
-                            targetCharID = m_action_queue.getQueue()[index].getGuidForAction(); //ID of target char to be searched (by this.character)    
-                            Guid targetCharBlockID = ConstantClass.MAPPING_TABLE_FOR_ALL_CHARS.getMappingTable()[targetCharID].getBlockID();
-                            
-                            //need to find unoccupid targetBlockID next to targetCharID                                                        
-                            List<Guid> unoccupiedBlocksNextToChar = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetCharBlockID].returnListOfUnoccupiedAdjBlocks(targetCharBlockID);
-
-                            if (unoccupiedBlocksNextToChar.Count == 0) //if no avaiable adjacent blocks next to char, then wait one turn
+                            //TODO: character goes to sleep until he replenishes his energy                    
+                            if (m_action_queue.getQueue()[index].getVarForAction() > 0)//wait until MINIMUM_NUMBER_OF_SLEEP_HOURS 
                             {
-                                //wait one turn
+                                //wait - character is sleeping
+                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is SLEEPING");
+                                m_action_queue.getQueue()[index].modifyVarForAction(-1 * ConstantClass.GAME_SPEED);
+                                m_stats.modifyEnergy(ConstantClass.ENERGY_ADD_WHEN_SLEEP);
                             }
-                            else //choose first block from list??
-                            {                            
-                                targetBlockID = unoccupiedBlocksNextToChar.First();//ID of block where target char is residing
+                            else //sleeping is over, reinitialize sleep rate and set status to AWAKE
+                            {
+                                m_stats.initializeSleepRate(0, m_stats.getSleepRate().getMaxValue());
+                                m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
+                                m_stats.fillHPtoMax();
+                                m_stats.fillEnergytoMax();
+                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is AWAKE");
+                                m_action_queue.removeAction(index); //SLEEP action completed - removed from queue
                             }
                         }
-                        else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK)
+
+                        //-------------------ACTION: REST ---------------------//
+
+                        else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.REST) // TIRED
                         {
-                            targetBlockID = m_action_queue.getQueue()[index].getGuidForAction(); //ID of block this.character is searching
+                            //TODO: character rests until he replenishes his energy                    
+                            if (m_action_queue.getQueue()[index].getVarForAction() > 0 && !m_stats.isEnergyAtMax())//wait until rest period is over or energy reaches max
+                            {
+                                //wait - character is resting                            
+                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is RESTING");
+                                m_stats.modifyEnergy(ConstantClass.ENERGY_ADD_WHEN_SLEEP);
+                                m_action_queue.getQueue()[index].modifyVarForAction(-1 * ConstantClass.GAME_SPEED);
+
+                            }
+                            else //rest is over, set status to AWAKE
+                            {
+                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is RESTED");
+                                m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
+                                m_action_queue.removeAction(index); //REST action completed - removed from queue
+                            }
                         }
 
-                        Guid targetBlockRoomID = ConstantClass.GET_ROOMID_BASED_BLOCKID(targetBlockID); //roomID where this.character wants to get
-                        Guid currentCharRoomID = ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id); //current roomID where this.character resides
+                        //-------------------ACTION: WALK ---------------------//
 
-                        if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable().ContainsKey(targetBlockID)) //checks if targetblockID is a block ID
+                        else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.WALK) // WALKS
                         {
-                            if (targetBlockID == m_block_id) //arrived
+                            //TODO: character wants to walk to a random exit (before AI introduction)
+                            Guid[] allExits = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].getAllExits(); //get all exits from character's residing block
+                            List<Guid> possibleExitsToWalk = new List<Guid>();
+
+                            foreach (Guid id in allExits) //go through all exits and check which ones are exitable
                             {
-                                m_action_queue.removeAction(index); //action completed, remove from index                            
-                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " has found " + targetBlockID);
-                                updateAction(); //take next action since character move action completed beginning of this round.
+                                if (id != Guid.Empty) { possibleExitsToWalk.Add(id); }
                             }
-                            else if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID() != Guid.Empty &&
-                                     ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //wall
+
+                            if (possibleExitsToWalk.Count == 0) { ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot walk out of the current block."); }
+                            else //character walks out of one of the exits
                             {
-                                m_action_queue.removeAction(index); //action completed, remove from index
-                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot walk to  " + targetBlockID + " due to building.");
-                                updateAction(); //take next action since character move action completed beginning of this round.
-                            }
-                            else if (targetBlockRoomID != currentCharRoomID) //target block is in another room than the character
-                            {
-                                List<GuidPairClass> listOfSharedBlocks = new List<GuidPairClass>();
-                                List<Guid> backtrackedRooms = new List<Guid>();
-                                Guid adjRoomIDOfCurrentRoomID = backTrackToAdjacentRoom(targetBlockRoomID, currentCharRoomID, backtrackedRooms);
-                                GuidPairClass roomsPair = new GuidPairClass(adjRoomIDOfCurrentRoomID, currentCharRoomID);
-                                Guid chosenBlockOnAdjRoom = Guid.Empty;
-                                Guid chosenBlockOnCharRoom = Guid.Empty;
-                                bool crossedRoom = false;
+                                int exitNumber = ConstantClass.RANDOMIZER.produceInt(1, 100); //randomizing which exit to take                        
+                                Guid nextStep = possibleExitsToWalk[exitNumber % possibleExitsToWalk.Count]; //character possible next step 
 
-                                if (ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable().ContainsKey(roomsPair))
+                                if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].isOccupantListEmpty()) //checks if next step is occupied
                                 {
-                                    listOfSharedBlocks = ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable()[roomsPair];
-                                }
 
-                                //1. go over all shared blocks and check if character is standing on shared block between the rooms
-                                if (listOfSharedBlocks.Count > 0) //check list is not empty
-                                {
-                                    foreach (GuidPairClass pair in listOfSharedBlocks)
-                                    {
-                                        if (pair.isGuidOneofthePairs(m_block_id)) //character is standing on a shared block between the rooms
-                                        {
-                                            Guid nextStep = pair.returnSecondGuidPair(m_block_id); //character possible next step 
-
-                                            if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].isOccupantListEmpty())
-                                            {
-                                                //next action is to move to next room
-                                                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].removeCharacterFromBlockOccupants(m_unique_character_id);//remove character id from previuos block list of occupants                                                                                                                                    
-                                                ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].addCharacterToBlockOccupants(m_unique_character_id);//adds character id as part of block list of occupants                                            
-                                                m_block_id = nextStep;
-                                                deductEnergyBasedOnTerrain();
-                                                crossedRoom = true;
-
-                                                //if character newly arrived block is still not target block id and last action item in queue is to reach target block id, then we do not remove it.
-                                                //needed for scenario where character starts at shared block and has only 1 action item in queue to reach to target block id in different room. without below, the last action will be removed and character will not move.
-                                                if (m_block_id != targetBlockID && m_action_queue.getQueue().Count == 1 && m_action_queue.getQueue()[0].getGuidForAction() == targetBlockID) { }
-                                                else { m_action_queue.removeAction(index); }//action completed, remove from index
-
-                                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " crossed room to block " + m_block_id + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id));
-
-                                                break;
-                                            }
-                                            else
-                                            {
-                                                //character waits for one turn
-                                            }
-                                        }
-                                    }
-                                    if (!crossedRoom) //character is not standing on a shared block between the rooms
-                                    {
-                                        //2. choose randomly among the available shared blocks to walk into the other room
-                                        int exitNumber = ConstantClass.RANDOMIZER.produceInt(1, 100); //randomizing which block to take
-
-                                        if (listOfSharedBlocks.Count > 0)
-                                        {
-                                            chosenBlockOnCharRoom = listOfSharedBlocks[exitNumber % listOfSharedBlocks.Count].m_guid2;
-                                            chosenBlockOnAdjRoom = listOfSharedBlocks[exitNumber % listOfSharedBlocks.Count].m_guid1;
-                                        }
-                                        //3. add to queue new action character to find shared exit block id with higher priority than current action
-                                        int currentPriority = this.m_action_queue.getQueue()[index].getPriority();
-
-                                        m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 2, ConstantClass.VARIABLE_FOR_ACTION_NONE, chosenBlockOnCharRoom));
-                                        m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, chosenBlockOnAdjRoom));
-                                        ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is looking for block " + targetBlockID + " in room ID " + targetBlockRoomID + "(" + (m_action_queue.getQueue()[index].getPriority()) + ")");
-                                        ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " needs to find " + chosenBlockOnCharRoom + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(chosenBlockOnCharRoom) + "(" + (currentPriority - 2) + ")");
-                                        ConstantClass.LOGGER.writeToGameLog("and cross to block " + chosenBlockOnAdjRoom + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(chosenBlockOnAdjRoom) + "(" + (currentPriority - 1) + ")");
-
-                                        updateAction(); //take next action since character move action completed beginning of this round.
-                                    }
-                                }
-                            }
-                            else //block is in the same room as character
-                            {
-                                PathFindingClass searchPath = new PathFindingClass(m_block_id, targetBlockID);
-                                Guid nextStep = searchPath.returnNextBlockGuidToMove();
-
-                                //check if nextstep is occupied, if so char waits one turn . if not, char moves.
-                                if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].isOccupantListEmpty())
-                                {
-                                    ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].removeCharacterFromBlockOccupants(m_unique_character_id);//remove character id from previuos block list of occupants                                                                                                                        
-                                    ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].addCharacterToBlockOccupants(m_unique_character_id);//adds character id as part of block list of occupants                                            
+                                    ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].removeCharacterFromBlockOccupants(m_unique_character_id);//remove character id from previuos block list of occupants                            
+                                    ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].addCharacterToBlockOccupants(m_unique_character_id);//adds character id as part of block list of occupants                            
                                     m_block_id = nextStep;
-                                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " moves to block " + m_block_id);
                                     deductEnergyBasedOnTerrain();
-                                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is finding " + targetBlockID + " with priority " + (m_action_queue.getQueue()[index].getPriority() - 1));
-                                }        
+
+                                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is going to walk " + printDirection(allExits, m_block_id) + " into block " + m_block_id.ToString().Substring(0, 2) + ".");
+                                }
                                 else
                                 {
                                     //character waits one turn
-                                }                        
+                                }
+                            }
+                            m_action_queue.removeAction(index); //action completed, remove from index
+                        }
+
+                        //-------------------ACTION: FIND_BLOCK / FIND_CHAR ---------------------//
+
+                        else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK ||
+                                 m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_CHAR) //SEARCHES FOR SPECIFIC BLOCK or CHAR
+                        {
+                            Guid targetBlockID = Guid.Empty;
+                            Guid targetCharID = Guid.Empty;
+
+                            if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_CHAR) //if find char, then get targetBlockID of the char
+                            {
+                                targetCharID = m_action_queue.getQueue()[index].getGuidForAction(); //ID of target char to be searched (by this.character)    
+                                Guid targetCharBlockID = ConstantClass.MAPPING_TABLE_FOR_ALL_CHARS.getMappingTable()[targetCharID].getBlockID();
+
+                                //need to find unoccupid targetBlockID next to targetCharID                                                        
+                                List<Guid> unoccupiedBlocksNextToChar = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetCharBlockID].returnListOfUnoccupiedAdjBlocks(targetCharBlockID);
+
+                                if (unoccupiedBlocksNextToChar.Count == 0) //if no avaiable adjacent blocks next to char, then wait one turn
+                                {
+                                    //wait one turn
+                                }
+                                else //choose first block from list??
+                                {
+                                    targetBlockID = unoccupiedBlocksNextToChar.First();//ID of block where target char is residing
+                                }
+                            }
+                            else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK)
+                            {
+                                targetBlockID = m_action_queue.getQueue()[index].getGuidForAction(); //ID of block this.character is searching
+                            }
+
+                            Guid targetBlockRoomID = ConstantClass.GET_ROOMID_BASED_BLOCKID(targetBlockID); //roomID where this.character wants to get
+                            Guid currentCharRoomID = ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id); //current roomID where this.character resides
+
+                            if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable().ContainsKey(targetBlockID)) //checks if targetblockID is a block ID
+                            {
+                                if (targetBlockID == m_block_id) //arrived
+                                {
+                                    m_action_queue.removeAction(index); //action completed, remove from index                            
+                                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " has found " + targetBlockID);
+                                    updateAction(); //take next action since character move action completed beginning of this round.
+                                }
+                                else if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID() != Guid.Empty &&
+                                         ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getBuildingID()].getType() == ConstantClass.BUILDING.WALL) //wall
+                                {
+                                    m_action_queue.removeAction(index); //action completed, remove from index
+                                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot walk to  " + targetBlockID + " due to building.");
+                                    updateAction(); //take next action since character move action completed beginning of this round.
+                                }
+                                else if (targetBlockRoomID != currentCharRoomID) //target block is in another room than the character
+                                {
+                                    List<GuidPairClass> listOfSharedBlocks = new List<GuidPairClass>();
+                                    List<Guid> backtrackedRooms = new List<Guid>();
+                                    Guid adjRoomIDOfCurrentRoomID = backTrackToAdjacentRoom(targetBlockRoomID, currentCharRoomID, backtrackedRooms);
+                                    GuidPairClass roomsPair = new GuidPairClass(adjRoomIDOfCurrentRoomID, currentCharRoomID);
+                                    Guid chosenBlockOnAdjRoom = Guid.Empty;
+                                    Guid chosenBlockOnCharRoom = Guid.Empty;
+                                    bool crossedRoom = false;
+
+                                    if (ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable().ContainsKey(roomsPair))
+                                    {
+                                        listOfSharedBlocks = ConstantClass.MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS.getMappingTable()[roomsPair];
+                                    }
+
+                                    //1. go over all shared blocks and check if character is standing on shared block between the rooms
+                                    if (listOfSharedBlocks.Count > 0) //check list is not empty
+                                    {
+                                        foreach (GuidPairClass pair in listOfSharedBlocks)
+                                        {
+                                            if (pair.isGuidOneofthePairs(m_block_id)) //character is standing on a shared block between the rooms
+                                            {
+                                                Guid nextStep = pair.returnSecondGuidPair(m_block_id); //character possible next step 
+
+                                                if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].isOccupantListEmpty())
+                                                {
+                                                    //next action is to move to next room
+                                                    ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].removeCharacterFromBlockOccupants(m_unique_character_id);//remove character id from previuos block list of occupants                                                                                                                                    
+                                                    ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].addCharacterToBlockOccupants(m_unique_character_id);//adds character id as part of block list of occupants                                            
+                                                    m_block_id = nextStep;
+                                                    deductEnergyBasedOnTerrain();
+                                                    crossedRoom = true;
+
+                                                    //if character newly arrived block is still not target block id and last action item in queue is to reach target block id, then we do not remove it.
+                                                    //needed for scenario where character starts at shared block and has only 1 action item in queue to reach to target block id in different room. without below, the last action will be removed and character will not move.
+                                                    if (m_block_id != targetBlockID && m_action_queue.getQueue().Count == 1 && m_action_queue.getQueue()[0].getGuidForAction() == targetBlockID) { }
+                                                    else { m_action_queue.removeAction(index); }//action completed, remove from index
+
+                                                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " crossed room to block " + m_block_id + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id));
+
+                                                    break;
+                                                }
+                                                else
+                                                {
+                                                    //character waits for one turn
+                                                }
+                                            }
+                                        }
+                                        if (!crossedRoom) //character is not standing on a shared block between the rooms
+                                        {
+                                            //2. choose randomly among the available shared blocks to walk into the other room
+                                            int exitNumber = ConstantClass.RANDOMIZER.produceInt(1, 100); //randomizing which block to take
+
+                                            if (listOfSharedBlocks.Count > 0)
+                                            {
+                                                chosenBlockOnCharRoom = listOfSharedBlocks[exitNumber % listOfSharedBlocks.Count].m_guid2;
+                                                chosenBlockOnAdjRoom = listOfSharedBlocks[exitNumber % listOfSharedBlocks.Count].m_guid1;
+                                            }
+                                            //3. add to queue new action character to find shared exit block id with higher priority than current action
+                                            int currentPriority = this.m_action_queue.getQueue()[index].getPriority();
+
+                                            m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 2, ConstantClass.VARIABLE_FOR_ACTION_NONE, chosenBlockOnCharRoom));
+                                            m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, chosenBlockOnAdjRoom));
+                                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is looking for block " + targetBlockID + " in room ID " + targetBlockRoomID + "(" + (m_action_queue.getQueue()[index].getPriority()) + ")");
+                                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " needs to find " + chosenBlockOnCharRoom + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(chosenBlockOnCharRoom) + "(" + (currentPriority - 2) + ")");
+                                            ConstantClass.LOGGER.writeToGameLog("and cross to block " + chosenBlockOnAdjRoom + " in room ID " + ConstantClass.GET_ROOMID_BASED_BLOCKID(chosenBlockOnAdjRoom) + "(" + (currentPriority - 1) + ")");
+
+                                            updateAction(); //take next action since character move action completed beginning of this round.
+                                        }
+                                    }
+                                }
+                                else //block is in the same room as character
+                                {
+                                    PathFindingClass searchPath = new PathFindingClass(m_block_id, targetBlockID);
+                                    Guid nextStep = searchPath.returnNextBlockGuidToMove();
+
+                                    //check if nextstep is occupied, if so char waits one turn . if not, char moves.
+                                    if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].isOccupantListEmpty())
+                                    {
+                                        ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].removeCharacterFromBlockOccupants(m_unique_character_id);//remove character id from previuos block list of occupants                                                                                                                        
+                                        ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].addCharacterToBlockOccupants(m_unique_character_id);//adds character id as part of block list of occupants                                            
+                                        m_block_id = nextStep;
+                                        ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " moves to block " + m_block_id);
+                                        deductEnergyBasedOnTerrain();
+                                        ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is finding " + targetBlockID + " with priority " + (m_action_queue.getQueue()[index].getPriority() - 1));
+                                    }
+                                    else
+                                    {
+                                        //character waits one turn
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                ConstantClass.LOGGER.writeToGameLog(targetBlockID + " is not a blockID. Removing action.");
+                                m_action_queue.removeAction(index); //action completed, remove from index
+                                updateAction(); //take next action since character move action completed beginning of this round.
                             }
                         }
-                        else
+
+                        //-------------------ACTION: GATHER ---------------------//
+
+                        else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.GATHER) //action to gather resources
                         {
-                            ConstantClass.LOGGER.writeToGameLog(targetBlockID + " is not a blockID. Removing action.");
-                            m_action_queue.removeAction(index); //action completed, remove from index
-                            updateAction(); //take next action since character move action completed beginning of this round.
+                            Guid targetBlockWithResource = m_action_queue.getQueue()[index].getGuidForAction();
+                            int currentPriority = m_action_queue.getQueue()[index].getPriority();
+
+                            //1. check if there are resources available in block inventory
+                            if (!ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockWithResource].existsResourceInInventory())
+                            {
+                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot gather resources since block " + m_block_id + " has no resources.");
+                                m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);
+                                m_action_queue.removeAction(index); //action completed, remove from index
+                            }
+                            //2. check if character inventory is not full
+                            else if (m_inventory.getInventorySize() == ConstantClass.INVENTORY_MAX_CHAR_CAP)
+                            {
+                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot gather resources since character inventory is full.");
+                                m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);
+                                m_action_queue.removeAction(index); //action completed, remove from index
+                            }
+                            //3. check if character is on target block, if not then go find block
+                            else if (m_block_id != targetBlockWithResource)
+                            {
+                                m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, targetBlockWithResource));
+                            }
+                            //4. if all okay, deduct block inventory to character based on character's gather skill rate
+                            //5. deduct energy
+                            //6. remove action from queue
+                            else
+                            {
+                                ResourceObjectClass resourceGathered = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].reduceBlockInventory(ConstantClass.CHAR_SKILLS_GATHER_RATE);
+
+                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is gathering " + resourceGathered.getQuantity() + " resource(s) from block " + m_block_id + ".");
+                                m_inventory.addItemToInventory(resourceGathered, resourceGathered.getQuantity());
+
+
+                                m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);
+                                m_action_queue.removeAction(index); //action completed, remove from index
+                            }
                         }
+
+                        //-------------------ACTION: IDLE ---------------------//
+
+                        else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.IDLE) //action to gather resources
+                        {
+                            m_action_queue.removeAction(index); //action completed, remove from index
+                        }
+                        //-------------------ACTION: XXXXX ---------------------//
+
+                        //add new actions here              
+                        //m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS
                     }
-
-                                            //-------------------ACTION: GATHER ---------------------//
-
-                    else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.GATHER) //action to gather resources
+                    else
                     {
-                        Guid targetBlockWithResource = m_action_queue.getQueue()[index].getGuidForAction();
-                        int currentPriority = m_action_queue.getQueue()[index].getPriority();
-
-                        //1. check if there are resources available in block inventory
-                        if (!ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockWithResource].existsResourceInInventory())
-                        {
-                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot gather resources since block " + m_block_id + " has no resources.");
-                            m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);
-                            m_action_queue.removeAction(index); //action completed, remove from index
-                        }
-                        //2. check if character inventory is not full
-                        else if (m_inventory.getInventorySize() == ConstantClass.INVENTORY_MAX_CHAR_CAP)
-                        {
-                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot gather resources since character inventory is full.");
-                            m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);
-                            m_action_queue.removeAction(index); //action completed, remove from index
-                        }
-                        //3. check if character is on target block, if not then go find block
-                        else if (m_block_id != targetBlockWithResource)
-                        {
-                            m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, targetBlockWithResource));
-                        }
-                        //4. if all okay, deduct block inventory to character based on character's gather skill rate
-                        //5. deduct energy
-                        //6. remove action from queue
-                        else
-                        {
-                            ResourceObjectClass resourceGathered = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].reduceBlockInventory(ConstantClass.CHAR_SKILLS_GATHER_RATE);
-
-                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is gathering " + resourceGathered.getQuantity() + " resource(s) from block " + m_block_id + ".");
-                            m_inventory.addItemToInventory(resourceGathered, resourceGathered.getQuantity());
-
-
-                            m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);                            
-                            m_action_queue.removeAction(index); //action completed, remove from index
-                        }                        
+                        deductEnergyBasedOnTerrain();
                     }
-
-                                                //-------------------ACTION: IDLE ---------------------//
-
-                    else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.IDLE) //action to gather resources
-                    {
-                        m_action_queue.removeAction(index); //action completed, remove from index
-                    }
-                    //-------------------ACTION: XXXXX ---------------------//
-
-                    //add new actions here              
-                    //m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS
+                    OnActionUpdated(); //raise event
                 }
-                else
+                else //character is dead
                 {
-                    deductEnergyBasedOnTerrain();
+                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is dead.");
                 }
-                OnActionUpdated(); //raise event
             }
             catch (Exception e)
             {
@@ -503,64 +515,80 @@ namespace RiseOfStrongholds.Classes
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            /*UPDATE BIOLOGICAL DETERIORATION*/
-            if (m_stats.getHungerRate().getCurrentValue() >= famishThres) //current = max --> hunger state
+            if (m_stats.getLifeStatus() == ConstantClass.CHARACTER_LIFE_STATUS.ALIVE)
             {
-                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is FAMISHED");
-                m_stats.setHungerStatus(ConstantClass.CHARACTER_SATIETY_STATUS.FAMISHED);
-            }
-            else if (m_stats.getHungerRate().getCurrentValue() >= starvingThres)
-            {
-                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is STARVING");
-                m_stats.setHungerStatus(ConstantClass.CHARACTER_SATIETY_STATUS.STARVING);
-            }
-            else if (m_stats.getHungerRate().getCurrentValue() >= hungryThres)
-            {
-                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is HUNGRY");
-                m_stats.setHungerStatus(ConstantClass.CHARACTER_SATIETY_STATUS.HUNGRY);
-            }
-            else if (m_stats.getHungerRate().getCurrentValue() >= fullThres)
-            {
-                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is FULL");
-                m_stats.setHungerStatus(ConstantClass.CHARACTER_SATIETY_STATUS.FULL);
-            }
-            
-                        
+                /*UPDATE BIOLOGICAL DETERIORATION*/
+                if (m_stats.getHungerRate().getCurrentValue() >= famishThres) //current = max --> hunger state
+                {
+                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is FAMISHED");
+                    m_stats.setHungerStatus(ConstantClass.CHARACTER_SATIETY_STATUS.FAMISHED);
+                }
+                else if (m_stats.getHungerRate().getCurrentValue() >= starvingThres)
+                {
+                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is STARVING");
+                    m_stats.setHungerStatus(ConstantClass.CHARACTER_SATIETY_STATUS.STARVING);
+                }
+                else if (m_stats.getHungerRate().getCurrentValue() >= hungryThres)
+                {
+                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is HUNGRY");
+                    m_stats.setHungerStatus(ConstantClass.CHARACTER_SATIETY_STATUS.HUNGRY);
+                }
+                else if (m_stats.getHungerRate().getCurrentValue() >= fullThres)
+                {
+                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is FULL");
+                    m_stats.setHungerStatus(ConstantClass.CHARACTER_SATIETY_STATUS.FULL);
+                }
 
-       
+                if (m_stats.getSleepRate().getCurrentValue() == m_stats.getSleepRate().getMaxValue())
+                {
+                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is SLEEPY");
+                    m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY);
+                }
+                else if (m_stats.isEnergyAtMax())
+                {
+                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is AWAKE.");
+                    m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
+                }
+                if (m_stats.getEnergy().getCurrentValue() == 0)
+                {
+                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is TIRED.");
+                    m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.TIRED);
+                }
 
+                /*DECISIONS BASED ON BIOLOGICAL NEEDS*/
+                switch (m_stats.getHungerStatus())
+                {
+                    case ConstantClass.CHARACTER_SATIETY_STATUS.HUNGRY:
+                        m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT, ConstantClass.ACTION_EAT_PRIORITY, ConstantClass.HOURS_FOR_EATING * ConstantClass.GAME_SPEED, Guid.Empty));
+                        m_stats.modifyHP(ConstantClass.CHARACTER_SATIETY_PENALITIES[(int)ConstantClass.CHARACTER_SATIETY_STATUS.HUNGRY]);
+                        ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " HP has been deducted (" + ConstantClass.CHARACTER_SATIETY_PENALITIES[(int)ConstantClass.CHARACTER_SATIETY_STATUS.HUNGRY] + ") due to HUNGRY status.");
+                        break;
+                    case ConstantClass.CHARACTER_SATIETY_STATUS.STARVING:
+                        m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT, ConstantClass.ACTION_EAT_PRIORITY, ConstantClass.HOURS_FOR_EATING * ConstantClass.GAME_SPEED, Guid.Empty));
+                        m_stats.modifyHP(ConstantClass.CHARACTER_SATIETY_PENALITIES[(int)ConstantClass.CHARACTER_SATIETY_STATUS.STARVING]);
+                        ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " HP has been deducted (" + ConstantClass.CHARACTER_SATIETY_PENALITIES[(int)ConstantClass.CHARACTER_SATIETY_STATUS.STARVING] + ") due to STARVING status.");
+                        break;
+                    case ConstantClass.CHARACTER_SATIETY_STATUS.FAMISHED:
+                        m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT, ConstantClass.ACTION_EAT_PRIORITY, ConstantClass.HOURS_FOR_EATING * ConstantClass.GAME_SPEED, Guid.Empty));
+                        m_stats.modifyHP(ConstantClass.CHARACTER_SATIETY_PENALITIES[(int)ConstantClass.CHARACTER_SATIETY_STATUS.FAMISHED]);
+                        ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " HP has been deducted (" + ConstantClass.CHARACTER_SATIETY_PENALITIES[(int)ConstantClass.CHARACTER_SATIETY_STATUS.FAMISHED] + ") due to FAMISHED status.");
+                        break;
+                }
 
-            if (m_stats.getSleepRate().getCurrentValue() == m_stats.getSleepRate().getMaxValue())
-            {
-                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is SLEEPY");
-                m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY);
+                if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY)
+                {
+                    m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SLEEP, ConstantClass.ACTION_SLEEP_PRIORITY, ConstantClass.MINIMUM_NUMBER_OF_SLEEP_HOURS * ConstantClass.MINUTES_IN_ONE_HOUR, Guid.Empty));
+                    m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_SLEEPY); //if sleepy , start deducting energy                    
+                }
+                if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.TIRED)
+                {
+                    m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.REST, ConstantClass.ACTION_REST_PRIORITY, ConstantClass.ENERGY_ADD_WHEN_REST * ConstantClass.MINUTES_IN_ONE_HOUR, Guid.Empty));
+                    m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_TIRED); //if tired , start deducting energy
+                }
             }
-            else if (m_stats.isEnergyAtMax())
+            else 
             {
-                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is AWAKE.");
-                m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
-            }
-            if (m_stats.getEnergy().getCurrentValue() == 0)
-            {
-                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is TIRED.");
-                m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.TIRED);
-            }
-
-            /*DECISIONS BASED ON BIOLOGICAL NEEDS*/
-            if (m_stats.getHungerStatus() == ConstantClass.CHARACTER_SATIETY_STATUS.HUNGRY)
-            {                
-                m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.EAT, ConstantClass.ACTION_EAT_PRIORITY, ConstantClass.HOURS_FOR_EATING * ConstantClass.GAME_SPEED, Guid.Empty));
-                //m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_HUNGRY); //if hungry , start deducting energy
-            }
-            if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.SLEEPY)
-            {
-                m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SLEEP, ConstantClass.ACTION_SLEEP_PRIORITY, ConstantClass.MINIMUM_NUMBER_OF_SLEEP_HOURS * ConstantClass.MINUTES_IN_ONE_HOUR, Guid.Empty));
-                m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_SLEEPY); //if sleepy , start deducting energy
-            }
-            if (m_stats.getSleepStatus() == ConstantClass.CHARACTER_SLEEP_STATUS.TIRED)
-            {
-                m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.REST, ConstantClass.ACTION_REST_PRIORITY, ConstantClass.ENERGY_ADD_WHEN_REST * ConstantClass.MINUTES_IN_ONE_HOUR, Guid.Empty));
-                m_stats.modifyEnergy(ConstantClass.ENERGY_COST_WHEN_TIRED); //if tired , start deducting energy
+                //character is dead - no actions
             }
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
@@ -669,6 +697,7 @@ namespace RiseOfStrongholds.Classes
             ConstantClass.LOGGER.writeToCharLog("Character ID| " + m_unique_character_id, m_unique_character_id.ToString());
             ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id)].printRoom(false, m_unique_character_id.ToString());
             ConstantClass.LOGGER.writeToCharLog("Birth date|" + m_birthDate, m_unique_character_id.ToString());
+            ConstantClass.LOGGER.writeToCharLog("Death date|" + m_stats.getDeathDate(), m_unique_character_id.ToString());
             ConstantClass.LOGGER.writeToCharLog("Block ID| " + m_block_id, m_unique_character_id.ToString());
             ConstantClass.LOGGER.writeToCharLog("Room ID|" + ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id), m_unique_character_id.ToString());
             m_action_queue.printQueue(m_unique_character_id.ToString());

@@ -65,18 +65,43 @@ namespace RiseOfStrongholds.Classes
     {
         /*VARIABLES*/
         private statStruct m_HP;
+        private ConstantClass.CHARACTER_LIFE_STATUS m_lifeStatus;
+        private GameTimeClass m_deathDate; //date of death
 
         /*GET & SET*/
         public statStruct getHP() { return m_HP; }
-        public void modifyHP(int value) { m_HP.modifyCurrentValue(value); }
-        public void initializeHP(int value) { m_HP = new statStruct(value); }
+        public GameTimeClass getDeathDate() { return m_deathDate; }
+        public ConstantClass.CHARACTER_LIFE_STATUS getLifeStatus() { return m_lifeStatus; }
+
+        /*METHODS*/
+        public void modifyHP(int value)
+        {
+            if (m_HP.getCurrentValue() + value <= 0)// dead
+            {
+                m_lifeStatus = ConstantClass.CHARACTER_LIFE_STATUS.DEAD;
+                m_deathDate = new GameTimeClass(ConstantClass.gameTime);
+            }
+            m_HP.modifyCurrentValue(value);
+        }
+        public void initializeHP(int value)
+        {
+            m_HP = new statStruct(value);
+            if (value > 0) { m_lifeStatus = ConstantClass.CHARACTER_LIFE_STATUS.ALIVE; }
+            else
+            {
+                m_lifeStatus = ConstantClass.CHARACTER_LIFE_STATUS.DEAD;
+                m_deathDate = new GameTimeClass(ConstantClass.gameTime);
+            }
+        }
         public void fillHPtoMax() { m_HP.modifyCurrentValue(m_HP.getMaxValue()); }
+        
 
         /*CONSTRUCTORS*/
         public GenericStatsClass()
         {
-
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            m_deathDate = null;
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }

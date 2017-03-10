@@ -14,7 +14,7 @@ namespace RiseOfStrongholds.Classes
 
         private statStruct m_hunger_rate; // max = how many hours character can last without eating, when current = max then hungry
         private statStruct m_sleep_rate; //max = how many hours character can last without sleeping, when current = max, then sleepy        
-        private statStruct m_Energy;
+        private statStruct m_Energy;        
         
         /*GET & SET*/
         public statStruct getEnergy() { return m_Energy; }
@@ -105,6 +105,8 @@ namespace RiseOfStrongholds.Classes
             ConstantClass.LOGGER.writeToCharLog("Stats|Sleep status|" + printSleepStatus(), charID);
             ConstantClass.LOGGER.writeToCharLog("Stats|Sleep rate|" + m_sleep_rate.printStat(), charID);
             ConstantClass.LOGGER.writeToCharLog("Stats|Energy|" + m_Energy.printStat(), charID);
+            ConstantClass.LOGGER.writeToCharLog("Stats|Health Points|" + base.getHP().printStat(), charID);
+            ConstantClass.LOGGER.writeToCharLog("Stats|Life Status|" + base.getLifeStatus().ToString(), charID);
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }

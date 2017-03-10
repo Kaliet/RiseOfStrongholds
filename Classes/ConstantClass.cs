@@ -23,11 +23,14 @@ namespace RiseOfStrongholds.Classes
 
         /*character enums*/
         public enum CHARACTER_ACTIONS { IDLE, EAT, SLEEP , WALK, FIND_BLOCK, FIND_CHAR, GATHER, REST};
-        public enum CHARACTER_SLEEP_STATUS { AWAKE, SLEEPY, TIRED}; //awake = can perform actions, sleepy = must sleep since char passed HOURS_BETWEEN_SLEEPING, tired = energy decreases to 0
-        public enum CHARACTER_SATIETY_STATUS { FULL, HUNGRY , STARVING, FAMISHED}; //different levels of appetite level
-        public static int[] CHARACTER_SATIETY_THRESHOLDS = { 0, 75, 90, 100 }; //thresholds for different satiety levels of max hunger rate (in percentile) - i.e: 100% of max hunger rate = FAMISHED, 
-        public static int[] CHARACTER_SATIETY_PENALITIES = {0,1,3,5}; //number of HP deducted per tick for each different satiety status
+        public enum CHARACTER_SLEEP_STATUS { AWAKE, SLEEPY, TIRED}; //awake = can perform actions, sleepy = must sleep since char passed HOURS_BETWEEN_SLEEPING, tired = energy decreases to 0        
+        public enum CHARACTER_LIFE_STATUS { ALIVE, DEAD }; //dead or alive
+        public enum CHARACTER_SATIETY_STATUS { FULL, HUNGRY, STARVING, FAMISHED }; //different levels of appetite level
 
+        /*SATIETY*/
+        public static int CHARACTER_HP_REGEN_EATING = 10; //amount of hp regenerated after eating
+        public static int[] CHARACTER_SATIETY_THRESHOLDS = { 0, 75, 90, 100 }; //thresholds for different satiety levels of max hunger rate (in percentile) - i.e: 100% of max hunger rate = FAMISHED, 
+        public static int[] CHARACTER_SATIETY_PENALITIES = { 0, -1, -1, -5 }; //number of HP deducted per tick for each different satiety status        
 
         /*character skills*/
         public static int CHAR_SKILLS_GATHER_RATE = 50; //# of resources gathered per round
@@ -76,6 +79,7 @@ namespace RiseOfStrongholds.Classes
 
         /*GAME TIME*/
         public static GameTimeClass gameTime;
+        public static int SECONDS_IN_ONE_MINUTE = 60;
         public static int MINUTES_IN_ONE_HOUR = 60;
         public static int HOURS_IN_ONE_DAY = 24;
         public static int DAYS_IN_ONE_MONTH = 30;
