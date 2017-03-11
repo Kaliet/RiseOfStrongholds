@@ -15,7 +15,8 @@ namespace RiseOfStrongholds.Classes
         private Guid m_unique_character_id; //character's unique id
         private QueueActionClass m_action_queue; //queue of actions the character is doing
         private Guid m_block_id; //in which block the character resides in        
-        private InventoryClass m_inventory;
+        private InventoryClass m_inventory; //characters inventory 
+        private MemoryClass m_memoryBank; //character's memory to store vital information (short and long term)
         
         /*GET & SET*/
         public string getName() { return m_character_name; }
@@ -23,6 +24,7 @@ namespace RiseOfStrongholds.Classes
         public GameTimeClass getBirthDate() { return m_birthDate; }  
         public Guid getUniqueCharacterID () { return m_unique_character_id; } 
         public Guid getBlockID() { return m_block_id; }
+        public MemoryClass DEBUG_getMemory() { return m_memoryBank; }
 
         /*CONSTRUCTORS*/
         public CharacterClass(Guid blockID)
@@ -46,6 +48,7 @@ namespace RiseOfStrongholds.Classes
             m_unique_character_id = Guid.NewGuid(); //unique id for character            
             m_action_queue = new QueueActionClass();
             m_inventory = new InventoryClass(ConstantClass.INVENTORY_MAX_CHAR_CAP);
+            m_memoryBank = new Classes.MemoryClass(ConstantClass.CHARACTER_MEMORY_INITIAL_SIZE);
 
             m_block_id = blockID;
 
@@ -218,6 +221,7 @@ namespace RiseOfStrongholds.Classes
                             }
                             else //sleeping is over, reinitialize sleep rate and set status to AWAKE
                             {
+                                //TODO: check what short memory can move to long term memory
                                 m_stats.initializeSleepRate(0, m_stats.getSleepRate().getMaxValue());
                                 m_stats.setSleepStatus(ConstantClass.CHARACTER_SLEEP_STATUS.AWAKE);
                                 m_stats.fillHPtoMax();
@@ -468,7 +472,7 @@ namespace RiseOfStrongholds.Classes
 
                                 ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is gathering " + resourceGathered.getQuantity() + " resource(s) from block " + m_block_id + ".");
                                 m_inventory.addItemToInventory(resourceGathered, resourceGathered.getQuantity());
-
+                                //TODO: add to memory
 
                                 m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);
                                 m_action_queue.removeAction(index); //action completed, remove from index
@@ -703,6 +707,7 @@ namespace RiseOfStrongholds.Classes
             m_action_queue.printQueue(m_unique_character_id.ToString());
             m_stats.printStats(m_unique_character_id.ToString());
             m_inventory.printInventoryList(m_unique_character_id.ToString());
+            m_memoryBank.printMemory(m_unique_character_id.ToString());
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH 
 

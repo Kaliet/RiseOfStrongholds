@@ -59,6 +59,8 @@
     <Compile Include="Classes\LoggerClass.cs" />
     <Compile Include="Classes\MappingClass.cs" />
     <Compile Include="Classes\MappingPairClass.cs" />
+    <Compile Include="Classes\MemoryBitClass.cs" />
+    <Compile Include="Classes\MemoryClass.cs" />
     <Compile Include="Classes\PathFindingClass.cs" />
     <Compile Include="Classes\QueueActionClass.cs" />
     <Compile Include="Classes\RandomClass.cs" />

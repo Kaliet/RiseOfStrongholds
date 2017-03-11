@@ -113,7 +113,7 @@ namespace RiseOfStrongholds.Classes
                     ConstantClass.gameTime.GameTicked += people[i].OnGameTicked;
                     people[i].ActionUpdated += room.OnActionUpdated;
                     people[i].ActionUpdated += region.OnActionUpdated;
-                }                
+                }
                 //CharacterClass person2 = new CharacterClass(room.getRoom()[0, 2].getUniqueBlockID());
                 //ConstantClass.gameTime.GameTicked += person2.OnGameTicked;
                 //person2.ActionUpdated += room.OnActionUpdated;
@@ -132,6 +132,9 @@ namespace RiseOfStrongholds.Classes
                 //people[1].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_CHAR, ConstantClass.ACTION_SEARCH_PRIORITY, 0, people[2].getUniqueCharacterID()));
                 //people[1].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_CHAR, ConstantClass.ACTION_SEARCH_PRIORITY, 0, people[0].getUniqueCharacterID()));
                 //people[2].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, 0, Guid.Empty));
+
+                MemoryBitClass bit = new MemoryBitClass(room.getRoom()[0, 0].getUniqueBlockID(), ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.gameTime);
+                people[0].DEBUG_getMemory().addMemoryToShortTerm(bit);
             }
             catch (Exception e)
             {

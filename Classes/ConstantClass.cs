@@ -18,11 +18,28 @@ namespace RiseOfStrongholds.Classes
         public static MappingClass<RoomClass> MAPPING_TABLE_FOR_ALL_ROOMS;
         public static MappingPairClass<List<GuidPairClass>> MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS; //<(room1,room2) -> list of (block1 of room1,block2 of room2) with shared exit
 
+        /*memory*/
+        public static int CHARACTER_MEMORY_INITIAL_SIZE = 10;
+        public static int CHARACTER_MEMORY_EXPIRATION_DAYS_DURATION = 10; //for example 10 days
+        public enum MEMORY_TYPE { BLOCK, ROOM, CHARACTER}; //defines what type of memory to store i.e: remembers person, block , room        
+        public enum MEMORY { LONG, SHORT, BOTH}; //defines long or short
+
         /*enums*/
         public enum DEBUG_LEVELS { OFF, LOW, HIGH };
 
         /*character enums*/
-        public enum CHARACTER_ACTIONS { IDLE, EAT, SLEEP , WALK, FIND_BLOCK, FIND_CHAR, GATHER, REST};
+        public enum CHARACTER_ACTIONS
+        {
+            IDLE,   //idle - not doing anything
+            EAT,    //eat - eats something from inventory, if none will SCAN
+            SLEEP , //sleep - sleep
+            WALK,   //walk - walks around aimlessly
+            FIND_BLOCK, //find_block - finds a specific block id with pathfinding skill
+            FIND_CHAR,  //find_char - finds a specific character
+            GATHER, //gather - gather resources
+            REST,   //rest - rest until energy is replenished
+            SCAN    //scan - scans around and memorize it
+        };
         public enum CHARACTER_SLEEP_STATUS { AWAKE, SLEEPY, TIRED}; //awake = can perform actions, sleepy = must sleep since char passed HOURS_BETWEEN_SLEEPING, tired = energy decreases to 0        
         public enum CHARACTER_LIFE_STATUS { ALIVE, DEAD }; //dead or alive
         public enum CHARACTER_SATIETY_STATUS { FULL, HUNGRY, STARVING, FAMISHED }; //different levels of appetite level
