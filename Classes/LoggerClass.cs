@@ -80,9 +80,9 @@ namespace RiseOfStrongholds.Classes
         public void writeToGameLog(string text)
         {
             //text = ConstantClass.gameTime.ToString() + "\t\t - \t" + text + "\n";
-            string datetime = getRealDateTime() + "\t|\t" + ConstantClass.gameTime.ToString();
+            string datetime = getRealDateTime() + "\t|" + ConstantClass.gameTime.ToString();
 
-            text = datetime + "\t\t - \t" + text + "\n"; ;
+            text = "\n" + datetime + "\t - \t" + text;
 
             try
             {

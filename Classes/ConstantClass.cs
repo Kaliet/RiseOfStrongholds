@@ -20,9 +20,14 @@ namespace RiseOfStrongholds.Classes
 
         /*memory*/
         public static int CHARACTER_MEMORY_INITIAL_SIZE = 10;
-        public static int CHARACTER_MEMORY_EXPIRATION_DAYS_DURATION = 10; //for example 10 days
+        public static int CHARACTER_MEMORY_SHORT_TERM_EXPIRATION_DAYS_DURATION = 5; //for example 10 days
+        public static int CHARACTER_MEMORY_LONG_TERM_EXPIRATION_DAYS_DURATION = 20; //for example 10 days
+        public static int CHARACTER_MEMORY_GATHER_PRIORITY = 50;
+        public static int CHARACTER_MEMORY_FIND_CHAR_PRIORITY = 20;
+        public static int CHARACTER_MEMORY_SLEEP_PRIORITY = 50;
+        public static int CHARACTER_MEMORY_SHORT_TO_LONG_TERM_THRESHOLD = 50;
         public enum MEMORY_TYPE { BLOCK, ROOM, CHARACTER}; //defines what type of memory to store i.e: remembers person, block , room        
-        public enum MEMORY { LONG, SHORT, BOTH}; //defines long or short
+        public enum MEMORY { LONG, SHORT, BOTH}; //defines long or short        
 
         /*enums*/
         public enum DEBUG_LEVELS { OFF, LOW, HIGH };
@@ -47,10 +52,10 @@ namespace RiseOfStrongholds.Classes
         /*SATIETY*/
         public static int CHARACTER_HP_REGEN_EATING = 10; //amount of hp regenerated after eating
         public static int[] CHARACTER_SATIETY_THRESHOLDS = { 0, 75, 90, 100 }; //thresholds for different satiety levels of max hunger rate (in percentile) - i.e: 100% of max hunger rate = FAMISHED, 
-        public static int[] CHARACTER_SATIETY_PENALITIES = { 0, -1, -1, -5 }; //number of HP deducted per tick for each different satiety status        
+        public static int[] CHARACTER_SATIETY_PENALITIES = { 0, 0, 0, -1 }; //number of HP deducted per tick for each different satiety status        
 
         /*character skills*/
-        public static int CHAR_SKILLS_GATHER_RATE = 50; //# of resources gathered per round
+        public static int CHAR_SKILLS_GATHER_RATE = 1; //# of resources gathered per round
 
         /*biological constants*/
         public static int MINIMUM_NUMBER_OF_SLEEP_HOURS = 8; //minimum hour of hours to sleep
@@ -118,7 +123,7 @@ namespace RiseOfStrongholds.Classes
         /*RESOURCE TYPES*/
         public enum RESOURCE_TYPE { WOOD, FOOD, NONE };
         public static int RESOURCE_WOOD_GENERATE_RATE = 10; //number of wood generated per tick
-        public static int RESOURCE_FOOD_GENERATE_RATE = 100; //number of food generated per tick
+        public static int RESOURCE_FOOD_GENERATE_RATE = 0; //number of food generated per tick
 
         /*INVENTORY*/
         public static int INVENTORY_BLOCK_MAX_CAP = 100; //maximum number of unique items in the inventory

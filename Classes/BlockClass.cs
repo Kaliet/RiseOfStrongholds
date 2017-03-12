@@ -171,7 +171,7 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            if (m_inventory_list.getInventorySize() > 0) return true;
+            if (!m_inventory_list.isEmpty()) return true;
             else return false;
         }
         public bool isOccupantListEmpty()
@@ -414,6 +414,11 @@ namespace RiseOfStrongholds.Classes
 
             return output;
 
+        }
+
+        public void DEBUG_addInventory(List<GenericObjectClass> value)
+        {
+            m_inventory_list = new InventoryClass(value);
         }
 
         /*EVENT HANDLER*/

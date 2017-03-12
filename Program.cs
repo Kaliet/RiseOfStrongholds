@@ -85,7 +85,13 @@ namespace RiseOfStrongholds
                 }
 
                 //rooms[numOfRooms - 1].getRoom()[1,0].setTerrainType(grassTerrain.getUniqueTerrainID());
-                rooms[0].getRoom()[0,0].setTerrainType(grassTerrain.getUniqueTerrainID());                
+                //rooms[0].getRoom()[1, 1].setTerrainType(grassTerrain.getUniqueTerrainID());
+                List<GenericObjectClass> list = new List<Classes.GenericObjectClass>();
+                list.Add(new GenericObjectClass("FOOD", 1));
+                rooms[0].getRoom()[1, 1].setTerrainType(grassTerrain.getUniqueTerrainID());
+                rooms[0].getRoom()[1, 1].DEBUG_addInventory(list);
+                rooms[0].getRoom()[2, 2].setTerrainType(grassTerrain.getUniqueTerrainID());
+                rooms[0].getRoom()[2, 2].DEBUG_addInventory(list);
 
                 rooms[1].getRoom()[0, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 rooms[1].getRoom()[0, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);

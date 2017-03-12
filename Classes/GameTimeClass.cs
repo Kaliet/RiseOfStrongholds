@@ -56,7 +56,7 @@ namespace RiseOfStrongholds.Classes
             }
             else game_mins += value;
         }
-        
+
 
         public int get_min() { return game_mins; }
         public int get_hour() { return game_hours; }
@@ -64,7 +64,7 @@ namespace RiseOfStrongholds.Classes
         public int get_month() { return game_month; }
         public int get_year() { return game_year; }
 
-        public int getTotalMins ()
+        public int getTotalMins()
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH            
@@ -72,7 +72,7 @@ namespace RiseOfStrongholds.Classes
                 game_hours * ConstantClass.MINUTES_IN_ONE_HOUR +
                 game_day * ConstantClass.HOURS_IN_ONE_DAY * ConstantClass.MINUTES_IN_ONE_HOUR +
                 game_month * ConstantClass.DAYS_IN_ONE_MONTH * ConstantClass.HOURS_IN_ONE_DAY * ConstantClass.MINUTES_IN_ONE_HOUR +
-                game_year * ConstantClass.MONTHS_IN_ONE_YEAR * ConstantClass.DAYS_IN_ONE_MONTH * ConstantClass.HOURS_IN_ONE_DAY * ConstantClass.MINUTES_IN_ONE_HOUR);            
+                game_year * ConstantClass.MONTHS_IN_ONE_YEAR * ConstantClass.DAYS_IN_ONE_MONTH * ConstantClass.HOURS_IN_ONE_DAY * ConstantClass.MINUTES_IN_ONE_HOUR);
         }
 
         /*CONSTRUCTORS*/
@@ -103,7 +103,34 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
-        public GameTimeClass(int min,int hour, int day, int month, int year)
+        public GameTimeClass(int totalMins)
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            int remainder;
+
+            game_year = (totalMins / (ConstantClass.MONTHS_IN_ONE_YEAR * ConstantClass.DAYS_IN_ONE_MONTH * ConstantClass.HOURS_IN_ONE_DAY * ConstantClass.MINUTES_IN_ONE_HOUR));
+            remainder = (totalMins % (ConstantClass.MONTHS_IN_ONE_YEAR * ConstantClass.DAYS_IN_ONE_MONTH * ConstantClass.HOURS_IN_ONE_DAY * ConstantClass.MINUTES_IN_ONE_HOUR));
+            totalMins = remainder;
+
+            game_month = (totalMins / (ConstantClass.DAYS_IN_ONE_MONTH * ConstantClass.HOURS_IN_ONE_DAY * ConstantClass.MINUTES_IN_ONE_HOUR));
+            remainder = (totalMins % (ConstantClass.DAYS_IN_ONE_MONTH * ConstantClass.HOURS_IN_ONE_DAY * ConstantClass.MINUTES_IN_ONE_HOUR));
+            totalMins = remainder;
+
+            game_day = (totalMins / (ConstantClass.HOURS_IN_ONE_DAY * ConstantClass.MINUTES_IN_ONE_HOUR));
+            remainder = (totalMins % (ConstantClass.HOURS_IN_ONE_DAY * ConstantClass.MINUTES_IN_ONE_HOUR));
+            totalMins = remainder;
+
+            game_hours = (totalMins / (ConstantClass.MINUTES_IN_ONE_HOUR));
+            remainder = (totalMins % (ConstantClass.MINUTES_IN_ONE_HOUR));
+            totalMins = remainder;
+
+            game_mins = totalMins;
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+
+        public GameTimeClass(int min, int hour, int day, int month, int year)
         {
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
@@ -116,7 +143,7 @@ namespace RiseOfStrongholds.Classes
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
-      
+
         /*OVERRIDE & OVERLOAD*/
         public override string ToString()
         {
@@ -129,10 +156,10 @@ namespace RiseOfStrongholds.Classes
             year = game_year.ToString();
 
             //TODO: Pad and format the dates and time
-            return day  + "/" + month + "/" + year + " " + hour + ":" + min ;
+            return day + "/" + month + "/" + year + " " + hour + ":" + min;
         }
 
-        public static bool operator == (GameTimeClass a, GameTimeClass b)
+        public static bool operator ==(GameTimeClass a, GameTimeClass b)
         {
             if (a.get_min() == b.get_min() &&
                 a.get_hour() == b.get_hour() &&
@@ -170,6 +197,11 @@ namespace RiseOfStrongholds.Classes
             return (a.getTotalMins() < b.getTotalMins());
         }
 
+        public static int operator -(GameTimeClass a, GameTimeClass b)
+        {
+            return (a.getTotalMins() - b.getTotalMins());
+        }
+
         /*GAMETIME MODIFICATIONS*/
         public void updateGameTimeBasedOnElapsedTimeSpan (TimeSpan elapsedTime)
         {
@@ -184,7 +216,7 @@ namespace RiseOfStrongholds.Classes
         /*EVENT HANDLERS*/
         public event EventHandler GameTicked;
 
-        protected virtual void OnGameTicked ()
+        protected virtual void OnGameTicked () //tick
         {        
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
@@ -225,7 +257,9 @@ namespace RiseOfStrongholds.Classes
                     /*EVENT HANDLING*/
                     OnGameTicked();
                     ConstantClass.LOGGER.writeToCharLog("=======================tick================================\n",null);
-                    ConstantClass.LOGGER.writeToGameLog("\n\t\t\t\t\t\t\t\t\t\t=======================tick================================\n");
+                    //ConstantClass.LOGGER.writeToGameLog("TotalMins: " + ConstantClass.gameTime.getTotalMins().ToString());
+                    //ConstantClass.LOGGER.writeToGameLog("Converted Date: " + new GameTimeClass(ConstantClass.gameTime.getTotalMins()).ToString());
+                    ConstantClass.LOGGER.writeToGameLog("=======================tick================================");
                     ConstantClass.LOGGER.writeToInventoryLog("\n=======================tick================================\n");
                     ConstantClass.LOGGER.writeToQueueLog("\n=======================tick================================\n");                    
                 }                
