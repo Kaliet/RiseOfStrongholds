@@ -508,6 +508,13 @@ namespace RiseOfStrongholds.Classes
                         {
                             m_action_queue.removeAction(index); //action completed, remove from index
                         }
+
+                        //-------------------ACTION: GATHER ---------------------//
+
+                        else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.SCAN) //action to scan
+                        {
+
+                        }
                         //-------------------ACTION: XXXXX ---------------------//
 
                         //add new actions here              

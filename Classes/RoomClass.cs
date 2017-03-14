@@ -217,6 +217,56 @@ namespace RiseOfStrongholds.Classes
             return output;            
         }
 
+        public BlockClass[,] getBlocksWithinRadius(Guid centerBlock, int radius) //returns back 2d block array given centerblock id and radius length
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            int startRowIndex, endRowIndex, startColumnIndex, endColumnIndex, xCenterBlock, yCenterBlock;
+            int resultSize = 2 * radius + 1;
+            if (resultSize >= m_size) { resultSize = m_size; }
+
+            BlockClass[,] result = new BlockClass[resultSize, resultSize]; xxxx debug case where start point is on the side and radius is big. it should show limited area.
+
+            //1. checks if center block is a block in room            
+            if (centerBlock == Guid.Empty) return result;
+            //2. checks if radius is valid number
+            if (radius <= 0) return result;
+            
+            //3. check if centerBlock is in room
+            if (ConstantClass.GET_ROOMID_BASED_BLOCKID(centerBlock) != m_room_id) return result;
+
+            xCenterBlock = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[centerBlock].getPosition().getPositionX();
+            yCenterBlock = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[centerBlock].getPosition().getPositionY();
+            
+            if (xCenterBlock - radius <= 0) { startRowIndex = 0; } //if we are on the top edge 
+            else { startRowIndex = xCenterBlock - radius; }
+
+            if (xCenterBlock + radius >= m_size - 1) { endRowIndex = m_size - 1; } //if we are on the bottom edge
+            else { endRowIndex = xCenterBlock + radius; }
+
+            if (yCenterBlock - radius <= 0) { startColumnIndex = 0; } //if we are the left edge
+            else { startColumnIndex = yCenterBlock - radius; }
+
+            if (yCenterBlock + radius >= m_size - 1) { endColumnIndex = m_size - 1; } //if we are on the right edge
+            else { endColumnIndex = yCenterBlock + radius; }
+
+            int counter = startColumnIndex;
+
+            for (int i = 0; i < resultSize; i++)  //fill out result 2d array
+            {
+                for (int j = 0; j < resultSize; j++)
+                {
+                    result[i, j] = new BlockClass(ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[m_room_id].getRoom()[startRowIndex, counter]);
+                    counter++;
+                }
+                startRowIndex++;
+                counter = startColumnIndex;
+            }
+
+            return result;
+        }
+
         /*EVENT HANDLER*/
         public void OnActionUpdated(object source, EventArgs args)
         {

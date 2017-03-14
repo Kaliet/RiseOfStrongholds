@@ -139,6 +139,32 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
+        public BlockClass(BlockClass target) //copy constructor
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            this.m_unique_block_id = target.m_unique_block_id;
+            this.m_NorthExit = target.m_NorthExit;
+            this.m_SouthExit = target.m_SouthExit;
+            this.m_EastExit = target.m_EastExit;
+            this.m_WestExit = target.m_WestExit;
+            this.m_createDate = new GameTimeClass(target.m_createDate);
+            this.m_terrain_id = target.m_terrain_id;
+            this.m_position = new PositionClass(target.m_position);
+            this.m_stats = new BlockStatsClass(target.m_stats);
+            this.m_room_id = target.m_room_id;
+            this.m_building_id = target.m_building_id;
+            this.m_inventory_list = new InventoryClass(target.m_inventory_list);
+
+            this.m_list_of_occupants = new List<Guid>();
+            foreach (Guid id in target.m_list_of_occupants)
+            {
+                this.m_list_of_occupants.Add(id);
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+
         /*METHODS*/
         
             /*exists*/

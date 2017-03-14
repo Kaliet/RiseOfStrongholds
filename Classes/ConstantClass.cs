@@ -56,6 +56,7 @@ namespace RiseOfStrongholds.Classes
 
         /*character skills*/
         public static int CHAR_SKILLS_GATHER_RATE = 1; //# of resources gathered per round
+        public static int CHAR_SKILLS_SCAN_RADIUS = 1; //radius from where character is standing
 
         /*biological constants*/
         public static int MINIMUM_NUMBER_OF_SLEEP_HOURS = 8; //minimum hour of hours to sleep

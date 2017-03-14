@@ -104,7 +104,7 @@ namespace RiseOfStrongholds.Classes
                 {
                     try
                     {
-                        people.Add(new CharacterClass(room.getRoom()[i, 0].getUniqueBlockID()));
+                        people.Add(new CharacterClass(room.getRoom()[1, 1].getUniqueBlockID()));
                     }
                     catch (CharacterNotCreatedException ex)
                     {
@@ -133,10 +133,20 @@ namespace RiseOfStrongholds.Classes
                 //people[1].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_CHAR, ConstantClass.ACTION_SEARCH_PRIORITY, 0, people[0].getUniqueCharacterID()));
                 //people[2].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.WALK, ConstantClass.ACTION_WALK_PRIORITY, 0, Guid.Empty));
 
-                MemoryBitClass bit = new MemoryBitClass(room.getRoom()[1, 1].getUniqueBlockID(), ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.gameTime, ConstantClass.CHARACTER_MEMORY_GATHER_PRIORITY);
-                people[0].DEBUG_getMemory().addMemoryToShortTerm(bit);
-                bit = new MemoryBitClass(room.getRoom()[2, 2].getUniqueBlockID(), ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.gameTime, ConstantClass.CHARACTER_MEMORY_GATHER_PRIORITY);
-                people[0].DEBUG_getMemory().addMemoryToShortTerm(bit);
+                //MemoryBitClass bit = new MemoryBitClass(room.getRoom()[1, 1].getUniqueBlockID(), ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.gameTime, ConstantClass.CHARACTER_MEMORY_GATHER_PRIORITY);
+                //people[0].DEBUG_getMemory().addMemoryToShortTerm(bit);
+                //bit = new MemoryBitClass(room.getRoom()[2, 2].getUniqueBlockID(), ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.gameTime, ConstantClass.CHARACTER_MEMORY_GATHER_PRIORITY);
+                //people[0].DEBUG_getMemory().addMemoryToShortTerm(bit);
+                
+                BlockClass[,] output = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[room.getUniqueRoomID()].getBlocksWithinRadius(people[0].getBlockID(), 2);
+                for (int i = 0; i < output.GetUpperBound(1) + 1; i++)
+                {
+                    for (int j = 0; j < output.GetUpperBound(1) + 1; j++)
+                    {
+                        ConstantClass.LOGGER.writeToMapLog("[" + output[i, j].printOccupantList() + "]");
+                    }
+                    ConstantClass.LOGGER.writeToMapLog("\n");
+                }
             }
             catch (Exception e)
             {
