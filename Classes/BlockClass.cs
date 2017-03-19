@@ -40,7 +40,7 @@ namespace RiseOfStrongholds.Classes
             exits[(int)ConstantClass.EXITS.WEST] = m_WestExit;
 
             return exits;
-        }
+        }        
         
         public void setTerrainType(Guid terrain) { m_terrain_id = terrain; }
         public void setRoom(Guid room){ m_room_id = room; }
@@ -226,6 +226,7 @@ namespace RiseOfStrongholds.Classes
         {
             return (m_list_of_occupants.Count == 0);
         }
+        public bool existsBuilding() { return m_building_id != Guid.Empty; }
 
             /*inventory related*/
         public ResourceObjectClass reduceBlockInventory(int rate) //rate = reduction rate
@@ -427,6 +428,13 @@ namespace RiseOfStrongholds.Classes
 
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }        
+        public Guid[] retrieveOccupantsList () //returns array of occupants of the block -> to avoid defining getOccupantList()
+        {
+            Guid[] result = new Guid[m_list_of_occupants.Count];
+            m_list_of_occupants.CopyTo(result, 0);
+
+            return result;
+        }
 
             /*printing*/
         public string printAllAvailableExits()

@@ -8,9 +8,20 @@ namespace RiseOfStrongholds.Classes
 {
     public class MemoryBitClass
     {
+        /*  ACTION.GATHER = 
+         *      - IDOfSomething = Block ID where resource resides
+         *  ACTION.FIND_CHAR =
+         *      - IDOfSomething = Block ID where character resides
+         *      - IDOfSomeone = Char ID
+         *  ACTION.FIND_BUILDING =
+         *      - IDOfSomething = Block ID where building resides
+         *      - IDOfSomeone = Building ID
+         */
+
         /*VARIABLES*/
-        private Guid m_IDOfSomething; //remembers ID of something
-        private ConstantClass.CHARACTER_ACTIONS m_ActionToDo; //action related to ID
+        private Guid m_IDOfSomething; //remembers ID of something        
+        private Guid m_IDOfSomeone; //remembers ID of someone
+        private ConstantClass.CHARACTER_ACTIONS m_ActionToDo; //action related to ID        
         private GameTimeClass m_dateOfLastOccurrence; //when did event occur
         private int m_numberOfTimesOccurred; //how many times occurred , more times --> goes to long term memory
         private GameTimeClass m_dateMemoryWillBeLost; //date when memory will be lost if occurrence does not increase with the period
@@ -29,11 +40,12 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
-        public MemoryBitClass(Guid ID, ConstantClass.CHARACTER_ACTIONS action, GameTimeClass dateActionPerformed, int priority)
+        public MemoryBitClass(Guid IDofSomeThing, Guid IDofSomeOne, ConstantClass.CHARACTER_ACTIONS action, GameTimeClass dateActionPerformed, int priority)
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            m_IDOfSomething = ID;
+            m_IDOfSomething = IDofSomeThing;
+            m_IDOfSomeone = IDofSomeOne;
             m_ActionToDo = action;
             m_dateOfLastOccurrence = new GameTimeClass(dateActionPerformed);
             m_priorityOfMemoryBit = priority;
@@ -53,7 +65,7 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            return "DO|" + m_dateOfLastOccurrence.ToString() + "|ACT|" + m_ActionToDo.ToString() + "|ID|" + m_IDOfSomething.ToString() + "|NO.|" + m_numberOfTimesOccurred + "|LOST|" + m_dateMemoryWillBeLost.ToString() + "|PRI|" + m_priorityOfMemoryBit;
+            return "DO|" + m_dateOfLastOccurrence.ToString() + "|ACT|" + m_ActionToDo.ToString() + "|THINGID|" + m_IDOfSomething.ToString() + "|ONEID|" + m_IDOfSomeone.ToString() + "|NO.|" + m_numberOfTimesOccurred + "|DATE2FORGET|" + m_dateMemoryWillBeLost.ToString() + "|PRI|" + m_priorityOfMemoryBit;
         }
 
         public bool isMemoryBitExpired() //returns if memory bit is expired or not

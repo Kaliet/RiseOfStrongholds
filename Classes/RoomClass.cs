@@ -167,7 +167,7 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
-        public string printRoom(bool withExits, string charID)
+        public string printEntireRoom(bool withExits, string charID)
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
@@ -215,6 +215,56 @@ namespace RiseOfStrongholds.Classes
             }
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             return output;            
+        }
+
+        public void printLimitedRadiusRoom(Guid centerBlockID, int radius, string charID)
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            
+            BlockClass[,] output = getBlocksWithinRadius(centerBlockID, radius);
+            Guid buildingID;
+            string name = "";
+            string outputText = "";
+            for (int i = 0; i < output.GetUpperBound(1) + 1; i++)
+            {
+                for (int j = 0; j < output.GetUpperBound(1) + 1; j++)
+                {
+                    if (output[i, j].getUniqueBlockID() == Guid.Empty) { outputText += "[X]"; }
+                    else
+                    {
+                        if (output[i, j].existsResourceInInventory())
+                        {
+                            name += "+";
+                        }
+                        if (output[i, j].getBuildingID() != Guid.Empty)
+                        {
+                            buildingID = output[i, j].getBuildingID();
+                            if (ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[buildingID].getType() == ConstantClass.BUILDING.WALL) { name += "W"; }
+                        }
+                        else { name += output[i, j].printOccupantList(); }
+                        outputText += "[" + name + "]";
+                    }
+                    name = "";
+                }                
+                ConstantClass.LOGGER.writeToCharLog("MAP|" + outputText, charID);
+                outputText = "";
+            }           
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH            
+        }
+
+        public void printAllBlocksInRoomToLog()
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            ConstantClass.LOGGER.writeToMapLog("Room ID: " + m_room_id + "\n");
+            for (int i = 0; i < m_size; i++)
+            {
+                for (int j = 0; j < m_size; j++)
+                {
+                    ConstantClass.LOGGER.writeToMapLog("\t[" + i + "][" + j + "]\t" + m_Room[i, j].getUniqueBlockID()+"\n");
+                }
+            }
+                    if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
         public BlockClass[,] getBlocksWithinRadius(Guid centerBlock, int radius) //returns back 2d block array given centerblock id and radius length

@@ -122,14 +122,18 @@ namespace RiseOfStrongholds
                     region1.linkTwoRoomsWithExit(rooms[i], ConstantClass.EXITS.SOUTH, rooms[i + 1], 1);
                 }
 
+                for (int i = 0; i < numOfRooms; i++)
+                {
+                    rooms[i].printAllBlocksInRoomToLog();
+                }
                 //ConstantClass.LOGGER.writeToMapLog(region1.printRoomLinks());
-                ConstantClass.LOGGER.writeToMapLog(region1.printAllRoomsInRegion());
+                //ConstantClass.LOGGER.writeToMapLog(region1.printAllRoomsInRegion());
 
 
                 ///*SECOND GENERATE THE CHARACTERS IN THE WORLD*/
-                testcase.runRoomTestWithMultipleChars(rooms[1], region1, rooms[numOfRooms - 1]);
+                testcase.runRoomTestWithMultipleChars(rooms[0], region1, rooms[numOfRooms - 1]);
                 //testcase.runRoomTestWithMultipleChars(room2, region1);            
-
+                
             }
             catch (Exception e)
             {

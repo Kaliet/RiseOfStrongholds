@@ -151,6 +151,8 @@ namespace RiseOfStrongholds.Classes
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             int index = -1;
+            int currentPriority = -1;
+            int varForAction = ConstantClass.VARIABLE_FOR_ACTION_NONE;
 
             try
             {
@@ -191,7 +193,7 @@ namespace RiseOfStrongholds.Classes
                                 else //need to find food
                                 {
                                     //gathers food at same block                                    
-                                    m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.GATHER, m_action_queue.getQueue()[index].getPriority() - 1, 0, Guid.Empty));
+                                    m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.GATHER, m_action_queue.getQueue()[index].getPriority() - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, Guid.Empty));
                                     ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " has no food! Going to gather food.");
                                 }
                             }
@@ -307,7 +309,7 @@ namespace RiseOfStrongholds.Classes
                                     //wait one turn
                                 }
                                 else //choose first block from list??
-                                {
+                                {                                    
                                     targetBlockID = unoccupiedBlocksNextToChar.First();//ID of block where target char is residing
                                 }
                             }
@@ -393,7 +395,7 @@ namespace RiseOfStrongholds.Classes
                                                 chosenBlockOnAdjRoom = listOfSharedBlocks[exitNumber % listOfSharedBlocks.Count].m_guid1;
                                             }
                                             //3. add to queue new action character to find shared exit block id with higher priority than current action
-                                            int currentPriority = this.m_action_queue.getQueue()[index].getPriority();
+                                            currentPriority = this.m_action_queue.getQueue()[index].getPriority();
 
                                             m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 2, ConstantClass.VARIABLE_FOR_ACTION_NONE, chosenBlockOnCharRoom));
                                             m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, chosenBlockOnAdjRoom));
@@ -443,7 +445,7 @@ namespace RiseOfStrongholds.Classes
                             if (targetBlockWithResource == Guid.Empty)
                             {
                                 //0.2 then check in memory if there are any historic references
-                                MemoryBitClass memory = new MemoryBitClass(Guid.Empty, ConstantClass.CHARACTER_ACTIONS.GATHER, new GameTimeClass(), 0);
+                                MemoryBitClass memory = new MemoryBitClass(Guid.Empty, Guid.Empty, ConstantClass.CHARACTER_ACTIONS.GATHER, new GameTimeClass(), 0);
                                 MemoryBitClass retrievedMem = m_memoryBank.retrieveMemoryBitWithActionOnlyIfExistsInMemory(memory, ConstantClass.MEMORY.BOTH);
                                 if (!retrievedMem.isEmpty)
                                 {
@@ -454,11 +456,26 @@ namespace RiseOfStrongholds.Classes
                                 else
                                 {
                                     //TODO: 0.4 if no, then perform ACTION.SCAN for resources
-                                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " scans around for food.");
+                                    //          if no resources within vicinity then need to move and ACTION.SCAN again until resource found
+                                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " does not recall any gathering locations from the past.");
+                                    currentPriority = this.m_action_queue.getQueue()[index].getPriority();
+                                    varForAction = this.m_action_queue.getQueue()[index].getVarForAction(); //gets the GATHER Variable for action value
+                                    if (varForAction == ConstantClass.VARIABLE_FOR_ACTION_NONE) //first time ACTION.GATHER is calling ACTION.SCAN
+                                    {
+                                        this.m_action_queue.getQueue()[index].setVarForAction(varForAction + 1); //flags the ACTION.GATHER that we are calling ACTION.SCAN
+                                        m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SCAN, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, Guid.Empty));
+                                    }
+                                    else //ACTION.SCAN was called already once with this ACTION.GATHER and allows a endless scanning
+                                    {
+                                        //1. choose a target Block ID from memory;
+                                        //1.1 get all list of blocks from memory. remove ones that we visited (aka scanned from there) and choose randomly from the remaining
+                                        Guid blockID = 
+                                        //2. goes to a specific block and starts again.
+                                        m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, blockID));
+                                    }
+                                    
                                 }
                             }
-                            
-                            int currentPriority = m_action_queue.getQueue()[index].getPriority();
 
                             if (targetBlockWithResource != Guid.Empty) //there is a targetblock that has resource
                             {
@@ -467,7 +484,7 @@ namespace RiseOfStrongholds.Classes
                                 {
                                     ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot gather resources since block " + m_block_id + " has no resources.");
 
-                                    MemoryBitClass memory = new MemoryBitClass(targetBlockWithResource, ConstantClass.CHARACTER_ACTIONS.GATHER, new GameTimeClass(), 0);
+                                    MemoryBitClass memory = new MemoryBitClass(targetBlockWithResource, Guid.Empty, ConstantClass.CHARACTER_ACTIONS.GATHER, new GameTimeClass(), 0);
                                     m_memoryBank.removeMemoryFromShortLongTerm(memory, outputPersonGUID());
 
                                     m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);
@@ -494,7 +511,7 @@ namespace RiseOfStrongholds.Classes
 
                                     ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is gathering " + resourceGathered.getQuantity() + " resource(s) from block " + m_block_id + ".");
                                     m_inventory.addItemToInventory(resourceGathered, resourceGathered.getQuantity());
-                                    m_memoryBank.addMemoryToShortTerm(new MemoryBitClass(m_block_id, ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.gameTime, ConstantClass.CHARACTER_MEMORY_GATHER_PRIORITY));
+                                    m_memoryBank.addMemoryToShortTerm(new MemoryBitClass(m_block_id, Guid.Empty, ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.gameTime, ConstantClass.CHARACTER_MEMORY_GATHER_PRIORITY), outputPersonGUID());
 
                                     m_stats.modifyEnergy(ConstantClass.ENERGY_COST_FOR_GATHERING);
                                     m_action_queue.removeAction(index); //action completed, remove from index
@@ -513,7 +530,55 @@ namespace RiseOfStrongholds.Classes
 
                         else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.SCAN) //action to scan
                         {
-                            call getBlocksWithinRadius() and save whatever character scans into memory
+                            Guid roomID = ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id);
+                            //1. scans to 2d array
+                            BlockClass[,] result = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[roomID].getBlocksWithinRadius(m_block_id, ConstantClass.CHAR_SKILLS_SCAN_RADIUS);
+
+                            //2. goes through 2d array and records to short term memory all objects/items/chars
+                            ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " looks and studies his surroundings.");
+
+                            MemoryBitClass memoryBit;
+                            for (int i = 0; i < result.GetUpperBound(result.Rank - 1) + 1; i++) //rows
+                            {
+                                for (int j = 0; j < result.GetUpperBound(result.Rank - 1) + 1; j++) //columns
+                                {
+                                    //1. memorize resources in block
+                                    if (result[i, j].existsResourceInInventory())
+                                    {
+                                        memoryBit = new MemoryBitClass(result[i, j].getUniqueBlockID(), Guid.Empty, ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.gameTime, ConstantClass.CHARACTER_MEMORY_GATHER_PRIORITY);
+                                        m_memoryBank.addMemoryToShortTerm(memoryBit, outputPersonGUID());
+                                    }
+                                    //2. memorize characters in block
+                                    if (!result[i, j].isOccupantListEmpty()) //has at least 1 occupant in block
+                                    {
+                                        Guid[] occupantsList = result[i, j].retrieveOccupantsList();
+                                        foreach (Guid id in occupantsList)
+                                        {
+                                            if (id != m_unique_character_id)
+                                            {
+                                                memoryBit = new MemoryBitClass(result[i, j].getUniqueBlockID(), id, ConstantClass.CHARACTER_ACTIONS.FIND_CHAR, ConstantClass.gameTime, ConstantClass.CHARACTER_MEMORY_FIND_CHAR_PRIORITY);
+                                                m_memoryBank.addMemoryToShortTerm(memoryBit, outputPersonGUID());
+                                            }
+                                        }                                                                                
+                                    }
+                                    //3. memorize buildings in block
+                                    if (result[i,j].existsBuilding())
+                                    {
+                                        memoryBit = new MemoryBitClass(result[i, j].getUniqueBlockID(), result[i, j].getBuildingID(), ConstantClass.CHARACTER_ACTIONS.FIND_BUILDING, ConstantClass.gameTime, ConstantClass.ACTION_SEARCH_PRIORITY);
+                                        m_memoryBank.addMemoryToShortTerm(memoryBit, outputPersonGUID());
+                                    }
+                                    //4. memorize block IDs even though there are no characters AND resources AND buildings
+                                    if (!result[i,j].existsResourceInInventory() && 
+                                        result[i,j].isOccupantListEmpty() &&
+                                        !result[i,j].existsBuilding() &&
+                                        result[i,j].getUniqueBlockID() != Guid.Empty)
+                                    {
+                                        memoryBit = new MemoryBitClass(result[i, j].getUniqueBlockID(), Guid.Empty, ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.gameTime, ConstantClass.ACTION_SEARCH_PRIORITY);
+                                        m_memoryBank.addMemoryToShortTerm(memoryBit, outputPersonGUID());
+                                    }
+                                }
+                            }
+                            m_action_queue.removeAction(index); //action completed, remove from index
                         }
                         //-------------------ACTION: XXXXX ---------------------//
 
@@ -729,7 +794,8 @@ namespace RiseOfStrongholds.Classes
                       m_stats.printStats(m_unique_character_id.ToString()) + "\n" +
                       m_inventory.printInventoryList() + "\n";*/
             ConstantClass.LOGGER.writeToCharLog("Character ID| " + m_unique_character_id, m_unique_character_id.ToString());
-            ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id)].printRoom(false, m_unique_character_id.ToString());
+            //ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id)].printEntireRoom(false, m_unique_character_id.ToString());
+            ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[ConstantClass.GET_ROOMID_BASED_BLOCKID(m_block_id)].printLimitedRadiusRoom(m_block_id, ConstantClass.CHAR_SKILLS_SCAN_RADIUS, m_unique_character_id.ToString());
             ConstantClass.LOGGER.writeToCharLog("Birth date|" + m_birthDate, m_unique_character_id.ToString());
             ConstantClass.LOGGER.writeToCharLog("Death date|" + m_stats.getDeathDate(), m_unique_character_id.ToString());
             ConstantClass.LOGGER.writeToCharLog("Block ID| " + m_block_id, m_unique_character_id.ToString());

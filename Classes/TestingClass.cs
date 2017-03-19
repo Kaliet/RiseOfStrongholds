@@ -100,13 +100,13 @@ namespace RiseOfStrongholds.Classes
 
             try
             {
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 1; i++)
                 {
                     try
                     {
-                        people.Add(new CharacterClass(room.getRoom()[2, 2 ].getUniqueBlockID()));
-                        people.Add(new CharacterClass(room.getRoom()[1, 2].getUniqueBlockID()));
-                        people.Add(new CharacterClass(room.getRoom()[2, 1].getUniqueBlockID()));
+                        people.Add(new CharacterClass(room.getRoom()[0, 0].getUniqueBlockID()));
+                        //people.Add(new CharacterClass(room.getRoom()[1, 2].getUniqueBlockID()));
+                        //people.Add(new CharacterClass(room.getRoom()[2, 1].getUniqueBlockID()));
                     }
                     catch (CharacterNotCreatedException ex)
                     {
@@ -125,7 +125,7 @@ namespace RiseOfStrongholds.Classes
 
                 //people.Add(person2);
 
-                //people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_SEARCH_PRIORITY, 0, room.getRoom()[4,4].getUniqueBlockID()));
+                people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SCAN, ConstantClass.ACTION_SCAN_PRIORITY, 0, Guid.Empty));
                 //people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_SEARCH_PRIORITY, 0, room.getRoom()[0, 1].getUniqueBlockID()));
                 //people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.ACTION_GATHER_PRIORITY, 0, room.getRoom()[0, 0].getUniqueBlockID()));
                 //people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_GATHER_PRIORITY, 0, room.getRoom()[0, 0].getUniqueBlockID()));
@@ -140,32 +140,34 @@ namespace RiseOfStrongholds.Classes
                 //bit = new MemoryBitClass(room.getRoom()[2, 2].getUniqueBlockID(), ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.gameTime, ConstantClass.CHARACTER_MEMORY_GATHER_PRIORITY);
                 //people[0].DEBUG_getMemory().addMemoryToShortTerm(bit);
                 
-                BlockClass[,] output = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[room.getUniqueRoomID()].getBlocksWithinRadius(people[0].getBlockID(), 1);
-                Guid buildingID;
-                string name = "";
-                for (int i = 0; i < output.GetUpperBound(1) + 1; i++)
-                {
-                    for (int j = 0; j < output.GetUpperBound(1) + 1; j++)
-                    {
-                        if (output[i, j].getUniqueBlockID() == Guid.Empty) { ConstantClass.LOGGER.writeToMapLog("[X]"); }
-                        else
-                        {
-                            if (output[i,j].existsResourceInInventory())
-                            {
-                                name += "+";                                
-                            }
-                            if (output[i, j].getBuildingID() != Guid.Empty)
-                            {
-                                buildingID = output[i, j].getBuildingID();
-                                if (ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[buildingID].getType() == ConstantClass.BUILDING.WALL) { name += "W"; }                                
-                            }
-                            else { name += output[i, j].printOccupantList(); }
-                            ConstantClass.LOGGER.writeToMapLog("[" + name + "]");
-                        }
-                        name = "";
-                    }
-                    ConstantClass.LOGGER.writeToMapLog("\n");
-                }
+                //BlockClass[,] output = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[room.getUniqueRoomID()].getBlocksWithinRadius(people[0].getBlockID(), 1);
+                //Guid buildingID;
+                //string name = "";
+                //for (int i = 0; i < output.GetUpperBound(1) + 1; i++)
+                //{
+                //    for (int j = 0; j < output.GetUpperBound(1) + 1; j++)
+                //    {
+                //        if (output[i, j].getUniqueBlockID() == Guid.Empty) { ConstantClass.LOGGER.writeToMapLog("[X]"); }
+                //        else
+                //        {
+                //            if (output[i,j].existsResourceInInventory())
+                //            {
+                //                name += "+";                                
+                //            }
+                //            if (output[i, j].getBuildingID() != Guid.Empty)
+                //            {
+                //                buildingID = output[i, j].getBuildingID();
+                //                if (ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[buildingID].getType() == ConstantClass.BUILDING.WALL) { name += "W"; }                                
+                //            }
+                //            else { name += output[i, j].printOccupantList(); }
+                //            ConstantClass.LOGGER.writeToMapLog("[" + name + "]");
+                //        }
+                //        name = "";
+                //    }
+                //    ConstantClass.LOGGER.writeToMapLog("\n");
+                //}
+
+                
             }
             catch (Exception e)
             {

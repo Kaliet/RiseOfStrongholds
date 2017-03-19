@@ -267,7 +267,7 @@ namespace RiseOfStrongholds.Classes
             foreach (Guid room in m_list_of_rooms)
             {
                 output += "Room ID:\t\t" + room + "\n";
-                output += ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[room].printRoom(true,null) + "\n";
+                output += ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[room].printEntireRoom(true,null) + "\n";
             }
 
             return output;
@@ -284,7 +284,7 @@ namespace RiseOfStrongholds.Classes
 
             foreach (Guid id in m_list_of_rooms)
             {
-                Console.WriteLine(ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[id].printRoom(false,""));
+                Console.WriteLine(ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[id].printEntireRoom(false,""));
             }
 
             Console.WriteLine(ConstantClass.gameTime.ToString());

@@ -19,10 +19,11 @@ namespace RiseOfStrongholds.Classes
         public static MappingPairClass<List<GuidPairClass>> MAPPING_TABLE_FOR_SHARED_EXITS_BETWEEN_ROOMS; //<(room1,room2) -> list of (block1 of room1,block2 of room2) with shared exit
 
         /*memory*/
+        /*memory priority = the higher the longer the memory will be kept in long term memory*/
         public static int CHARACTER_MEMORY_INITIAL_SIZE = 10;
         public static int CHARACTER_MEMORY_SHORT_TERM_EXPIRATION_DAYS_DURATION = 5; //for example 10 days
         public static int CHARACTER_MEMORY_LONG_TERM_EXPIRATION_DAYS_DURATION = 20; //for example 10 days
-        public static int CHARACTER_MEMORY_GATHER_PRIORITY = 50;
+        public static int CHARACTER_MEMORY_GATHER_PRIORITY = 500;
         public static int CHARACTER_MEMORY_FIND_CHAR_PRIORITY = 20;
         public static int CHARACTER_MEMORY_SLEEP_PRIORITY = 50;
         public static int CHARACTER_MEMORY_SHORT_TO_LONG_TERM_THRESHOLD = 50;
@@ -40,6 +41,7 @@ namespace RiseOfStrongholds.Classes
             SLEEP , //sleep - sleep
             WALK,   //walk - walks around aimlessly
             FIND_BLOCK, //find_block - finds a specific block id with pathfinding skill
+            FIND_BUILDING, //TODO: not implemented yet
             FIND_CHAR,  //find_char - finds a specific character
             GATHER, //gather - gather resources
             REST,   //rest - rest until energy is replenished
@@ -82,7 +84,8 @@ namespace RiseOfStrongholds.Classes
         public static int ACTION_REST_PRIORITY = 10;
         public static int ACTION_GATHER_PRIORITY = 100;
         public static int ACTION_WALK_PRIORITY = 100;
-        public static int ACTION_SEARCH_PRIORITY = 100;        
+        public static int ACTION_SEARCH_PRIORITY = 100;
+        public static int ACTION_SCAN_PRIORITY = 100;
         public static int ACTION_NO_PRIORITY = 99999;
         public static int VARIABLE_FOR_ACTION_NONE = -1;
 

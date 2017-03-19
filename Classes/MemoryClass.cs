@@ -269,7 +269,7 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
-        public void addMemoryToShortTerm(MemoryBitClass memoryBit) //adds a memory bit to short memory. cannot add directly to long term memory
+        public void addMemoryToShortTerm(MemoryBitClass memoryBit, string charID) //adds a memory bit to short memory. cannot add directly to long term memory
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH            
             try
@@ -281,6 +281,7 @@ namespace RiseOfStrongholds.Classes
                 {
                     //2. if yes, then update existing memory: date of occurrence and number of occurrence
                     refreshMemory(memoryBit, ConstantClass.MEMORY.BOTH);
+                    ConstantClass.LOGGER.writeToGameLog(charID + " remembers something.");
                 }
                 //3. if no, then add new memory to short term
                 else
@@ -293,12 +294,13 @@ namespace RiseOfStrongholds.Classes
                         MemoryBitClass oldestMemory = m_ShortTermMemory.First(obj => obj.getDateMemoryWillBeLost() == earliestDateOfMemory);
                         m_ShortTermMemory.Remove(oldestMemory);
                         m_ShortTermMemory.Add(memoryBit);
-                        ConstantClass.LOGGER.writeToGameLog(charID + " forgets something irrelevant.");dfdfdf
+                        ConstantClass.LOGGER.writeToGameLog(charID + " forgets something irrelevant.");
                     }
                     else
                     {
                         //3.3 if not full, add memory
                         m_ShortTermMemory.Add(memoryBit);
+                        ConstantClass.LOGGER.writeToGameLog(charID + " memorizes something unique.");
                     }
                 }
             }
