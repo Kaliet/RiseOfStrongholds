@@ -165,6 +165,28 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
+        public BlockClass()
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            this.m_unique_block_id = Guid.Empty;
+            this.m_NorthExit = Guid.Empty;
+            this.m_SouthExit = Guid.Empty;
+            this.m_EastExit = Guid.Empty;
+            this.m_WestExit = Guid.Empty;
+            this.m_createDate = new GameTimeClass();
+            this.m_terrain_id = Guid.Empty;
+            this.m_position = new PositionClass();
+            this.m_stats = new BlockStatsClass();
+            this.m_room_id = Guid.Empty;
+            this.m_building_id = Guid.Empty;
+            this.m_inventory_list = new InventoryClass();
+
+            this.m_list_of_occupants = new List<Guid>();            
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+
         /*METHODS*/
         
             /*exists*/
@@ -440,6 +462,15 @@ namespace RiseOfStrongholds.Classes
 
             return output;
 
+        }
+        public string printInventory()
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            string output = "";
+            output = m_inventory_list.printUnformattedInventoryList();
+            return output;
         }
 
         public void DEBUG_addInventory(List<GenericObjectClass> value)

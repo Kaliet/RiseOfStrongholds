@@ -509,11 +509,11 @@ namespace RiseOfStrongholds.Classes
                             m_action_queue.removeAction(index); //action completed, remove from index
                         }
 
-                        //-------------------ACTION: GATHER ---------------------//
+                        //-------------------ACTION: SCAN ---------------------//
 
                         else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.SCAN) //action to scan
                         {
-
+                            call getBlocksWithinRadius() and save whatever character scans into memory
                         }
                         //-------------------ACTION: XXXXX ---------------------//
 

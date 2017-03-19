@@ -293,6 +293,7 @@ namespace RiseOfStrongholds.Classes
                         MemoryBitClass oldestMemory = m_ShortTermMemory.First(obj => obj.getDateMemoryWillBeLost() == earliestDateOfMemory);
                         m_ShortTermMemory.Remove(oldestMemory);
                         m_ShortTermMemory.Add(memoryBit);
+                        ConstantClass.LOGGER.writeToGameLog(charID + " forgets something irrelevant.");dfdfdf
                     }
                     else
                     {

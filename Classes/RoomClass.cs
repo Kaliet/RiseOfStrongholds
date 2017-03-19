@@ -226,7 +226,16 @@ namespace RiseOfStrongholds.Classes
             int resultSize = 2 * radius + 1;
             if (resultSize >= m_size) { resultSize = m_size; }
 
-            BlockClass[,] result = new BlockClass[resultSize, resultSize]; xxxx debug case where start point is on the side and radius is big. it should show limited area.
+            BlockClass[,] result = new BlockClass[resultSize, resultSize];
+
+            //0. initialize result
+            for (int i = 0; i < resultSize; i++)  //fill out result 2d array
+            {
+                for (int j = 0; j < resultSize; j++)
+                {
+                    result[i, j] = new BlockClass();
+                }
+            }
 
             //1. checks if center block is a block in room            
             if (centerBlock == Guid.Empty) return result;
@@ -252,10 +261,12 @@ namespace RiseOfStrongholds.Classes
             else { endColumnIndex = yCenterBlock + radius; }
 
             int counter = startColumnIndex;
+            int rowDelta = endRowIndex - startRowIndex;
+            int columnDelta = endColumnIndex - startColumnIndex;
 
-            for (int i = 0; i < resultSize; i++)  //fill out result 2d array
+            for (int i = 0; i <= rowDelta; i++)  //fill out result 2d array with relevant rows and columns
             {
-                for (int j = 0; j < resultSize; j++)
+                for (int j = 0; j <= columnDelta; j++)
                 {
                     result[i, j] = new BlockClass(ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[m_room_id].getRoom()[startRowIndex, counter]);
                     counter++;

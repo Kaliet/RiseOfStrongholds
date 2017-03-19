@@ -100,11 +100,13 @@ namespace RiseOfStrongholds.Classes
 
             try
             {
-                for (int i = 0; i < 1; i++)
+                for (int i = 0; i < 3; i++)
                 {
                     try
                     {
-                        people.Add(new CharacterClass(room.getRoom()[1, 1].getUniqueBlockID()));
+                        people.Add(new CharacterClass(room.getRoom()[2, 2 ].getUniqueBlockID()));
+                        people.Add(new CharacterClass(room.getRoom()[1, 2].getUniqueBlockID()));
+                        people.Add(new CharacterClass(room.getRoom()[2, 1].getUniqueBlockID()));
                     }
                     catch (CharacterNotCreatedException ex)
                     {
@@ -138,12 +140,29 @@ namespace RiseOfStrongholds.Classes
                 //bit = new MemoryBitClass(room.getRoom()[2, 2].getUniqueBlockID(), ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.gameTime, ConstantClass.CHARACTER_MEMORY_GATHER_PRIORITY);
                 //people[0].DEBUG_getMemory().addMemoryToShortTerm(bit);
                 
-                BlockClass[,] output = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[room.getUniqueRoomID()].getBlocksWithinRadius(people[0].getBlockID(), 2);
+                BlockClass[,] output = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[room.getUniqueRoomID()].getBlocksWithinRadius(people[0].getBlockID(), 1);
+                Guid buildingID;
+                string name = "";
                 for (int i = 0; i < output.GetUpperBound(1) + 1; i++)
                 {
                     for (int j = 0; j < output.GetUpperBound(1) + 1; j++)
                     {
-                        ConstantClass.LOGGER.writeToMapLog("[" + output[i, j].printOccupantList() + "]");
+                        if (output[i, j].getUniqueBlockID() == Guid.Empty) { ConstantClass.LOGGER.writeToMapLog("[X]"); }
+                        else
+                        {
+                            if (output[i,j].existsResourceInInventory())
+                            {
+                                name += "+";                                
+                            }
+                            if (output[i, j].getBuildingID() != Guid.Empty)
+                            {
+                                buildingID = output[i, j].getBuildingID();
+                                if (ConstantClass.MAPPING_TABLE_FOR_ALL_BUILDINGS.getMappingTable()[buildingID].getType() == ConstantClass.BUILDING.WALL) { name += "W"; }                                
+                            }
+                            else { name += output[i, j].printOccupantList(); }
+                            ConstantClass.LOGGER.writeToMapLog("[" + name + "]");
+                        }
+                        name = "";
                     }
                     ConstantClass.LOGGER.writeToMapLog("\n");
                 }

@@ -81,7 +81,7 @@ namespace RiseOfStrongholds
                     else { rooms[i].initializeRoom(dirtTerrain); }
                     rooms[i].linkAllBlocksTogetherHorizontally();
                     rooms[i].linkAllBlocksTogetherVertically();                   
-                    region1.addRoom(rooms[i].getUniqueRoomID());
+                    region1.addRoom(rooms[i].getUniqueRoomID());                    
                 }
 
                 //rooms[numOfRooms - 1].getRoom()[1,0].setTerrainType(grassTerrain.getUniqueTerrainID());
@@ -97,6 +97,10 @@ namespace RiseOfStrongholds
                 rooms[1].getRoom()[0, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 rooms[1].getRoom()[1, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 rooms[1].getRoom()[1, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
+                rooms[1].getRoom()[3, 3].setTerrainType(grassTerrain.getUniqueTerrainID());
+                rooms[1].getRoom()[3, 3].DEBUG_addInventory(list);
+                rooms[1].getRoom()[3, 2].setTerrainType(grassTerrain.getUniqueTerrainID());
+                rooms[1].getRoom()[3, 2].DEBUG_addInventory(list);
 
                 rooms[numOfRooms -1].getRoom()[0, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 //rooms[1].getRoom()[0, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);
@@ -123,7 +127,7 @@ namespace RiseOfStrongholds
 
 
                 ///*SECOND GENERATE THE CHARACTERS IN THE WORLD*/
-                testcase.runRoomTestWithMultipleChars(rooms[0], region1, rooms[numOfRooms - 1]);
+                testcase.runRoomTestWithMultipleChars(rooms[1], region1, rooms[numOfRooms - 1]);
                 //testcase.runRoomTestWithMultipleChars(room2, region1);            
 
             }
