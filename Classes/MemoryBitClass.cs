@@ -29,7 +29,8 @@ namespace RiseOfStrongholds.Classes
         public bool isEmpty;
 
         /*GET & SET*/
-        public GameTimeClass getDateMemoryWillBeLost() { return m_dateMemoryWillBeLost; }
+        public GameTimeClass getDateMemoryWillBeLost() { return m_dateMemoryWillBeLost; }        
+        public GameTimeClass getDateOfLastOccurence() { return m_dateOfLastOccurrence; }
         public Guid getIDOfSomething() { return m_IDOfSomething; }
 
         /*CONSTRUCTOR*/
@@ -65,7 +66,7 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
-            return "DO|" + m_dateOfLastOccurrence.ToString() + "|ACT|" + m_ActionToDo.ToString() + "|THINGID|" + m_IDOfSomething.ToString() + "|ONEID|" + m_IDOfSomeone.ToString() + "|NO.|" + m_numberOfTimesOccurred + "|DATE2FORGET|" + m_dateMemoryWillBeLost.ToString() + "|PRI|" + m_priorityOfMemoryBit;
+            return "DLO|" + m_dateOfLastOccurrence.ToString() + "|ACT|" + m_ActionToDo.ToString() + "|THINGID|" + m_IDOfSomething.ToString() + "|ONEID|" + m_IDOfSomeone.ToString() + "|NO.|" + m_numberOfTimesOccurred + "|DATE2FORGET|" + m_dateMemoryWillBeLost.ToString() + "|PRI|" + m_priorityOfMemoryBit;
         }
 
         public bool isMemoryBitExpired() //returns if memory bit is expired or not
@@ -84,13 +85,26 @@ namespace RiseOfStrongholds.Classes
             return (m_priorityOfMemoryBit >= ConstantClass.CHARACTER_MEMORY_SHORT_TO_LONG_TERM_THRESHOLD);
         }
 
-        public void updateMemoryBit(GameTimeClass newDateOfOccurence) //updates the memory last date of occurence
+        public void updateMemoryBitForShortLongTerm(GameTimeClass newDateOfOccurence) //updates the memory last date of occurence
         {
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
             m_dateOfLastOccurrence = new GameTimeClass(newDateOfOccurence);
             m_dateMemoryWillBeLost = new GameTimeClass(m_dateOfLastOccurrence);
             m_dateMemoryWillBeLost.set_days(ConstantClass.CHARACTER_MEMORY_SHORT_TERM_EXPIRATION_DAYS_DURATION);
+            m_numberOfTimesOccurred++;
+            m_priorityOfMemoryBit++;
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH 
+        }
+
+        public void updateMemoryBitForBlocksVisited(GameTimeClass newDateOfOccurence) //updates the memory last date of occurence
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            m_dateOfLastOccurrence = new GameTimeClass(newDateOfOccurence);
+            m_dateMemoryWillBeLost = new GameTimeClass(m_dateOfLastOccurrence);
+            m_dateMemoryWillBeLost.set_days(ConstantClass.CHARACTER_MEMORY_BLOCKS_VISITED_EXPIRATION_DAYS_DURATION);
             m_numberOfTimesOccurred++;
             m_priorityOfMemoryBit++;
 
@@ -117,6 +131,32 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
 
             return (this.m_ActionToDo == obj.m_ActionToDo);
+        }
+
+        public bool isActionSameAs (ConstantClass.CHARACTER_ACTIONS action)
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            return (m_ActionToDo == action);
+        }
+
+        public void setDateOfMemoryWillBeLost(int numberOfDaysToAdd)
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            m_dateMemoryWillBeLost.set_days(numberOfDaysToAdd);
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+
+        public void setDateOfMemoryWillBeLost(GameTimeClass newDate)
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            m_dateMemoryWillBeLost = new GameTimeClass(newDate);
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
         /*OVERRIDE*/

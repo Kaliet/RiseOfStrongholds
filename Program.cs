@@ -92,6 +92,8 @@ namespace RiseOfStrongholds
                 rooms[0].getRoom()[1, 1].DEBUG_addInventory(list);
                 rooms[0].getRoom()[2, 2].setTerrainType(grassTerrain.getUniqueTerrainID());
                 rooms[0].getRoom()[2, 2].DEBUG_addInventory(list);
+                rooms[0].getRoom()[sizeRoom - 1, sizeRoom - 1].setTerrainType(grassTerrain.getUniqueTerrainID());
+                rooms[0].getRoom()[sizeRoom - 1, sizeRoom - 1].DEBUG_addInventory(list);
 
                 rooms[1].getRoom()[0, 0].constructNewBuilding(ConstantClass.BUILDING.WALL);
                 rooms[1].getRoom()[0, 1].constructNewBuilding(ConstantClass.BUILDING.WALL);

@@ -34,8 +34,8 @@ namespace RiseOfStrongholds.Classes
             m_character_name = "";
 
             m_stats = new CharacterStatsClass();
-            m_stats.initializeHP(50);
-            m_stats.initializeEnergy(20);
+            m_stats.initializeHP(500);
+            m_stats.initializeEnergy(200);
             
             //m_stats.initializeHungerRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_EATING * ConstantClass.HOURS_IN_ONE_DAY));
             //m_stats.initializeSleepRate(0, ConstantClass.RANDOMIZER.produceInt(1, ConstantClass.HOURS_BETWEEN_SLEEPING * ConstantClass.HOURS_IN_ONE_DAY));
@@ -276,6 +276,9 @@ namespace RiseOfStrongholds.Classes
                                     ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].removeCharacterFromBlockOccupants(m_unique_character_id);//remove character id from previuos block list of occupants                            
                                     ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].addCharacterToBlockOccupants(m_unique_character_id);//adds character id as part of block list of occupants                            
                                     m_block_id = nextStep;
+                                    //memorizes the block
+                                    MemoryBitClass bit = new MemoryBitClass(m_block_id, Guid.Empty, ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.gameTime, ConstantClass.ACTION_SEARCH_PRIORITY);
+                                    m_memoryBank.addMemoryToBlocksVisited(bit, outputPersonGUID());
                                     deductEnergyBasedOnTerrain();
 
                                     ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is going to walk " + printDirection(allExits, m_block_id) + " into block " + m_block_id.ToString().Substring(0, 2) + ".");
@@ -366,6 +369,10 @@ namespace RiseOfStrongholds.Classes
                                                     ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].removeCharacterFromBlockOccupants(m_unique_character_id);//remove character id from previuos block list of occupants                                                                                                                                    
                                                     ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].addCharacterToBlockOccupants(m_unique_character_id);//adds character id as part of block list of occupants                                            
                                                     m_block_id = nextStep;
+                                                    //memorizes the block
+                                                    MemoryBitClass bit = new MemoryBitClass(m_block_id, Guid.Empty, ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.gameTime, ConstantClass.ACTION_SEARCH_PRIORITY);
+                                                    m_memoryBank.addMemoryToBlocksVisited(bit, outputPersonGUID());
+                                                    
                                                     deductEnergyBasedOnTerrain();
                                                     crossedRoom = true;
 
@@ -418,6 +425,10 @@ namespace RiseOfStrongholds.Classes
                                         ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].removeCharacterFromBlockOccupants(m_unique_character_id);//remove character id from previuos block list of occupants                                                                                                                        
                                         ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[nextStep].addCharacterToBlockOccupants(m_unique_character_id);//adds character id as part of block list of occupants                                            
                                         m_block_id = nextStep;
+                                        //memorizes the block
+                                        MemoryBitClass bit = new MemoryBitClass(m_block_id, Guid.Empty, ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.gameTime, ConstantClass.ACTION_SEARCH_PRIORITY);
+                                        m_memoryBank.addMemoryToBlocksVisited(bit, outputPersonGUID());
+
                                         ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " moves to block " + m_block_id);
                                         deductEnergyBasedOnTerrain();
                                         //ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " is finding " + targetBlockID + " with priority " + (m_action_queue.getQueue()[index].getPriority() - 1));
@@ -446,11 +457,11 @@ namespace RiseOfStrongholds.Classes
                             {
                                 //0.2 then check in memory if there are any historic references
                                 MemoryBitClass memory = new MemoryBitClass(Guid.Empty, Guid.Empty, ConstantClass.CHARACTER_ACTIONS.GATHER, new GameTimeClass(), 0);
-                                MemoryBitClass retrievedMem = m_memoryBank.retrieveMemoryBitWithActionOnlyIfExistsInMemory(memory, ConstantClass.MEMORY.BOTH);
+                                MemoryBitClass retrievedMem = m_memoryBank.retrieveMemoryBitWithActionOnlyIfExistsInMemory(memory, ConstantClass.MEMORY.SHORT_AND_LONG);
                                 if (!retrievedMem.isEmpty)
                                 {
                                     //0.3 if yes, then go to that block
-                                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " tries to recall from memory last gathering location.");
+                                    ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " recalls from memory last gathering location.");
                                     targetBlockWithResource = retrievedMem.getIDOfSomething();                                    
                                 }
                                 else
@@ -469,11 +480,19 @@ namespace RiseOfStrongholds.Classes
                                     {
                                         //1. choose a target Block ID from memory;
                                         //1.1 get all list of blocks from memory. remove ones that we visited (aka scanned from there) and choose randomly from the remaining
-                                        Guid blockID = 
+                                        Guid blockID = m_memoryBank.chooseUnvisitedBlockFromMemory(outputPersonGUID());
                                         //2. goes to a specific block and starts again.
-                                        m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, blockID));
+                                        if (blockID != Guid.Empty)
+                                        {
+                                            m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, currentPriority - 2, ConstantClass.VARIABLE_FOR_ACTION_NONE, blockID));
+                                            m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SCAN, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, blockID));
+                                        }
+                                        else //all blocks in memory have been visited 
+                                        {
+                                            check when finding blocks to update memory for gathering
+                                            check and code scanning when in connection between two rooms
+                                        }
                                     }
-                                    
                                 }
                             }
 

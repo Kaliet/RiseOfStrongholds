@@ -20,15 +20,16 @@ namespace RiseOfStrongholds.Classes
 
         /*memory*/
         /*memory priority = the higher the longer the memory will be kept in long term memory*/
-        public static int CHARACTER_MEMORY_INITIAL_SIZE = 10;
-        public static int CHARACTER_MEMORY_SHORT_TERM_EXPIRATION_DAYS_DURATION = 5; //for example 10 days
-        public static int CHARACTER_MEMORY_LONG_TERM_EXPIRATION_DAYS_DURATION = 20; //for example 10 days
+        public static int CHARACTER_MEMORY_INITIAL_SIZE = 100;
+        public static int CHARACTER_MEMORY_SHORT_TERM_EXPIRATION_DAYS_DURATION = 100; //for example 100 days
+        public static int CHARACTER_MEMORY_LONG_TERM_EXPIRATION_DAYS_DURATION = 200; //for example 200 days
+        public static int CHARACTER_MEMORY_BLOCKS_VISITED_EXPIRATION_DAYS_DURATION = 300; //for example 300 days
         public static int CHARACTER_MEMORY_GATHER_PRIORITY = 500;
         public static int CHARACTER_MEMORY_FIND_CHAR_PRIORITY = 20;
         public static int CHARACTER_MEMORY_SLEEP_PRIORITY = 50;
         public static int CHARACTER_MEMORY_SHORT_TO_LONG_TERM_THRESHOLD = 50;
         public enum MEMORY_TYPE { BLOCK, ROOM, CHARACTER}; //defines what type of memory to store i.e: remembers person, block , room        
-        public enum MEMORY { LONG, SHORT, BOTH}; //defines long or short        
+        public enum MEMORY { LONG, SHORT, SHORT_AND_LONG, BLOCKS, RESOURCES}; //defines long or short , blocks memory has not end date only capacity based. if full, then it will replace an older block visited memory       
 
         /*enums*/
         public enum DEBUG_LEVELS { OFF, LOW, HIGH };
