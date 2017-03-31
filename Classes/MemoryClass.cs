@@ -55,7 +55,7 @@ namespace RiseOfStrongholds.Classes
             if (type == ConstantClass.MEMORY.LONG) { return m_LongTermMemory.Count == m_LongTermMemory.Capacity; }
             else if (type == ConstantClass.MEMORY.SHORT) { return m_ShortTermMemory.Count == m_ShortTermMemory.Capacity; }
             else if (type == ConstantClass.MEMORY.BLOCKS) { return m_MemoryForBlocksVisited.Count == m_MemoryForBlocksVisited.Capacity; }
-            else if (type == ConstantClass.MEMORY.RESOURCES) { return m_MemoryForBlocksWithResources.Count == m_MemoryForBlocksWithResources.Capacity;)}
+            else if (type == ConstantClass.MEMORY.RESOURCES) { return m_MemoryForBlocksWithResources.Count == m_MemoryForBlocksWithResources.Capacity;}
             else
             {
                 throw new Exception("Invalid memory access.");
@@ -64,8 +64,7 @@ namespace RiseOfStrongholds.Classes
 
         public MemoryBitClass retrieveMemoryBitIfExistsInMemory (MemoryBitClass memoryBit, ConstantClass.MEMORY type) //checks if memorybit exists (action+id) in short/long term memory
         {
-            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
-            List<MemoryBitClass> list = new List<MemoryBitClass>();
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH            
 
             try
             {
@@ -99,9 +98,9 @@ namespace RiseOfStrongholds.Classes
                         }
                     }
                 }
-                if(type == ConstantClass.MEMORY.BLOCKS)
+                if(type == ConstantClass.MEMORY.RESOURCES)
                 {
-                    foreach (MemoryBitClass bit in m_MemoryForBlocksVisited)
+                    foreach (MemoryBitClass bit in m_MemoryForBlocksWithResources)
                     {
                         if (bit == memoryBit) //memory found
                         {
@@ -147,6 +146,16 @@ namespace RiseOfStrongholds.Classes
                 if (type == ConstantClass.MEMORY.BLOCKS)
                 {
                     foreach (MemoryBitClass bit in m_MemoryForBlocksVisited)
+                    {
+                        if (bit.ifActionIsSame(memoryBit)) //memory found
+                        {
+                            return bit;
+                        }
+                    }
+                }
+                if (type == ConstantClass.MEMORY.RESOURCES)
+                {
+                    foreach (MemoryBitClass bit in m_MemoryForBlocksWithResources)
                     {
                         if (bit.ifActionIsSame(memoryBit)) //memory found
                         {
@@ -266,6 +275,16 @@ namespace RiseOfStrongholds.Classes
                         }
                     }
                 }
+                if (type == ConstantClass.MEMORY.RESOURCES)
+                {
+                    foreach (MemoryBitClass bit in m_MemoryForBlocksWithResources)
+                    {
+                        if (bit == memoryBit)
+                        {
+                            bit.updateMemoryBitForBlocksVisited(ConstantClass.gameTime);
+                        }
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -331,6 +350,24 @@ namespace RiseOfStrongholds.Classes
                     }
                 }
                 if (found) m_MemoryForBlocksVisited.RemoveAt(index);
+
+                //for resources
+                found = false;
+                index = 0;
+
+                if (type == ConstantClass.MEMORY.RESOURCES)
+                {
+                    foreach (MemoryBitClass bit in m_MemoryForBlocksWithResources)
+                    {
+                        if (bit == memoryBit)
+                        {
+                            found = true;
+                            break;
+                        }
+                        else index++;
+                    }
+                }
+                if (found) m_MemoryForBlocksWithResources.RemoveAt(index);
             }
             catch (Exception e)
             {
@@ -346,6 +383,13 @@ namespace RiseOfStrongholds.Classes
 
             try
             {
+                //0. check if block visited has resources, if so, then add to resources memory
+                Guid blockID = memoryBit.getIDOfSomething();
+                if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[blockID].existsResourceInInventory())
+                {
+                    addMemoryToBlocksWithResources(memoryBit, charID);
+                }
+
                 //1. check if memory is already in short/long term
                 MemoryBitClass bit = retrieveMemoryBitIfExistsInMemory(memoryBit, ConstantClass.MEMORY.BLOCKS);
 
@@ -366,7 +410,7 @@ namespace RiseOfStrongholds.Classes
                         MemoryBitClass oldestMemory = m_MemoryForBlocksVisited.First(obj => obj.getDateMemoryWillBeLost() == earliestDateOfMemory);
                         m_MemoryForBlocksVisited.Remove(oldestMemory);
                         m_MemoryForBlocksVisited.Add(memoryBit);
-                        ConstantClass.LOGGER.writeToGameLog(charID + " forgets some place he had been.");
+                        ConstantClass.LOGGER.writeToGameLog(charID + " forgets some place he had been.");                        
                     }
                     else
                     {
@@ -374,6 +418,51 @@ namespace RiseOfStrongholds.Classes
                         memoryBit.updateMemoryBitForBlocksVisited(ConstantClass.gameTime);
                         m_MemoryForBlocksVisited.Add(memoryBit);
                         ConstantClass.LOGGER.writeToGameLog(charID + " memorizes the way.");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                ConstantClass.LOGGER.writeToCrashLog(e);
+            }
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+        }
+
+        public void addMemoryToBlocksWithResources (MemoryBitClass memoryBit, string charID) //adds a memory bit to blocks with resources memory.
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            try
+            {
+                //1. check if memory is already in short/long term
+                MemoryBitClass bit = retrieveMemoryBitIfExistsInMemory(memoryBit, ConstantClass.MEMORY.RESOURCES);
+
+                if (!bit.isEmpty)
+                {
+                    //2. if yes, then update existing memory: date of occurrence and number of occurrence
+                    refreshMemory(memoryBit, ConstantClass.MEMORY.RESOURCES);
+                    ConstantClass.LOGGER.writeToGameLog(charID + " remembers the block with resource.");
+                }
+                //3. if no, then add new memory to short term
+                else
+                {
+                    //3.1 check if short memory is full
+                    if (isMemoryFull(ConstantClass.MEMORY.RESOURCES))
+                    {
+                        //3.2 if full, remove oldest memory and add newest memory
+                        GameTimeClass earliestDateOfMemory = m_MemoryForBlocksWithResources.Min(obj => obj.getDateMemoryWillBeLost());
+                        MemoryBitClass oldestMemory = m_MemoryForBlocksWithResources.First(obj => obj.getDateMemoryWillBeLost() == earliestDateOfMemory);
+                        m_MemoryForBlocksWithResources.Remove(oldestMemory);
+                        m_MemoryForBlocksWithResources.Add(memoryBit);
+                        ConstantClass.LOGGER.writeToGameLog(charID + " forgets the block that had resources.");
+                    }
+                    else
+                    {
+                        //3.3 if not full, add memory
+                        memoryBit.updateMemoryBitForBlocksVisited(ConstantClass.gameTime);
+                        m_MemoryForBlocksWithResources.Add(memoryBit);
+                        ConstantClass.LOGGER.writeToGameLog(charID + " memorizes the blocks with resource.");
                     }
                 }
             }
@@ -462,7 +551,7 @@ namespace RiseOfStrongholds.Classes
                 {
                     //2. if yes, then remove existing memory: date of occurrence and number of occurrence 
                     deleteMemory(memoryBit, ConstantClass.MEMORY.SHORT_AND_LONG);
-                    ConstantClass.LOGGER.writeToGameLog(charID + " forgets something irrelevant.");
+                    ConstantClass.LOGGER.writeToGameLog(charID + " forgets an irrelevant memory.");
                 }
             }
             catch (Exception e)
@@ -505,7 +594,7 @@ namespace RiseOfStrongholds.Classes
                 foreach (int number in indexToRemove)
                 {
                     m_ShortTermMemory.RemoveAt(number);
-                    ConstantClass.LOGGER.writeToGameLog(charID + " lost a memory.");
+                    ConstantClass.LOGGER.writeToGameLog(charID + " lost a short term memory.");
                 }
                 //for long
                 index = 0;
@@ -529,7 +618,7 @@ namespace RiseOfStrongholds.Classes
                 foreach (int number in indexToRemove)
                 {
                     m_LongTermMemory.RemoveAt(number);
-                    ConstantClass.LOGGER.writeToGameLog(charID + " lost a memory..");
+                    ConstantClass.LOGGER.writeToGameLog(charID + " lost a long term memory..");
                 }
                 //for blocks
                 index = 0;
@@ -553,8 +642,34 @@ namespace RiseOfStrongholds.Classes
                 foreach (int number in indexToRemove)
                 {
                     m_MemoryForBlocksVisited.RemoveAt(number);
-                    ConstantClass.LOGGER.writeToGameLog(charID + " lost a memory...");
+                    ConstantClass.LOGGER.writeToGameLog(charID + " lost a visited block memory...");
                 }
+
+                //for resources
+                index = 0;
+                indexToRemove.Clear();
+
+                foreach (MemoryBitClass bit in m_MemoryForBlocksWithResources)
+                {
+                    //if memory bit is expired, then remove it from memory
+                    if (bit.isMemoryBitExpired())
+                    {
+                        indexToRemove.Add(index);
+                    }
+                    if (newDayFlag)
+                    {
+                        delta = bit.returnDeltaLastOccuredDate();
+                        bit.reducePriorityBy(delta.get_day()); //reduces priority based on number of days passed the last occurrence date.
+                    }
+                    index++;
+                }
+                //remove those memories
+                foreach (int number in indexToRemove)
+                {
+                    m_MemoryForBlocksWithResources.RemoveAt(number);
+                    ConstantClass.LOGGER.writeToGameLog(charID + " lost a resource block memory...");
+                }
+
             }
             catch (Exception e)
             {
@@ -585,6 +700,12 @@ namespace RiseOfStrongholds.Classes
                 foreach (MemoryBitClass blockMem in m_MemoryForBlocksVisited)
                 {
                     ConstantClass.LOGGER.writeToCharLog("Block Visited Memory|" + blockMem.printMemoryBit(), charID);
+                }
+
+                ConstantClass.LOGGER.writeToCharLog("Resource Blocks Memory|Size|" + m_MemoryForBlocksWithResources.Capacity, charID);
+                foreach (MemoryBitClass blockMem in m_MemoryForBlocksWithResources)
+                {
+                    ConstantClass.LOGGER.writeToCharLog("Resource Blocks Memory|" + blockMem.printMemoryBit(), charID);
                 }
             }
             catch (Exception e)

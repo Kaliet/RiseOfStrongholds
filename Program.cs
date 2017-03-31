@@ -72,7 +72,7 @@ namespace RiseOfStrongholds
                 //    region1.linkTwoRoomsWithExit(rooms[i], ConstantClass.EXITS.SOUTH, rooms[i + 1], 1);
                 //}
                 int numOfRooms = 3;
-                int sizeRoom = 10;
+                int sizeRoom = 6;
                 RoomClass[] rooms = new RoomClass[numOfRooms];
                 for (int i = 0; i < numOfRooms; i++)
                 {

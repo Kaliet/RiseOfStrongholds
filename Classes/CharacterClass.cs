@@ -371,7 +371,7 @@ namespace RiseOfStrongholds.Classes
                                                     m_block_id = nextStep;
                                                     //memorizes the block
                                                     MemoryBitClass bit = new MemoryBitClass(m_block_id, Guid.Empty, ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.gameTime, ConstantClass.ACTION_SEARCH_PRIORITY);
-                                                    m_memoryBank.addMemoryToBlocksVisited(bit, outputPersonGUID());
+                                                    m_memoryBank.addMemoryToBlocksVisited(bit, outputPersonGUID());                                                    
                                                     
                                                     deductEnergyBasedOnTerrain();
                                                     crossedRoom = true;
@@ -489,7 +489,7 @@ namespace RiseOfStrongholds.Classes
                                         }
                                         else //all blocks in memory have been visited 
                                         {
-                                            check when finding blocks to update memory for gathering
+                                            remove finding blocks to update memory for gathering and use the long/short term with GATHER action
                                             check and code scanning when in connection between two rooms
                                         }
                                     }
