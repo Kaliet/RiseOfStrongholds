@@ -489,7 +489,7 @@ namespace RiseOfStrongholds.Classes
                                         }
                                         else //all blocks in memory have been visited 
                                         {
-                                            remove finding blocks to update memory for gathering and use the long/short term with GATHER action
+                                            remove finding blocks to update memory for gathering and use the long/short term with GATHER action 
                                             check and code scanning when in connection between two rooms
                                         }
                                     }
