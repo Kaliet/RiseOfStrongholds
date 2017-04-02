@@ -1,7 +1,7 @@
 # RiseOfStrongholds
 Micro to Macro theme RPG game 
 
-Welcome!  
+Welcome!!  
   
   
 Please read Wiki pages for info.
