@@ -227,6 +227,39 @@ namespace RiseOfStrongholds.Classes
             return (m_list_of_occupants.Count == 0);
         }
         public bool existsBuilding() { return m_building_id != Guid.Empty; }
+        public bool isAdajcentToBlock (Guid targetBlockID) //checks if targetBlockID is an adjacent block to this.blockID
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            if (targetBlockID == Guid.Empty) return false;
+
+            Guid targetRoomID = ConstantClass.GET_ROOMID_BASED_BLOCKID(targetBlockID);
+            int targetX = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getPosition().getPositionX();
+            int targetY = ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[targetBlockID].getPosition().getPositionY();
+            int thisX = this.getPosition().getPositionX();
+            int thisY = this.getPosition().getPositionY();
+
+            if (targetRoomID == m_room_id) //same room
+            {
+                if (thisX == targetX) //same X coordinate
+                {
+                    if (Math.Abs(targetY - thisY) == 1) //if difference is greater than 1
+                    {
+                        return true;
+                    }
+                    }
+                if (thisY == targetY) //same Y coordinate
+                {
+                    if (Math.Abs(targetX - thisX) == 1) //if difference is greater than 1
+                    {
+                        return true;
+                    }
+                }
+            }            
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            return false;
+        }
 
             /*inventory related*/
         public ResourceObjectClass reduceBlockInventory(int rate) //rate = reduction rate

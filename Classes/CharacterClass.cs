@@ -489,8 +489,8 @@ namespace RiseOfStrongholds.Classes
                                         }
                                         else //all blocks in memory have been visited 
                                         {
-                                            remove finding blocks to update memory for gathering and use the long/short term with GATHER action 
-                                            check and code scanning when in connection between two rooms
+                                            //TODO: remove finding blocks to update memory for gathering and use the long/short term with GATHER action 
+                                            //TODO: check and code scanning when in connection between two rooms
                                         }
                                     }
                                 }
@@ -598,6 +598,37 @@ namespace RiseOfStrongholds.Classes
                                 }
                             }
                             m_action_queue.removeAction(index); //action completed, remove from index
+                        }
+                        else if (m_action_queue.getQueue()[index].getAction() == ConstantClass.CHARACTER_ACTIONS.FIGHT) //action to fight character ID
+                        {
+                            Guid opponentID = m_action_queue.getQueue()[index].getGuidForAction();
+                            
+                            if (opponentID == Guid.Empty)
+                            {
+                                ConstantClass.LOGGER.writeToGameLog(outputPersonGUID() + " cannot find opponent with no ID!");
+                                
+                                //action completed, remove action from queue
+                                m_action_queue.removeAction(index); //action completed, remove from index
+                            }
+                            else
+                            {
+                                Guid opponentBlockID = ConstantClass.MAPPING_TABLE_FOR_ALL_CHARS.getMappingTable()[opponentID].getBlockID();
+
+                                //1. check if opponent Block ID is adajcent to character
+                                if (ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[m_block_id].isAdajcentToBlock(opponentID))
+                                {
+                                    //1.1 if adjacent, then initiate fight
+                                    Guid winner = fightAgainstCharacter(opponentID);
+                                                                        
+                                    //action completed, remove action from queue
+                                    m_action_queue.removeAction(index); //action completed, remove from index
+                                }
+                                else //1.2 if not adajcent, then add prior action to FIND_CHAR
+                                {
+                                    currentPriority = m_action_queue.getQueue()[index].getPriority();
+                                    m_action_queue.addAction(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_CHAR, currentPriority - 1, ConstantClass.VARIABLE_FOR_ACTION_NONE, opponentID));
+                                }
+                            }
                         }
                         //-------------------ACTION: XXXXX ---------------------//
 
@@ -827,6 +858,16 @@ namespace RiseOfStrongholds.Classes
             if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH 
 
             return output;
+        }
+
+        /*BATTLE*/
+        private Guid fightAgainstCharacter(Guid oppponentID) //fights against opponent ID and return the GUid of the winner
+        {
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("->" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
+
+            
+
+            if (ConstantClass.DEBUG_LOG_LEVEL == ConstantClass.DEBUG_LEVELS.HIGH) { ConstantClass.LOGGER.writeToDebugLog("<-" + System.Reflection.MethodBase.GetCurrentMethod().ReflectedType + "." + System.Reflection.MethodBase.GetCurrentMethod().Name); } //DEBUG HIGH
         }
 
         /*EVENTS HANDLER*/

@@ -46,6 +46,7 @@ namespace RiseOfStrongholds.Classes
             FIND_CHAR,  //find_char - finds a specific character
             GATHER, //gather - gather resources
             REST,   //rest - rest until energy is replenished
+            FIGHT, //fight - fights another character in adajcent cell
             SCAN    //scan - scans around and memorize it
         };
         public enum CHARACTER_SLEEP_STATUS { AWAKE, SLEEPY, TIRED}; //awake = can perform actions, sleepy = must sleep since char passed HOURS_BETWEEN_SLEEPING, tired = energy decreases to 0        

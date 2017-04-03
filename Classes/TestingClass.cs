@@ -104,7 +104,7 @@ namespace RiseOfStrongholds.Classes
                 {
                     try
                     {
-                        people.Add(new CharacterClass(room.getRoom()[0, 0].getUniqueBlockID()));
+                        people.Add(new CharacterClass(room.getRoom()[2, 1].getUniqueBlockID()));
                         //people.Add(new CharacterClass(room.getRoom()[1, 2].getUniqueBlockID()));
                         //people.Add(new CharacterClass(room.getRoom()[2, 1].getUniqueBlockID()));
                     }
@@ -116,16 +116,17 @@ namespace RiseOfStrongholds.Classes
                     people[i].ActionUpdated += room.OnActionUpdated;
                     people[i].ActionUpdated += region.OnActionUpdated;
                 }
-                //CharacterClass person2 = new CharacterClass(room.getRoom()[0, 2].getUniqueBlockID());
-                //ConstantClass.gameTime.GameTicked += person2.OnGameTicked;
-                //person2.ActionUpdated += room.OnActionUpdated;
-                //person2.ActionUpdated += region.OnActionUpdated;            
+                CharacterClass person2 = new CharacterClass(room.getRoom()[2, 2].getUniqueBlockID());
+                ConstantClass.gameTime.GameTicked += person2.OnGameTicked;
+                person2.ActionUpdated += room.OnActionUpdated;
+                person2.ActionUpdated += region.OnActionUpdated;
                 //person2.FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_SEARCH_PRIORITY, 0, room.getRoom()[1,0].getUniqueBlockID()));
                 //person2.FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_CHAR, ConstantClass.ACTION_SEARCH_PRIORITY, 0, people[0].getUniqueCharacterID()));
 
-                //people.Add(person2);
+                people.Add(person2);
+                Console.WriteLine("Result = " + ConstantClass.MAPPING_TABLE_FOR_ALL_BLOCKS.getMappingTable()[people[0].getBlockID()].isAdajcentToBlock(people[1].getBlockID()));
 
-                people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SCAN, ConstantClass.ACTION_SCAN_PRIORITY, 0, Guid.Empty));
+                //people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.SCAN, ConstantClass.ACTION_SCAN_PRIORITY, 0, Guid.Empty));
                 //people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_SEARCH_PRIORITY, 0, room.getRoom()[0, 1].getUniqueBlockID()));
                 //people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.ACTION_GATHER_PRIORITY, 0, room.getRoom()[0, 0].getUniqueBlockID()));
                 //people[0].FOR_DEBUG_addActionInQueue(new ActionClass(ConstantClass.CHARACTER_ACTIONS.FIND_BLOCK, ConstantClass.ACTION_GATHER_PRIORITY, 0, room.getRoom()[0, 0].getUniqueBlockID()));
@@ -139,7 +140,7 @@ namespace RiseOfStrongholds.Classes
                 //people[0].DEBUG_getMemory().addMemoryToShortTerm(bit);
                 //bit = new MemoryBitClass(room.getRoom()[2, 2].getUniqueBlockID(), ConstantClass.CHARACTER_ACTIONS.GATHER, ConstantClass.gameTime, ConstantClass.CHARACTER_MEMORY_GATHER_PRIORITY);
                 //people[0].DEBUG_getMemory().addMemoryToShortTerm(bit);
-                
+
                 //BlockClass[,] output = ConstantClass.MAPPING_TABLE_FOR_ALL_ROOMS.getMappingTable()[room.getUniqueRoomID()].getBlocksWithinRadius(people[0].getBlockID(), 1);
                 //Guid buildingID;
                 //string name = "";
@@ -167,7 +168,7 @@ namespace RiseOfStrongholds.Classes
                 //    ConstantClass.LOGGER.writeToMapLog("\n");
                 //}
 
-                
+
             }
             catch (Exception e)
             {
